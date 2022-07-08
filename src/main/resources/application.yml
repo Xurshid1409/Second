@@ -1,0 +1,30 @@
+
+spring:
+  datasource:
+    username: postgres
+    password: 1488384
+    url: jdbc:postgresql://localhost:5432/second_education
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  main:
+    banner-mode: OFF
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+jwt:
+  secret: '[0-9.a-zA-z_]^+$TutorAcademy9891212skidU3AkjbgcNftrFbsdrxh^56409unjbgGfd528482'
+
+file:
+  storage:
+    location: fileStorage
+server:
+  port: 8080
+  servlet:
+    context-path: /
