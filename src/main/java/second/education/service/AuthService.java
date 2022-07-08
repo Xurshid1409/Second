@@ -13,6 +13,7 @@ import second.education.domain.User;
 import second.education.domain.classificator.Role;
 import second.education.model.request.DefaultRole;
 import second.education.model.request.IIBRequest;
+import second.education.model.response.EnrolleeResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.CheckSMSRepository;
@@ -22,6 +23,7 @@ import second.education.repository.UserRepository;
 import second.education.service.api.IIBServiceApi;
 import second.education.service.api.SmsServiceApi;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,52 +43,61 @@ public class AuthService {
 
     @Transactional
     public Result checkUser(IIBRequest iibRequest) {
-        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-        Data data = iibResponse.getData();
-        Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(iibRequest.getPhoneNumber(), data.getPinfl());
-        if (byPhoneNumber.isEmpty()) {
-            SMSAPIRequest smsApiRequest = new SMSAPIRequest();
-            smsApiRequest.setPhone_number(iibRequest.getPhoneNumber());
-            smsServiceApi.sendData(smsApiRequest);
-            CheckSMSEntity checkSMSEntity = new CheckSMSEntity();
-            checkSMSEntity.setPhoneNumber(iibRequest.getPhoneNumber());
-            checkSMSEntity.setCode(passwordEncoder.encode(smsApiRequest.getCode().toString()));
-            checkSMSEntity.setPinfl(data.getPinfl());
-            checkSMSEntity.setGivenDate(data.getPassportGivenDate());
-            checkSMSRepository.save(checkSMSEntity);
-            return new Result(ResponseMessage.SUCCESSFULLY.getMessage(), true);
-        } else if (byPhoneNumber.get().getPhoneNumber().equals(iibRequest.getPhoneNumber())) {
-            return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+        try {
+            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+            Data data = iibResponse.getData();
+            Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(iibRequest.getPhoneNumber(), data.getPinfl());
+            if (byPhoneNumber.isEmpty()) {
+                SMSAPIRequest smsApiRequest = new SMSAPIRequest();
+                smsApiRequest.setPhone_number(iibRequest.getPhoneNumber());
+                smsServiceApi.sendData(smsApiRequest);
+                CheckSMSEntity checkSMSEntity = new CheckSMSEntity();
+                checkSMSEntity.setPhoneNumber(iibRequest.getPhoneNumber());
+                checkSMSEntity.setCode(passwordEncoder.encode(smsApiRequest.getCode().toString()));
+                checkSMSEntity.setPinfl(data.getPinfl());
+                checkSMSEntity.setGivenDate(data.getPassportGivenDate());
+                checkSMSRepository.save(checkSMSEntity);
+                return new Result(ResponseMessage.SUCCESSFULLY.getMessage(), true);
+            } else if (byPhoneNumber.get().getPhoneNumber().equals(iibRequest.getPhoneNumber())) {
+                return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+            }
+            return new Result(iibRequest.getPinfl() + "  " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+        } catch (Exception ex) {
+            return new Result("Shaxsni tasdiqlovchi ma'lumotlar hato kiritilgan, iltimos tekshirib qayta urinib ko'ring", false);
         }
-        return new Result(iibRequest.getPinfl() + "  " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
     }
 
     @Transactional
     public Result validateUser(String phoneNumber, String code) {
-        List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findByPhoneNumber(phoneNumber);
-        CheckSMSEntity check = new CheckSMSEntity();
-        for (CheckSMSEntity smsEntity : checkSMSEntity) {
-            boolean matches = passwordEncoder.matches(code, smsEntity.getCode());
-            if (matches) {
-                check = smsEntity;
+
+        try {
+            List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findByPhoneNumber(phoneNumber);
+            CheckSMSEntity check = new CheckSMSEntity();
+            for (CheckSMSEntity smsEntity : checkSMSEntity) {
+                boolean matches = passwordEncoder.matches(code, smsEntity.getCode());
+                if (matches) {
+                    check = smsEntity;
+                }
             }
+            if (check.getPhoneNumber() == null) {
+                return new Result("Kiritilgan kod xato", false);
+            }
+            User user = new User();
+            user.setPhoneNumber(phoneNumber);
+            user.setPassword(check.getCode());
+            user.setRole(getRole());
+            User saveUser = userRepository.save(user);
+            IIBRequest iibRequest = new IIBRequest();
+            iibRequest.setPinfl(check.getPinfl());
+            iibRequest.setGiven_date(check.getGivenDate());
+            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+            Data data = iibResponse.getData();
+            EnrolleeInfo enrolleeInfo = saveEnrolleeInfo(saveUser, data);
+            diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(phoneNumber + " " + ResponseMessage.NOT_FOUND, false);
         }
-        if (check.getPhoneNumber() == null) {
-            return new Result("Kiritilgan kod xato", false);
-        }
-        User user = new User();
-        user.setPhoneNumber(phoneNumber);
-        user.setPassword(check.getCode());
-        user.setRole(getRole());
-        User saveUser = userRepository.save(user);
-        IIBRequest iibRequest = new IIBRequest();
-        iibRequest.setPinfl(check.getPinfl());
-        iibRequest.setGiven_date(check.getGivenDate());
-        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-        Data data = iibResponse.getData();
-        EnrolleeInfo enrolleeInfo = saveEnrolleeInfo(saveUser, data);
-        diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
-        return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
     }
 
     @Transactional
@@ -135,8 +146,7 @@ public class AuthService {
         enrolleeInfo.setPhoneNumber(saveUser.getPhoneNumber());
         enrolleeInfo.setGender(data.getGender());
         enrolleeInfo.setDateOfBirth(data.getBirthDate());
-        enrolleeInfo.setPassportSerial(data.getPassportSerial());
-        enrolleeInfo.setPassportNumber(data.getPassportNumber());
+        enrolleeInfo.setPassportSerialAndNumber(data.getPassportSerial()+data.getPassportNumber());
         enrolleeInfo.setPermanentRegion(data.getPermanentDistrict().getRegion().getName());
         enrolleeInfo.setPermanentDistrict(data.getPermanentDistrict().getName());
         enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
@@ -154,5 +164,4 @@ public class AuthService {
         }
         return optionalRole.get();
     }
-
 }

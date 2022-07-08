@@ -60,59 +60,6 @@ public class DiplomaService {
             }
     }
 
-    // User panel
-    @Transactional
-    public Result createDiploma(Principal principal, DiplomaRequest diplomaRequest) {
-
-        try {
-            User currentUser = getCurrentUser(principal);
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(currentUser).get();
-            Diploma diploma = new Diploma();
-            diploma.setCountryName(diplomaRequest.getCountryName());
-            diploma.setInstitutionName(diplomaRequest.getInstitutionName());
-            diploma.setEduFormName(diplomaRequest.getEduFormName());
-            diploma.setEduFinishingDate(diplomaRequest.getEduFinishingDate());
-            diploma.setSpecialityName(diplomaRequest.getSpeciality());
-            diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
-            diploma.setEnrolleeInfo(enrolleeInfo);
-            diplomaRepository.save(diploma);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
-        } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
-        }
-    }
-
-    @Transactional
-    public Result updateDiploma(Principal principal, DiplomaRequest diplomaRequest) {
-        try {
-            Diploma diploma = diplomaRepository.getDiplomaByPrincipal(principal.getName()).get();
-            diploma.setCountryName(diplomaRequest.getCountryName());
-            diploma.setInstitutionName(diplomaRequest.getInstitutionName());
-            diploma.setEduFormName(diplomaRequest.getEduFormName());
-            diploma.setEduFinishingDate(diplomaRequest.getEduFinishingDate());
-            diploma.setSpecialityName(diplomaRequest.getSpeciality());
-            diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
-            diplomaRepository.save(diploma);
-            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
-        } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public List<DiplomaResponse> getDiplomasByEnrolleeInfo(Principal principal) {
-        User user = this.getCurrentUser(principal);
-        return diplomaRepository.findAllByEnrolleeInfo(user.getId())
-                .stream().map(DiplomaResponse::new).toList();
-    }
-
-    @Transactional(readOnly = true)
-    public DiplomaResponse getDiplomaByIdAndEnrolleInfo(Principal principal, int diplomaId) {
-        User user = this.getCurrentUser(principal);
-        Diploma diploma = diplomaRepository.findByIdAndEnrolleeInfo(user.getId(), diplomaId).get();
-        return new DiplomaResponse(diploma);
-    }
-
     // Admin panel
 
     @Transactional(readOnly = true)

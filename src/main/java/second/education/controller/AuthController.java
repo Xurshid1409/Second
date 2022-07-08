@@ -1,6 +1,5 @@
 package second.education.controller;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +33,7 @@ public class AuthController {
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
-    @PostMapping("validateUser")
+    @PostMapping("/validateUser")
     public ResponseEntity<?> validateUser(@RequestParam(value = "phoneNumber") String phoneNumber,
                                           @RequestParam(value = "code") String code) {
         Result result = authService.validateUser(phoneNumber, code);
@@ -55,6 +54,5 @@ public class AuthController {
                     jwtToken,
                     roles
             ));
-
     }
 }

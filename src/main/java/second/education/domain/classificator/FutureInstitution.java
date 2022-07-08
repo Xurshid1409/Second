@@ -1,9 +1,11 @@
-package second.education.domain;
+package second.education.domain.classificator;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import second.education.domain.AbstractData;
 
 import javax.persistence.Entity;
 
@@ -12,7 +14,7 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Language extends AbstractData<Integer> {
+public class FutureInstitution extends AbstractData<Integer> {
 
     private String name;
 }

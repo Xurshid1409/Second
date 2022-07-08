@@ -54,8 +54,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(12);
     }
 
-   /* @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/swagger-ui/**", " /v3/api-docs/**");
-         }*/
 }

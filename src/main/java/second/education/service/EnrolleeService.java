@@ -1,99 +1,87 @@
 package second.education.service;
 
-/*import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import second.education.api_model.one_id.OneIdResponseToken;
-import second.education.api_model.one_id.OneIdResponseUserInfo;
-import second.education.domain.User;
+import second.education.domain.Diploma;
+import second.education.domain.EnrolleeInfo;
+import second.education.model.request.DiplomaRequest;
+import second.education.model.response.DiplomaResponse;
+import second.education.model.response.EnrolleeResponse;
 import second.education.model.response.ResponseMessage;
-import second.education.model.response.JwtResponse;
 import second.education.model.response.Result;
-import second.education.repository.UserRepository;
-import second.education.security.JwtTokenProvider;
-import second.education.security.UserDetailsImpl;
-import second.education.service.api.OneIdServiceApi;
+import second.education.repository.DiplomaRepository;
+import second.education.repository.EnrolleInfoRepository;
+import java.security.Principal;
 import java.util.List;
-import java.util.Optional;*/
 
-/*
 @Service
-*/
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class EnrolleeService {
-/*
-    private final OneIdServiceApi oneIdServiceApi;
-    private final UserRepository userRepository;
-  //  private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
+
+    private final EnrolleInfoRepository enrolleInfoRepository;
+    private final DiplomaRepository diplomaRepository;
 
     @Transactional
-    public Result signUp(String code) {
+    public Result createDiploma(Principal principal, DiplomaRequest diplomaRequest) {
 
         try {
-            OneIdResponseToken token = oneIdServiceApi.getAccessAndRefreshToken(code);
-            if (token == null) {
-                return new Result("Authorization Token " + ResponseMessage.NOT_FOUND.getMessage(), false);
-            }
-            OneIdResponseUserInfo userInfo = oneIdServiceApi.getUserInfo(token.getAccess_token());
-            if (userInfo == null) {
-                return new Result("OneId platformasidan ro'xatdan o'ting", false);
-            }
-            Optional<User> userOptional = userRepository.findByPhoneNumber(userInfo.getPin());
-            if (userOptional.isEmpty()) {
-                User user = new User();
-                user.setPhoneNumber(userInfo.getMobPhoneNo());
-           //     user.setPassword(passwordEncoder.encode(userInfo.getPin()));
-                user.setRoles(roleService.create());
-                userRepository.save(user);
-                return getResultAndToken(user);
-            } else {
-                return getResultAndToken(userOptional.get());
-            }
-        }
-        catch (Exception e) {
-            return new Result("Authorization code " + ResponseMessage.NOT_FOUND.getMessage(), false);
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            Diploma diploma = new Diploma();
+            diploma.setCountryName(diplomaRequest.getCountryName());
+            diploma.setInstitutionName(diplomaRequest.getInstitutionName());
+            diploma.setEduFormName(diplomaRequest.getEduFormName());
+            diploma.setEduFinishingDate(diplomaRequest.getEduFinishingDate());
+            diploma.setSpecialityName(diplomaRequest.getSpeciality());
+            diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
+            diploma.setEnrolleeInfo(enrolleeInfo);
+            diplomaRepository.save(diploma);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 
     @Transactional
-    public Result signUpAdmin(String code) {
-
+    public Result updateDiploma(Principal principal, DiplomaRequest diplomaRequest) {
         try {
-            OneIdResponseToken token = oneIdServiceApi.getAccessAndRefreshToken(code);
-            if (token == null) {
-                return new Result("Authorization Token " + ResponseMessage.NOT_FOUND.getMessage(), false);
-            }
-            OneIdResponseUserInfo userInfo = oneIdServiceApi.getUserInfo(token.getAccess_token());
-            if (userInfo == null) {
-                return new Result("OneId platformasidan ro'xatdan o'ting", false);
-            }
-            User user = userRepository.findByPhoneNumber(userInfo.getPin()).orElseThrow(
-                    () -> new RuntimeException(
-                            String.format("Foydalanuvchi %s ", userInfo.getPin() + "" + ResponseMessage.NOT_FOUND)));
-            return getResultAndToken(user);
-        }
-        catch (Exception e) {
-            return new Result("Authorization code " + ResponseMessage.NOT_FOUND.getMessage(), false);
+            Diploma diploma = diplomaRepository.getDiplomaByPrincipal(principal.getName()).get();
+            diploma.setCountryName(diplomaRequest.getCountryName());
+            diploma.setInstitutionName(diplomaRequest.getInstitutionName());
+            diploma.setEduFormName(diplomaRequest.getEduFormName());
+            diploma.setEduFinishingDate(diplomaRequest.getEduFinishingDate());
+            diploma.setSpecialityName(diplomaRequest.getSpeciality());
+            diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
+            diplomaRepository.save(diploma);
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
     }
 
-    private Result getResultAndToken(User user) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                user.getPhoneNumber(), user.getPassword()
-        ));
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authenticate.getPrincipal();
-        String jwtToken = jwtTokenProvider.generateJWTToken(userDetails);
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        JwtResponse jwtResponse = new JwtResponse(userDetails.getId() , userDetails.getUsername(), jwtToken, roles);
-        return new Result(ResponseMessage.SUCCESSFULLY.getMessage(), true, jwtResponse);
-    }*/
+    @Transactional(readOnly = true)
+    public EnrolleeResponse getEnrolleeResponse(Principal principal) {
+        try {
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            return new EnrolleeResponse(enrolleeInfo);
+        } catch (Exception ex) {
+            return new EnrolleeResponse();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<DiplomaResponse> getDiplomasByEnrolleeInfo(Principal principal) {
+        return diplomaRepository.findAllByEnrolleeInfo(principal.getName())
+                .stream().map(DiplomaResponse::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public DiplomaResponse getDiplomaByIdAndEnrolleInfo(Principal principal, int diplomaId) {
+        try {
+            Diploma diploma = diplomaRepository.findByIdAndEnrolleeInfo(principal.getName(), diplomaId).get();
+            return new DiplomaResponse(diploma);
+        } catch (Exception ex) {
+            return new DiplomaResponse();
+        }
+    }
 }

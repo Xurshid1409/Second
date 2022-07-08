@@ -14,6 +14,7 @@ public class Data {
 
     private String pinfl;
     private String gender;
+    private Citizenship citizenship;
     @JsonProperty("birth_date")
     private String birthDate;
     @JsonProperty("last_name")
@@ -29,7 +30,6 @@ public class Data {
     @JsonProperty("passport_expire_date")
     private String passportExpireDate;
     @JsonProperty("passport_number")
-
     private String passportNumber;
     @JsonProperty("first_name")
     private String firstName;

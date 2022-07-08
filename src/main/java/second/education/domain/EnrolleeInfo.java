@@ -17,14 +17,13 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor
 public class EnrolleeInfo extends AbstractData<Integer> {
 
-
+    private String citizenship;
     private String firstname;
     private String middleName;
     private String lastname;
     private String dateOfBirth;
     private String gender;
-    private String passportSerial;
-    private String passportNumber;
+    private String passportSerialAndNumber;
     private String passportGivenDate;
     private String pinfl;
     private String phoneNumber;
