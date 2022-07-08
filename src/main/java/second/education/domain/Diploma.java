@@ -33,6 +33,7 @@ public class Diploma extends AbstractData<Integer> {
     private Integer diplomaSerialId;
     private String diplomaSerialAndNumber;
     private String countryName;
+    private Boolean isActive = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private EnrolleeInfo enrolleeInfo;

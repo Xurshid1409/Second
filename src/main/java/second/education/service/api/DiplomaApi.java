@@ -13,6 +13,7 @@ import second.education.api_model.spec_api.SpecialistResponse;
 import second.education.domain.classificator.Specialities;
 import second.education.domain.classificator.University;
 import second.education.model.response.ResponseMessage;
+import second.education.model.response.Result;
 import second.education.model.response.SpecialitiesResponse;
 import second.education.model.response.UniversityResponse;
 import second.education.repository.InstitutionRepository;
@@ -29,7 +30,6 @@ public class DiplomaApi {
     private final InstitutionRepository institutionRepository;
     private final SpecialistRepository specialistRepository;
     String token = "jfqubdpWtR8qAOiUrFq5iPRlU8j1uOEaVWqHw6iLLgdV5Q_0-MBWEm3du3GjsZ726RFyuFSB_qRZrDlQj4kBAf3cBDxlpMwr_Ezp8LzbumTMIe5jTFsVCMuD7O3QjJtBWInZvjyzIs_8nEzFRVEBKsK4MJDSbEz56v58fAoRxk6HQpu9uuXUpgHcQaoTTtmuY21-Rtc";
-    private static final Logger LOG = LoggerFactory.getLogger(DiplomaApi.class);
 
     public List<DiplomaResponseInfo> getDiploma(String pinfl) {
 
@@ -65,65 +65,69 @@ public class DiplomaApi {
     }
 
     @Transactional
-    public void saveInstitution() {
+    public Result saveInstitution() {
 
         try {
             InstitutionResponse institutions = getInstitutions();
             List<DataItem> dataItems = institutions.getData().getInstitutionsOldNames().getData();
-            List<University> universities = new ArrayList<>();
-            dataItems.forEach(dataItem -> {
-                University university = new University();
-                university.setInstitutionId(dataItem.getInstitutionId());
-                university.setInstitutionName(dataItem.getInstitutionName());
-                university.setInstitutionTypeId(dataItem.getInstitutionTypeId());
-                university.setInstitutionTypeName(dataItem.getInstitutionTypeName());
-                university.setNameOz(dataItem.getNameOz());
-                university.setNameUz(dataItem.getNameUz());
-                university.setNameRu(dataItem.getNameRu());
-                university.setNameEn(dataItem.getNameEn());
-                university.setRegionSoatoId(dataItem.getRegionSoatoId());
-                university.setRegionName(dataItem.getRegionName());
-                university.setStatusName(dataItem.getStatusName());
-                universities.add(university);
-            });
-            institutionRepository.saveAll(universities);
-            LOG.info(ResponseMessage.SUCCESSFULLY_SAVED.getMessage());
+            List<University> universities = institutionRepository.findAll();
+            if (universities.isEmpty()) {
+                dataItems.forEach(dataItem -> {
+                    University university = new University();
+                    university.setInstitutionId(dataItem.getInstitutionId());
+                    university.setInstitutionName(dataItem.getInstitutionName());
+                    university.setInstitutionTypeId(dataItem.getInstitutionTypeId());
+                    university.setInstitutionTypeName(dataItem.getInstitutionTypeName());
+                    university.setNameOz(dataItem.getNameOz());
+                    university.setNameUz(dataItem.getNameUz());
+                    university.setNameRu(dataItem.getNameRu());
+                    university.setNameEn(dataItem.getNameEn());
+                    university.setRegionSoatoId(dataItem.getRegionSoatoId());
+                    university.setRegionName(dataItem.getRegionName());
+                    university.setStatusName(dataItem.getStatusName());
+                    universities.add(university);
+                });
+                institutionRepository.saveAll(universities);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+                return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
         } catch (Exception ex) {
-            LOG.error(ResponseMessage.ERROR_SAVED.getMessage(), ex);
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 
     @Transactional
-    public void saveSpecialities() {
+    public Result saveSpecialities() {
         try {
             SpecialistResponse specialistResponse = getSpecialities();
             List<second.education.api_model.spec_api.DataItem> dataItems = specialistResponse.getData().getSpecialities().getData();
-            List<Specialities> specialitiesList = new ArrayList<>();
-            dataItems.forEach(dataItem -> {
-                Specialities specialities = new Specialities();
-                specialities.setSpecialitiesId(dataItem.getId());
-                specialities.setInstitutionId(dataItem.getInstitutionId());
-                specialities.setNameOz(dataItem.getNameOz());
-                specialities.setNameUz(dataItem.getNameUz());
-                specialities.setNameEn(dataItem.getNameEn());
-                specialities.setNameRu(dataItem.getNameRu());
-                specialities.setStatusId(dataItem.getStatusId());
-                specialities.setBeginYear(dataItem.getBeginYear());
-                specialitiesList.add(specialities);
-            });
-            specialistRepository.saveAll(specialitiesList);
+            List<Specialities> specialitiesList = specialistRepository.findAll();
+            if (specialitiesList.isEmpty()) {
+                dataItems.forEach(dataItem -> {
+                    Specialities specialities = new Specialities();
+                    specialities.setSpecialitiesId(dataItem.getId());
+                    specialities.setInstitutionId(dataItem.getInstitutionId());
+                    specialities.setNameOz(dataItem.getNameOz());
+                    specialities.setNameUz(dataItem.getNameUz());
+                    specialities.setNameEn(dataItem.getNameEn());
+                    specialities.setNameRu(dataItem.getNameRu());
+                    specialities.setStatusId(dataItem.getStatusId());
+                    specialities.setBeginYear(dataItem.getBeginYear());
+                    specialitiesList.add(specialities);
+                });
+                specialistRepository.saveAll(specialitiesList);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+            return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
         } catch (Exception e) {
-            LOG.error(ResponseMessage.ERROR_SAVED.getMessage(), e);
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 
     @Transactional(readOnly = true)
     public List<UniversityResponse> getUniversities() {
         List<University> universities = institutionRepository.findAll();
-        if (universities.isEmpty()) {
-            saveInstitution();
-        }
-        List<UniversityResponse> universityResponses = new ArrayList<>(1000);
+        List<UniversityResponse> universityResponses = new ArrayList<>();
         universities.forEach(university -> {
             UniversityResponse universityResponse = new UniversityResponse();
             universityResponse.setId(university.getId());
@@ -144,10 +148,7 @@ public class DiplomaApi {
 
     public List<SpecialitiesResponse> getSpecialitiesByUniversityId(Integer universityId) {
         List<Specialities> specialities = specialistRepository.findAllByInstitutionId(universityId);
-        if (specialities.isEmpty()) {
-            saveSpecialities();
-        }
-        List<SpecialitiesResponse> specialitiesResponses = new ArrayList<>(1000);
+        List<SpecialitiesResponse> specialitiesResponses = new ArrayList<>();
         specialities.forEach(speciality -> {
             SpecialitiesResponse specialitiesResponse = new SpecialitiesResponse();
             specialitiesResponse.setId(speciality.getId());

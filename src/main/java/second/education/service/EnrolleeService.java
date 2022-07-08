@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.Diploma;
+import second.education.domain.Document;
 import second.education.domain.EnrolleeInfo;
+import second.education.model.request.DiplomaCheckRequest;
 import second.education.model.request.DiplomaRequest;
 import second.education.model.response.DiplomaResponse;
 import second.education.model.response.EnrolleeResponse;
@@ -21,6 +23,7 @@ public class EnrolleeService {
 
     private final EnrolleInfoRepository enrolleInfoRepository;
     private final DiplomaRepository diplomaRepository;
+    private final DocumentService documentService;
 
     @Transactional
     public Result createDiploma(Principal principal, DiplomaRequest diplomaRequest) {
@@ -35,7 +38,8 @@ public class EnrolleeService {
             diploma.setSpecialityName(diplomaRequest.getSpeciality());
             diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
             diploma.setEnrolleeInfo(enrolleeInfo);
-            diplomaRepository.save(diploma);
+            Diploma diplomaSave = diplomaRepository.save(diploma);
+            documentService.documentSave(diplomaSave.getId(), diplomaRequest.getDiploma(), diplomaRequest.getDiplomaIlova());
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
@@ -52,6 +56,18 @@ public class EnrolleeService {
             diploma.setEduFinishingDate(diplomaRequest.getEduFinishingDate());
             diploma.setSpecialityName(diplomaRequest.getSpeciality());
             diploma.setDiplomaSerialAndNumber(diplomaRequest.getDiplomaNumberAndSerial());
+            diplomaRepository.save(diploma);
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
+        }
+    }
+
+    @Transactional
+    public Result checkDiploma(int diplomaId, DiplomaCheckRequest request) {
+        try {
+            Diploma diploma = diplomaRepository.findById(diplomaId).get();
+            diploma.setIsActive(request.getIsActive());
             diplomaRepository.save(diploma);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {

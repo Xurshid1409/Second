@@ -13,6 +13,7 @@ import second.education.domain.User;
 import second.education.domain.classificator.Role;
 import second.education.model.request.DefaultRole;
 import second.education.model.request.IIBRequest;
+import second.education.model.request.ValidateCodeRequest;
 import second.education.model.response.EnrolleeResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
@@ -68,13 +69,13 @@ public class AuthService {
     }
 
     @Transactional
-    public Result validateUser(String phoneNumber, String code) {
+    public Result validateUser(ValidateCodeRequest request) {
 
         try {
-            List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findByPhoneNumber(phoneNumber);
+            List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findByPhoneNumber(request.getPhoneNumber());
             CheckSMSEntity check = new CheckSMSEntity();
             for (CheckSMSEntity smsEntity : checkSMSEntity) {
-                boolean matches = passwordEncoder.matches(code, smsEntity.getCode());
+                boolean matches = passwordEncoder.matches(request.getCode(), smsEntity.getCode());
                 if (matches) {
                     check = smsEntity;
                 }
@@ -83,7 +84,7 @@ public class AuthService {
                 return new Result("Kiritilgan kod xato", false);
             }
             User user = new User();
-            user.setPhoneNumber(phoneNumber);
+            user.setPhoneNumber(request.getPhoneNumber());
             user.setPassword(check.getCode());
             user.setRole(getRole());
             User saveUser = userRepository.save(user);
@@ -96,7 +97,7 @@ public class AuthService {
             diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
-            return new Result(phoneNumber + " " + ResponseMessage.NOT_FOUND, false);
+            return new Result(request.getPhoneNumber() + " " + ResponseMessage.NOT_FOUND, false);
         }
     }
 
@@ -108,6 +109,7 @@ public class AuthService {
             SMSAPIRequest smsApiRequest = new SMSAPIRequest();
             smsApiRequest.setPhone_number(phoneNumber);
             smsServiceApi.sendData(smsApiRequest);
+            checkSMSEntity.setPhoneNumber(phoneNumber);
             checkSMSEntity.setCode(passwordEncoder.encode(smsApiRequest.getCode().toString()));
             checkSMSRepository.save(checkSMSEntity);
             return new Result("Sms junatildi", true);
@@ -115,30 +117,30 @@ public class AuthService {
         return new Result("Telefon raqam " + phoneNumber + " " + ResponseMessage.NOT_FOUND.getMessage(), false);
     }
 
-    @Transactional
-    public Result validateCheckCode(String code, String phoneNumber) {
+    public Result validateCheckCode(ValidateCodeRequest request) {
 
-        List<CheckSMSEntity> byPhoneNumber = checkSMSRepository.findByPhoneNumber(phoneNumber);
+        List<CheckSMSEntity> byPhoneNumber = checkSMSRepository.findByPhoneNumber(request.getPhoneNumber());
         CheckSMSEntity getSmsEntity = new CheckSMSEntity();
         for (CheckSMSEntity checkSMSEntity : byPhoneNumber) {
-            boolean matches = passwordEncoder.matches(code, checkSMSEntity.getCode());
+            boolean matches = passwordEncoder.matches(request.getCode(), checkSMSEntity.getCode());
             if (matches) {
                 getSmsEntity = checkSMSEntity;
-                User user = userRepository.findByPhoneNumber(getSmsEntity.getPhoneNumber()).get();
-                user.setPassword(getSmsEntity.getCode());
-                user.setModifiedDate(LocalDateTime.now());
-                userRepository.save(user);
-                return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
             }
         }
         if (getSmsEntity.getPhoneNumber() == null) {
             return new Result("Kiritilgan kod xato", false);
         }
-        return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
+        User user = userRepository.findByPhoneNumber(getSmsEntity.getPhoneNumber()).get();
+        user.setPassword(getSmsEntity.getCode());
+        user.setModifiedDate(LocalDateTime.now());
+        userRepository.save(user);
+        return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
     }
 
     private EnrolleeInfo saveEnrolleeInfo(User saveUser, Data data) {
         EnrolleeInfo enrolleeInfo = new EnrolleeInfo();
+        enrolleeInfo.setCitizenship(data.getCitizenship().getName());
+        enrolleeInfo.setNationality(data.getNationality().getName());
         enrolleeInfo.setFirstname(data.getFirstName());
         enrolleeInfo.setLastname(data.getLastName());
         enrolleeInfo.setMiddleName(data.getMiddleName());
@@ -150,6 +152,7 @@ public class AuthService {
         enrolleeInfo.setPermanentRegion(data.getPermanentDistrict().getRegion().getName());
         enrolleeInfo.setPermanentDistrict(data.getPermanentDistrict().getName());
         enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
+        enrolleeInfo.setPassportGivenDate(data.getPassportGivenDate());
         enrolleeInfo.setUser(saveUser);
         return enrolleInfoRepository.save(enrolleeInfo);
     }

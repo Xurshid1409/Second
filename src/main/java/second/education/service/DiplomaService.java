@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.api_model.diplom_api.DiplomaResponseInfo;
 import second.education.domain.Diploma;
+import second.education.domain.Document;
 import second.education.domain.EnrolleeInfo;
 import second.education.domain.User;
 import second.education.model.request.DiplomaRequest;
-import second.education.model.response.DiplomaResponse;
-import second.education.model.response.ResponseMessage;
-import second.education.model.response.Result;
+import second.education.model.response.*;
 import second.education.repository.DiplomaRepository;
+import second.education.repository.DocumentRepository;
 import second.education.repository.EnrolleInfoRepository;
 import second.education.repository.UserRepository;
 import second.education.service.api.DiplomaApi;
@@ -31,9 +31,9 @@ public class DiplomaService {
     private final DiplomaRepository diplomaRepository;
     private final DiplomaApi diplomaApi;
     private final UserRepository userRepository;
-    private final EnrolleInfoRepository enrolleInfoRepository;
+    private final DocumentRepository documentRepository;
 
-       @Transactional
+    @Transactional
     public void saveDiplomaByApi(String pinfl, EnrolleeInfo enrolleeInfo) {
             List<DiplomaResponseInfo> diplomas = diplomaApi.getDiploma(pinfl);
             List<Diploma> diplomaList = new ArrayList<>();
@@ -90,6 +90,28 @@ public class DiplomaService {
             return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
         }
     }
+
+    @Transactional(readOnly = true)
+    public FileResponse fileResponse(Integer diplomaId) {
+        List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
+        FileResponse fileResponse = new FileResponse();
+        documents.forEach(document -> {
+            if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
+                DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
+                diplomaCopyResponse.setId(document.getId());
+                diplomaCopyResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
+            }
+            if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
+                DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
+                diplomaIlovaResponse.setId(document.getId());
+                diplomaIlovaResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
+            }
+        });
+        return fileResponse;
+    }
+
 
     private User getCurrentUser(Principal principal) {
         return userRepository.findByPhoneNumber(principal.getName()).get();

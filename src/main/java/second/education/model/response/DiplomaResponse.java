@@ -12,6 +12,7 @@ import second.education.domain.Diploma;
 @AllArgsConstructor
 public class DiplomaResponse {
 
+    private Integer id;
     private String countryName;
     private Integer institutionId;
     private String institutionName;
@@ -27,13 +28,15 @@ public class DiplomaResponse {
     private String diplomaNumberAndDiplomaSerial;
 
     public DiplomaResponse(Diploma diploma) {
+        this.id = diploma.getId();
         this.countryName = diploma.getCountryName();
         this.institutionId = diploma.getInstitutionId();
         this.institutionName = diploma.getInstitutionName();
         this.institutionOldNameId = diploma.getInstitutionOldNameId();
         this.institutionOldName = diploma.getInstitutionOldName();
-
         this.eduFormName = diploma.getEduFormName();
+        this.degreeId = diploma.getDegreeId();
+        this.degreeName = diploma.getDegreeName();
         this.specialityId = diploma.getSpecialityId();
         this.specialityName = diploma.getSpecialityName();
         this.eduFinishingDate = diploma.getEduFinishingDate();

@@ -1,8 +1,10 @@
 package second.education.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import second.education.model.request.DiplomaCheckRequest;
 import second.education.model.request.DiplomaRequest;
 import second.education.model.response.DiplomaResponse;
 import second.education.model.response.EnrolleeResponse;
@@ -15,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/enrolleeInfo/")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "second")
 public class EnrolleeInfoController {
 
     private final EnrolleeService enrolleeService;
@@ -34,6 +37,12 @@ public class EnrolleeInfoController {
     @PutMapping
     public ResponseEntity<?> updateDiploma(Principal principal, @RequestBody DiplomaRequest diplomaRequest) {
         Result result = enrolleeService.updateDiploma(principal, diplomaRequest);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @PatchMapping("check/diplomas/{diplomaId}")
+    public ResponseEntity<?> checkDiploma(@PathVariable int diplomaId, @RequestBody DiplomaCheckRequest request) {
+        Result result = enrolleeService.checkDiploma(diplomaId, request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 

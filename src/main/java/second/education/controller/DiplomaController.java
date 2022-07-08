@@ -16,19 +16,24 @@ import second.education.service.api.DiplomaApi;
 import java.util.List;
 
 @RestController
-@RequestMapping("diploma/")
+@RequestMapping("api/diploma/")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "second")
 public class DiplomaController {
 
     private final DiplomaApi diplomaApi;
     private final ApplicationService applicationService;
 
- /*   @GetMapping("/create/institution")
+    @GetMapping("/create/institution")
     public ResponseEntity<?> createInstitution() {
         Result result = diplomaApi.saveInstitution();
         return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
-    }*/
+    }
+
+    @GetMapping("/create/specialities")
+    public ResponseEntity<?> createSpecialities() {
+        Result result = diplomaApi.saveSpecialities();
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+    }
 
 
     @GetMapping("getUniversities")
@@ -43,11 +48,11 @@ public class DiplomaController {
         return ResponseEntity.status(!specialities.isEmpty() ? 200 : 404).body(specialities);
     }
 
- /*   @PostMapping("saveDiploma")
-    public ResponseEntity<?> createDiploma(@RequestParam(value = "pinfl") String pinfl) {
-        Result result = applicationService.saveDiploma(pinfl);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
-    }*/
+//    @PostMapping("saveDiploma")
+//    public ResponseEntity<?> createDiploma(@RequestParam(value = "pinfl") String pinfl) {
+//        Result result = applicationService.saveDiploma(pinfl);
+//        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+//    }
 
 
 }

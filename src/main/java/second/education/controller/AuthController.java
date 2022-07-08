@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import second.education.model.request.IIBRequest;
 import second.education.model.request.LoginRequest;
+import second.education.model.request.ValidateCodeRequest;
 import second.education.model.response.JwtResponse;
 import second.education.model.response.Result;
 import second.education.security.JwtTokenProvider;
@@ -34,25 +35,41 @@ public class AuthController {
     }
 
     @PostMapping("/validateUser")
-    public ResponseEntity<?> validateUser(@RequestParam(value = "phoneNumber") String phoneNumber,
-                                          @RequestParam(value = "code") String code) {
-        Result result = authService.validateUser(phoneNumber, code);
+    public ResponseEntity<?> validateUser(@RequestBody ValidateCodeRequest request) {
+        Result result = authService.validateUser(request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
     @PostMapping("/signIn")
     public ResponseEntity<?> signIn(@RequestBody LoginRequest loginRequest){
 
-            Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getPhoneNumber(),loginRequest.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authenticate);
-            UserDetailsImpl userDetails = (UserDetailsImpl) authenticate.getPrincipal();
-            String jwtToken = jwtTokenProvider.generateToken(userDetails);
-            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-            return ResponseEntity.ok(new JwtResponse(
-                    userDetails.getId(),
-                    userDetails.getUsername(),
-                    jwtToken,
-                    roles
-            ));
+            try {
+                Authentication authenticate = authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getPhoneNumber(), loginRequest.getPassword()));
+                SecurityContextHolder.getContext().setAuthentication(authenticate);
+                UserDetailsImpl userDetails = (UserDetailsImpl) authenticate.getPrincipal();
+                String jwtToken = jwtTokenProvider.generateToken(userDetails);
+                List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+                return ResponseEntity.ok(new JwtResponse(
+                        userDetails.getId(),
+                        userDetails.getUsername(),
+                        jwtToken,
+                        roles
+                ));
+            } catch (Exception ex) {
+                return ResponseEntity.badRequest().body(new Result("Telefon raqam yoki parol hato kiritilgan, " +
+                        "iltimos tekshirib qayta urinib ko'ring", false));
+            }
+    }
+
+    @PostMapping("update/code")
+    public ResponseEntity<?> updateCode(@RequestParam(value = "phoneNumber") String phoneNumber) {
+        Result result = authService.updateCheckCode(phoneNumber);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @PostMapping("validate/code")
+    public ResponseEntity<?> validateCode(@RequestBody ValidateCodeRequest request) {
+        Result result = authService.validateCheckCode(request);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 }
