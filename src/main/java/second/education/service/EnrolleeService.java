@@ -10,7 +10,9 @@ import second.education.model.response.*;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.EnrolleInfoRepository;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -34,7 +36,6 @@ public class EnrolleeService {
                                          MultipartFile diplomaIlova) {
 
         try {
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
             diploma.setInstitutionName(institutionName);
@@ -42,6 +43,7 @@ public class EnrolleeService {
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             diploma.setEnrolleeInfo(enrolleeInfo);
             Diploma diplomaSave = diplomaRepository.save(diploma);
             documentService.documentSave(diplomaSave.getId(), diplomaCopy, diplomaIlova);
@@ -75,8 +77,9 @@ public class EnrolleeService {
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+            diploma.setModifiedDate(LocalDateTime.now());
             Diploma diplomaSave = diplomaRepository.save(diploma);
-            documentService.documentUpdate(diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
+            documentService.documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
             return new DiplomaResponse(diplomaSave, fileResponse);
         } catch (Exception ex) {

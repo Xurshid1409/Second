@@ -55,29 +55,50 @@ public class DocumentService {
     }
 
     @Transactional
-    public Result documentUpdate(int docDiplomId, int docIlovaId, MultipartFile docDiplom, MultipartFile docIlova){
+    public Result documentUpdate(Diploma diploma, Integer docDiplomId, Integer docIlovaId, MultipartFile docDiplom, MultipartFile docIlova){
         try {
             List<Document> documents = new ArrayList<>();
-            if (docDiplom != null) {
-                Document document = documentRepository.findById(docDiplomId).get();
-                fileService.deleteDocument(document);
+            if (docDiplomId != null) {
+                if (docDiplom != null) {
+                    Document document = documentRepository.findById(docDiplomId).get();
+                    fileService.deleteDocument(document);
+                    String diplomName = fileService.upload(docDiplom, "Diplom");
+                    String currentUrl = getCurrentUrl(diplomName);
+                    document.setUrl(currentUrl);
+                    document.setFileName(diplomName);
+                    document.setModifiedDate(LocalDateTime.now());
+                    documents.add(document);
+                }
+            } else {
+                Document document = new Document();
                 String diplomName = fileService.upload(docDiplom, "Diplom");
                 String currentUrl = getCurrentUrl(diplomName);
-                document.setUrl(currentUrl);
                 document.setFileName(diplomName);
-                document.setModifiedDate(LocalDateTime.now());
+                document.setUrl(currentUrl);
+                document.setDiploma(diploma);
                 documents.add(document);
             }
-            if (docIlova != null) {
-                Document documentIlova = documentRepository.findById(docIlovaId).get();
-                fileService.deleteDocument(documentIlova);
-                String diplomIlovaName = fileService.upload(docIlova, "Ilova");
-                String currentUrl = getCurrentUrl(diplomIlovaName);
-                documentIlova.setUrl(currentUrl);
-                documentIlova.setFileName(diplomIlovaName);
-                documentIlova.setModifiedDate(LocalDateTime.now());
-                documents.add(documentIlova);
+            if (docIlovaId != null ) {
+                if (docIlova != null) {
+                    Document documentIlova = documentRepository.findById(docIlovaId).get();
+                    fileService.deleteDocument(documentIlova);
+                    String diplomIlovaName = fileService.upload(docIlova, "Ilova");
+                    String currentUrl = getCurrentUrl(diplomIlovaName);
+                    documentIlova.setUrl(currentUrl);
+                    documentIlova.setFileName(diplomIlovaName);
+                    documentIlova.setModifiedDate(LocalDateTime.now());
+                    documents.add(documentIlova);
+                }
+            } else {
+                   Document documentIlova = new Document();
+                   String diplomIlovaName = fileService.upload(docIlova, "Ilova");
+                   String currentUrl = getCurrentUrl(diplomIlovaName);
+                   documentIlova.setFileName(diplomIlovaName);
+                   documentIlova.setUrl(currentUrl);
+                   documentIlova.setDiploma(diploma);
+                   documents.add(documentIlova);
             }
+
             if (documents.size() > 0) {
                 documentRepository.saveAll(documents);
             }

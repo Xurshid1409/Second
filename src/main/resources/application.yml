@@ -9,7 +9,7 @@ spring:
     show-sql: true
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   main:
     banner-mode: OFF
   servlet:

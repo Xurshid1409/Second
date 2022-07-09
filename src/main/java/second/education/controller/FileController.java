@@ -33,14 +33,14 @@ public class FileController {
         return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
     }
 
-    @PutMapping("update/{diplomaId}")
-    public ResponseEntity<?> updateDiploma(@RequestParam(value = "docDiplomId", required = false) int docDiplomId,
-                                           @RequestParam(value = "docIlovaId", required = false) int documentIlovaId,
-                                           @RequestParam(value = "docDiplom", required = false) MultipartFile docDiplom,
-                                           @RequestParam(value = "docilova", required = false) MultipartFile docilova) {
-        Result result = documentService.documentUpdate(docDiplomId, documentIlovaId,docDiplom,docilova);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
+//    @PutMapping("update/{diplomaId}")
+//    public ResponseEntity<?> updateDiploma(@RequestParam(value = "docDiplomId", required = false) int docDiplomId,
+//                                           @RequestParam(value = "docIlovaId", required = false) int documentIlovaId,
+//                                           @RequestParam(value = "docDiplom", required = false) MultipartFile docDiplom,
+//                                           @RequestParam(value = "docilova", required = false) MultipartFile docilova) {
+//        Result result = documentService.documentUpdate(docDiplomId, documentIlovaId, docDiplom, docilova);
+//        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+//    }
 
     @GetMapping("{documentId}")
     public ResponseEntity<?> getDocumentById(@PathVariable int documentId) {

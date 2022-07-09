@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 public class Diploma extends AbstractData<Integer> {
 
     private Integer id;
-    private String pinfl;
     private Integer institutionId;
     private String institutionName;
     private Integer institutionOldNameId;
