@@ -11,5 +11,5 @@ public class SMSAPIRequest {
 
     private String phone_number;
     private Integer code = ThreadLocalRandom.current().nextInt(99999, 1000000);
-    private String message = "Kasb.edu.uz tizimiga kirish uchun parol " + code;
+    private String message = "ikkinchitalim.edu.uz tizimiga kirish uchun parol " + code;
 }
