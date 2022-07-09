@@ -7,9 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import second.education.domain.Diploma;
 import second.education.domain.Document;
-import second.education.model.response.DocumentResponse;
-import second.education.model.response.ResponseMessage;
-import second.education.model.response.Result;
+import second.education.model.response.*;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.DocumentRepository;
 
@@ -57,7 +55,7 @@ public class DocumentService {
     }
 
     @Transactional
-    public Result documentUpdate( int docDiplomId, int docIlovaId, MultipartFile docDiplom, MultipartFile docIlova){
+    public Result documentUpdate(int docDiplomId, int docIlovaId, MultipartFile docDiplom, MultipartFile docIlova){
         try {
             List<Document> documents = new ArrayList<>();
             if (docDiplom != null) {
@@ -80,7 +78,9 @@ public class DocumentService {
                 documentIlova.setModifiedDate(LocalDateTime.now());
                 documents.add(documentIlova);
             }
-            documentRepository.saveAll(documents);
+            if (documents.size() > 0) {
+                documentRepository.saveAll(documents);
+            }
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
@@ -104,6 +104,26 @@ public class DocumentService {
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
         }
+    }
+
+    public FileResponse getFileResponse(Integer diplomaId) {
+        List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
+        FileResponse fileResponse = new FileResponse();
+        documents.forEach(document -> {
+            if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
+                DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
+                diplomaCopyResponse.setId(document.getId());
+                diplomaCopyResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
+            }
+            if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
+                DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
+                diplomaIlovaResponse.setId(document.getId());
+                diplomaIlovaResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
+            }
+        });
+        return fileResponse;
     }
 
     private String getCurrentUrl(String fileName) {

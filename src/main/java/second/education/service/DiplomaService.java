@@ -91,28 +91,6 @@ public class DiplomaService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public FileResponse fileResponse(Integer diplomaId) {
-        List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
-        FileResponse fileResponse = new FileResponse();
-        documents.forEach(document -> {
-            if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
-                DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
-                diplomaCopyResponse.setId(document.getId());
-                diplomaCopyResponse.setUrl(document.getUrl());
-                fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
-            }
-            if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
-                DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
-                diplomaIlovaResponse.setId(document.getId());
-                diplomaIlovaResponse.setUrl(document.getUrl());
-                fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
-            }
-        });
-        return fileResponse;
-    }
-
-
     private User getCurrentUser(Principal principal) {
         return userRepository.findByPhoneNumber(principal.getName()).get();
     }

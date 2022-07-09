@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import second.education.model.request.DiplomaCheckRequest;
 import second.education.model.request.DiplomaRequest;
 import second.education.model.response.DiplomaResponse;
@@ -29,15 +30,38 @@ public class EnrolleeInfoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createDiploma(Principal principal, @RequestBody DiplomaRequest diplomaRequest) {
-        Result result = enrolleeService.createDiploma(principal, diplomaRequest);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+    public ResponseEntity<?> createDiploma(Principal principal,
+                                           @RequestParam(value = "countryName", required = false) String countryName,
+//                                           @RequestParam(value = "institutionId") Integer institutionId,
+                                           @RequestParam(value = "institutionName", required = false) String institutionName,
+                                           @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                           @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                           @RequestParam(value = "speciality", required = false) String speciality,
+                                           @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                           @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                           @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+        DiplomaResponse response = enrolleeService.createDiploma(principal, countryName,
+                institutionName, eduFormName, eduFinishingDate, speciality,
+                diplomaNumberAndSerial, diploma, diplomaIlova);
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping
-    public ResponseEntity<?> updateDiploma(Principal principal, @RequestBody DiplomaRequest diplomaRequest) {
-        Result result = enrolleeService.updateDiploma(principal, diplomaRequest);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    @PutMapping("{diplomaId}")
+    public ResponseEntity<?> updateDiploma(@PathVariable int diplomaId,
+                                           @RequestParam(value = "countryName", required = false) String countryName,
+//                                           @RequestParam(value = "institutionId") Integer institutionId,
+                                           @RequestParam(value = "institutionName", required = false) String institutionName,
+                                           @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                           @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                           @RequestParam(value = "speciality", required = false) String speciality,
+                                           @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                           @RequestParam(value = "diplomaCopyId", required = false) Integer diplomaCopyId,
+                                           @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                           @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
+                                           @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+        DiplomaResponse diplomaResponse = enrolleeService.updateDiploma(diplomaId, countryName, institutionName, eduFormName, eduFinishingDate,
+                speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
+        return ResponseEntity.ok(diplomaResponse);
     }
 
     @PatchMapping("check/diplomas/{diplomaId}")
@@ -52,9 +76,9 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(diplomasByEnrolleeInfo);
     }
 
-    @GetMapping("diplomas/{diplomaId}")
-    public ResponseEntity<?> getDiplomaById(Principal principal, @PathVariable int diplomaId) {
-        DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaByIdAndEnrolleInfo(principal, diplomaId);
+    @GetMapping("diplomasByPrincipal")
+    public ResponseEntity<?> getDiplomaById(Principal principal) {
+        DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaByIdAndEnrolleInfo(principal);
         return ResponseEntity.ok(diplomaByIdAndEnrolleInfo);
     }
 }

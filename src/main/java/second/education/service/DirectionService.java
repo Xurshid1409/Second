@@ -11,7 +11,6 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.DirectionRepository;
 import second.education.repository.FutureInstitutionRepository;
-
 import java.util.List;
 
 @Service
@@ -42,8 +41,8 @@ public class DirectionService {
         try {
             Direction direction = directionRepository.findById(directionId).get();
             direction.setName(request.getName());
-            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
-            direction.setFutureInstitution(futureInstitution);
+//            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
+//            direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
@@ -51,8 +50,9 @@ public class DirectionService {
         }
     }
 
-    public List<DirectionResponse> getAllDirection() {
-        return directionRepository.findAll().stream().map(DirectionResponse::new).toList();
+    public List<DirectionResponse> getAllDirection(Integer futureInstitutionId) {
+        return directionRepository.findAllByFutureInstitutionId(futureInstitutionId)
+                .stream().map(DirectionResponse::new).toList();
     }
 
     public DirectionResponse getDirectionById(int directionId) {

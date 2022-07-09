@@ -26,4 +26,6 @@ public class PublicController {
         Result result = enrolleeService.signUp(code);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }*/
+
+
 }

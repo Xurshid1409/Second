@@ -51,8 +51,8 @@ public class EduFormAndLanguageService {
         }
     }
 
-    public List<EduFormResponse> getAllEduForm() {
-        return eduFormRepository.findAll().stream().map(EduFormResponse::new).toList();
+    public List<EduFormResponse> getAllEduForm(Integer directionId) {
+        return eduFormRepository.findAllByDirectionId(directionId).stream().map(EduFormResponse::new).toList();
     }
 
     public EduFormResponse getEduFormById(int eduFormId) {
@@ -99,8 +99,8 @@ public class EduFormAndLanguageService {
         }
     }
 
-    public List<LanguageResponse> allLanguages() {
-        return languageRepository.findAll().stream().map(LanguageResponse::new).toList();
+    public List<LanguageResponse> getAllLanguages(Integer directionId) {
+        return languageRepository.findAllByDirectionId(directionId).stream().map(LanguageResponse::new).toList();
     }
 
     public LanguageResponse getLanguageById(int languageId) {
@@ -112,4 +112,12 @@ public class EduFormAndLanguageService {
         }
     }
 
+    public Result deleteLanguage(int languageId) {
+        try {
+            languageRepository.deleteById(languageId);
+            return new Result(ResponseMessage.SUCCESSFULLY_DELETED.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
+        }
+    }
 }

@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("api/file")
+@RequestMapping("api/file/")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "second")
 public class FileController {

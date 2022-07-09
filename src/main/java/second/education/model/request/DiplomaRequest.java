@@ -15,6 +15,4 @@ public class DiplomaRequest {
     private String eduFinishingDate;
     private String speciality;
     private String diplomaNumberAndSerial;
-    private MultipartFile diploma;
-    private MultipartFile diplomaIlova;
 }

@@ -12,6 +12,11 @@ spring:
       ddl-auto: none
   main:
     banner-mode: OFF
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -23,7 +28,7 @@ jwt:
 
 file:
   storage:
-    location: fileStorage
+    location: /home/software/fileStorage
 server:
   port: 8081
   servlet:
