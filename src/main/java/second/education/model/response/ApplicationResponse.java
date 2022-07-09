@@ -7,7 +7,9 @@ public interface ApplicationResponse {
     String getTilName();
     Integer getShaklId();
     String getShaklName();
+    Integer getDirectionId();
     String getDirectionName();
+    Integer getFutureInstitutionId();
     String getFutureInstitutionName();
     String getStatus();
     String getCreatedDate();

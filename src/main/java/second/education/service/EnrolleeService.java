@@ -10,6 +10,8 @@ import second.education.model.response.*;
 import second.education.repository.ApplicationRepository;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.EnrolleInfoRepository;
+import second.education.repository.InstitutionRepository;
+
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class EnrolleeService {
     private final DiplomaRepository diplomaRepository;
     private final DocumentService documentService;
     private final ApplicationRepository applicationRepository;
+    private final InstitutionRepository institutionRepository;
 
     @Transactional
     public DiplomaResponse createDiploma(Principal principal,
