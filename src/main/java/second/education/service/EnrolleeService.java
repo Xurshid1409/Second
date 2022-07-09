@@ -16,6 +16,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -73,8 +74,7 @@ public class EnrolleeService {
             Integer diplomaCopyId,
             MultipartFile diplomaCopy,
             Integer diplomaIlovaId,
-            MultipartFile diplomaIlova)
-    {
+            MultipartFile diplomaIlova) {
         try {
             Diploma diploma = diplomaRepository.findById(diplomaId).get();
             diploma.setCountryName(countryName);
@@ -114,16 +114,15 @@ public class EnrolleeService {
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-            return new EnrolleeResponse(enrolleeInfo, getApplicationByPrincipal(principal));
+            // TODO: 10.07.2022 nullga tekshirish kerak
+            EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
+            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+            applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
+            return enrolleeResponse;
+
         } catch (Exception ex) {
             return new EnrolleeResponse();
         }
-    }
-
-    @Transactional
-    public ApplicationResponse getApplicationByPrincipal(Principal principal) {
-        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-        return applicationRepository.findByAppByPrincipal(enrolleeInfo.getId()).get();
     }
 
     @Transactional(readOnly = true)

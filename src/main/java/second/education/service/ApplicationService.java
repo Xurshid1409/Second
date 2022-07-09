@@ -14,6 +14,7 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.*;
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,7 @@ public class ApplicationService {
             application.setEduForm(eduForm);
             application.setEnrolleeInfo(enrolleeInfo);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
+            application.setModifiedDate(LocalDateTime.now());
             applicationRepository.save(application);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {

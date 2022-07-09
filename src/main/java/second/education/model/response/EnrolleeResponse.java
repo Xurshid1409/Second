@@ -42,7 +42,25 @@ public class EnrolleeResponse {
         this.permanentAddress = enrolleeInfo.getPermanentAddress();
         this.gender = enrolleeInfo.getGender();
         this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
-        this.applicationResponse = applicationResponse;
+        if (applicationResponse != null) {
+            this.applicationResponse = applicationResponse;
+        }
+    }
+
+    public EnrolleeResponse(EnrolleeInfo enrolleeInfo) {
+        this.citizenship = enrolleeInfo.getCitizenship();
+        this.nationality = enrolleeInfo.getNationality();
+        this.passportSerialAndNumber = enrolleeInfo.getPassportSerialAndNumber();
+        this.pinfl = enrolleeInfo.getPinfl();
+        this.firstname = enrolleeInfo.getFirstname();
+        this.lastname = enrolleeInfo.getLastname();
+        this.middleName = enrolleeInfo.getMiddleName();
+        this.dateOfBirth = enrolleeInfo.getDateOfBirth();
+        this.permanentRegion = enrolleeInfo.getPermanentRegion();
+        this.permanentDistrict = enrolleeInfo.getPermanentDistrict();
+        this.permanentAddress = enrolleeInfo.getPermanentAddress();
+        this.gender = enrolleeInfo.getGender();
+        this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
     }
 
 }
