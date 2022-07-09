@@ -14,7 +14,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(nativeQuery = true, value = "select * from application a where a.enrollee_info_id =?1")
     Optional<Application> findByEnrolleeInfoId(Integer enrolleInfoId);
 
-    @Query(nativeQuery = true, value = "select l.id as tilId, l.language as tilName, " +
+    @Query(nativeQuery = true, value = "select l.id as tilId, l.language as tilName, a.id, a.status as status, a.created_date as createdDate, " +
             "ef.id as shaklId, ef.name as shaklName, d.name as directionName, fi.name as futureInstitutionName " +
             "from application a " +
             "join edu_form ef on a.edu_form_id = ef.id " +

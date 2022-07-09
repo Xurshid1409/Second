@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import second.education.domain.Diploma;
 import second.education.domain.EnrolleeInfo;
 import second.education.model.response.*;
+import second.education.repository.ApplicationRepository;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.EnrolleInfoRepository;
 import java.security.Principal;
@@ -21,6 +22,7 @@ public class EnrolleeService {
     private final EnrolleInfoRepository enrolleInfoRepository;
     private final DiplomaRepository diplomaRepository;
     private final DocumentService documentService;
+    private final ApplicationRepository applicationRepository;
 
     @Transactional
     public DiplomaResponse createDiploma(Principal principal,
@@ -42,6 +44,8 @@ public class EnrolleeService {
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+            diploma.setDegreeId(2);
+            diploma.setDegreeName("Bakalavr");
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             diploma.setEnrolleeInfo(enrolleeInfo);
             Diploma diplomaSave = diplomaRepository.save(diploma);
@@ -107,10 +111,16 @@ public class EnrolleeService {
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-            return new EnrolleeResponse(enrolleeInfo);
+            return new EnrolleeResponse(enrolleeInfo, getApplicationByPrincipal(principal));
         } catch (Exception ex) {
             return new EnrolleeResponse();
         }
+    }
+
+    @Transactional
+    public ApplicationResponse getApplicationByPrincipal(Principal principal) {
+        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+        return applicationRepository.findByAppByPrincipal(enrolleeInfo.getId()).get();
     }
 
     @Transactional(readOnly = true)

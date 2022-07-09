@@ -26,8 +26,9 @@ public class EnrolleeResponse {
     private String permanentRegion;
     private String permanentDistrict;
     private String permanentAddress;
+    private ApplicationResponse applicationResponse;
 
-    public EnrolleeResponse(EnrolleeInfo enrolleeInfo) {
+    public EnrolleeResponse(EnrolleeInfo enrolleeInfo, ApplicationResponse applicationResponse) {
         this.citizenship = enrolleeInfo.getCitizenship();
         this.nationality = enrolleeInfo.getNationality();
         this.passportSerialAndNumber = enrolleeInfo.getPassportSerialAndNumber();
@@ -41,6 +42,7 @@ public class EnrolleeResponse {
         this.permanentAddress = enrolleeInfo.getPermanentAddress();
         this.gender = enrolleeInfo.getGender();
         this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
+        this.applicationResponse = applicationResponse;
     }
 
 }

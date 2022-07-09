@@ -13,7 +13,6 @@ import second.education.model.response.ApplicationResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.*;
-
 import java.security.Principal;
 
 @Service
@@ -29,8 +28,8 @@ public class ApplicationService {
     public Result createApplication(Principal principal, ApplicationRequest request) {
 
         try {
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             Application application = new Application();
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             Language language = languageRepository.findById(request.getLanguageId()).get();
             application.setLanguage(language);
             EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
