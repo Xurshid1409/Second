@@ -6,12 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import second.education.domain.Diploma;
 import second.education.domain.EnrolleeInfo;
-import second.education.model.request.DiplomaCheckRequest;
-import second.education.model.request.DiplomaRequest;
 import second.education.model.response.*;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.EnrolleInfoRepository;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,10 +85,15 @@ public class EnrolleeService {
     }
 
     @Transactional
-    public Result checkDiploma(int diplomaId, DiplomaCheckRequest request) {
+    public Result checkDiploma(int diplomaId) {
         try {
+            List<Diploma> diplomas = diplomaRepository.findAll();
+            diplomas.forEach(diploma -> {
+                diploma.setIsActive(Boolean.FALSE);
+                diplomaRepository.save(diploma);
+            });
             Diploma diploma = diplomaRepository.findById(diplomaId).get();
-            diploma.setIsActive(request.getIsActive());
+            diploma.setIsActive(Boolean.TRUE);
             diplomaRepository.save(diploma);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
@@ -122,9 +124,20 @@ public class EnrolleeService {
     }
 
     @Transactional(readOnly = true)
-    public DiplomaResponse getDiplomaByIdAndEnrolleInfo(Principal principal) {
+    public DiplomaResponse getDiplomaByIdAndEnrolleInfo(Principal principal, Integer diplomaId) {
         try {
-            Diploma diploma = diplomaRepository.findByIdAndEnrolleeInfo(principal.getName()).get();
+            Diploma diploma = diplomaRepository.findByIdAndEnrolleeInfo(principal.getName(), diplomaId).get();
+            FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
+            return new DiplomaResponse(diploma, fileResponse);
+        } catch (Exception ex) {
+            return new DiplomaResponse();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public DiplomaResponse getDiplomaProfile(Principal principal) {
+        try {
+            Diploma diploma = diplomaRepository.getDiplomaProfile(principal.getName()).get();
             FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
             return new DiplomaResponse(diploma, fileResponse);
         } catch (Exception ex) {

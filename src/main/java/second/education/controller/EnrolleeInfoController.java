@@ -65,8 +65,8 @@ public class EnrolleeInfoController {
     }
 
     @PatchMapping("check/diplomas/{diplomaId}")
-    public ResponseEntity<?> checkDiploma(@PathVariable int diplomaId, @RequestBody DiplomaCheckRequest request) {
-        Result result = enrolleeService.checkDiploma(diplomaId, request);
+    public ResponseEntity<?> checkDiploma(@PathVariable int diplomaId) {
+        Result result = enrolleeService.checkDiploma(diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
@@ -76,9 +76,15 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(diplomasByEnrolleeInfo);
     }
 
-    @GetMapping("diplomasByPrincipal")
-    public ResponseEntity<?> getDiplomaById(Principal principal) {
-        DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaByIdAndEnrolleInfo(principal);
+    @GetMapping("diplomas/{diplomaId}")
+    public ResponseEntity<?> getDiplomaById(Principal principal, @PathVariable int diplomaId) {
+        DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaByIdAndEnrolleInfo(principal, diplomaId);
+        return ResponseEntity.ok(diplomaByIdAndEnrolleInfo);
+    }
+
+    @GetMapping("diplomas/profile")
+    public ResponseEntity<?> getDiplomaProfile(Principal principal) {
+        DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaProfile(principal);
         return ResponseEntity.ok(diplomaByIdAndEnrolleInfo);
     }
 }
