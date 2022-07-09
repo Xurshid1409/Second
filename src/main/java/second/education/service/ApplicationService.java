@@ -2,49 +2,69 @@ package second.education.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import second.education.repository.DiplomaRepository;
-import second.education.service.api.DiplomaApi;
+import org.springframework.transaction.annotation.Transactional;
+import second.education.domain.Application;
+import second.education.domain.EnrolleeInfo;
+import second.education.domain.classificator.EduForm;
+import second.education.domain.classificator.Language;
+import second.education.model.request.ApplicationRequest;
+import second.education.model.request.ApplicationStatus;
+import second.education.model.response.ApplicationResponse;
+import second.education.model.response.ResponseMessage;
+import second.education.model.response.Result;
+import second.education.repository.*;
+
+import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
 public class ApplicationService {
 
-    private final DiplomaApi diplomaApi;
-    private final DiplomaRepository diplomaRepository;
-/*
-    public Result saveDiploma(String pinfl) {
+    private final LanguageRepository languageRepository;
+    private final EduFormRepository eduFormRepository;
+    private final ApplicationRepository applicationRepository;
+    private final EnrolleInfoRepository enrolleInfoRepository;
+
+    @Transactional
+    public Result createApplication(Principal principal, ApplicationRequest request) {
+
         try {
-            List<DiplomaResponseInfo> diplomasResponse = diplomaApi.getDiploma(pinfl);
-            if (diplomasResponse == null) {
-                return new Result("Diplom " + ResponseMessage.NOT_FOUND.getMessage(), false);
-            }
-            List<Diploma> diplomas = new ArrayList<>();
-            diplomasResponse.forEach(responseItem -> {
-                Diploma diploma = new Diploma();
-                diploma.set(responseItem.getDiplomaSerial());
-                diploma.setDiplomaNumber(responseItem.getDiplomaNumber());
-                diploma.setDegreeId(responseItem.getDegreeId());
-                diploma.setDegreeName(responseItem.getDegreeName());
-                diploma.setEduFinishingDate(responseItem.getEduFinishingDate());
-                diploma.setEduFormId(responseItem.getEduFormId());
-                diploma.setEduFormName(responseItem.getEduFormName());
-                diploma.setEduStartingDate(responseItem.getEduStartingDate());
-                diploma.setInstitutionId(responseItem.getInstitutionId());
-                diploma.setInstitutionName(responseItem.getInstitutionName());
-                diploma.setInstitutionOldNameId(responseItem.getInstitutionOldNameId());
-                diploma.setInstitutionOldName(responseItem.getInstitutionOldName());
-                diploma.setInstitutionTypeId(responseItem.getInstitutionTypeId());
-                diploma.setInstitutionTypeName(responseItem.getInstitutionTypeName());
-                diploma.setSpecialityId(responseItem.getSpecialityId());
-                diploma.setSpecialityName(responseItem.getSpecialityName());
-                diploma.setSpecialityOldId(responseItem.getSpecialityOldId());
-                diploma.setEnrolleeInfo(null);
-                diplomas.add(diploma);
-            });
-            diplomaRepository.saveAll(diplomas);
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            Application application = new Application();
+            Language language = languageRepository.findById(request.getLanguageId()).get();
+            application.setLanguage(language);
+            EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
+            application.setEduForm(eduForm);
+            application.setEnrolleeInfo(enrolleeInfo);
+            application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
+            applicationRepository.save(application);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
-        } catch (Exception e) {
-            return new Result("Ma'lumot " + ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
-    }*/
+    }
+
+    @Transactional
+    public Result updateApplication(Principal principal, ApplicationRequest request) {
+
+        try {
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            Application application = applicationRepository.findByEnrolleeInfoId(enrolleeInfo.getId()).get();
+            Language language = languageRepository.findById(request.getLanguageId()).get();
+            application.setLanguage(language);
+            EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
+            application.setEduForm(eduForm);
+            application.setEnrolleeInfo(enrolleeInfo);
+            application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
+            applicationRepository.save(application);
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
+        }
+    }
+
+    public ApplicationResponse getApplicationByPrincipal(Principal principal) {
+        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+        return applicationRepository.findByAppByPrincipal(enrolleeInfo.getId()).get();
+    }
 }

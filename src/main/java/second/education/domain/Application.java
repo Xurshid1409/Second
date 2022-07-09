@@ -17,9 +17,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Application extends AbstractData<Integer> {
 
-    private String institutionName;
-    private String speciality;
-    private String educationType;
     private String status;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
