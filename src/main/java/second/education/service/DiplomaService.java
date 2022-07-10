@@ -8,19 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.api_model.diplom_api.DiplomaResponseInfo;
-import second.education.domain.Diploma;
-import second.education.domain.Document;
-import second.education.domain.EnrolleeInfo;
-import second.education.domain.User;
+import second.education.domain.*;
 import second.education.model.request.DiplomaRequest;
+import second.education.model.request.DiplomaStatusRequest;
 import second.education.model.response.*;
-import second.education.repository.DiplomaRepository;
-import second.education.repository.DocumentRepository;
-import second.education.repository.EnrolleInfoRepository;
-import second.education.repository.UserRepository;
+import second.education.repository.*;
 import second.education.service.api.DiplomaApi;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +28,7 @@ public class DiplomaService {
     private final DiplomaApi diplomaApi;
     private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
+    private final ApplicationRepository applicationRepository;
 
     @Transactional
     public void saveDiplomaByApi(String pinfl, EnrolleeInfo enrolleeInfo) {
@@ -61,6 +58,19 @@ public class DiplomaService {
     }
 
     // Admin panel
+
+    @Transactional
+    public Result updateDiplomaStatus(DiplomaStatusRequest request) {
+        try {
+            Application application = applicationRepository.findById(request.getApplicationId()).get();
+            application.setDiplomaStatus(request.getDiplomaStatus());
+            application.setMessage(request.getMessage());
+            applicationRepository.save(application);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+        } catch (Exception exception) {
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
+        }
+    }
 
     @Transactional(readOnly = true)
     public Page<DiplomaResponse> getAllDiploma(int page, int size) {

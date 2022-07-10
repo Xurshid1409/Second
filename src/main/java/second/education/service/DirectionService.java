@@ -29,7 +29,7 @@ public class DirectionService {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
             direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, direction);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
@@ -44,7 +44,7 @@ public class DirectionService {
 //            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
 //            direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, direction);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }

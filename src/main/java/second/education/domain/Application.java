@@ -16,6 +16,8 @@ import javax.persistence.*;
 public class Application extends AbstractData<Integer> {
 
     private String status;
+    private Boolean diplomaStatus;
+    private String message;
 
     @OneToOne(fetch = FetchType.LAZY)
     private Language language;
