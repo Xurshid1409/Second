@@ -36,9 +36,6 @@ public class Diploma extends AbstractData<Integer> {
     private String countryName;
     private Boolean isActive = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private University university;
-
     @ManyToOne(fetch = FetchType.LAZY)
     private EnrolleeInfo enrolleeInfo;
 }

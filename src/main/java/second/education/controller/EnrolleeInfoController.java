@@ -33,6 +33,7 @@ public class EnrolleeInfoController {
     public ResponseEntity<?> createDiploma(Principal principal,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,
+                                           @RequestParam(value = "id", required = false) Integer id,
                                            @RequestParam(value = "eduFormName", required = false) String eduFormName,
                                            @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
                                            @RequestParam(value = "speciality", required = false) String speciality,
@@ -40,7 +41,7 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diploma", required = false) MultipartFile diploma,
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
         DiplomaResponse response = enrolleeService.createDiploma(principal, countryName,
-                institutionId, eduFormName, eduFinishingDate, speciality,
+                institutionId, id, eduFormName, eduFinishingDate, speciality,
                 diplomaNumberAndSerial, diploma, diplomaIlova);
         return ResponseEntity.ok(response);
     }
@@ -49,6 +50,7 @@ public class EnrolleeInfoController {
     public ResponseEntity<?> updateDiploma(@PathVariable int diplomaId,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,
+                                           @RequestParam(value = "id", required = false) Integer id,
                                            @RequestParam(value = "eduFormName", required = false) String eduFormName,
                                            @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
                                            @RequestParam(value = "speciality", required = false) String speciality,
@@ -57,7 +59,7 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diploma", required = false) MultipartFile diploma,
                                            @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
-        DiplomaResponse diplomaResponse = enrolleeService.updateDiploma(diplomaId, countryName, institutionId, eduFormName, eduFinishingDate,
+        DiplomaResponse diplomaResponse = enrolleeService.updateDiploma(diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
                 speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
         return ResponseEntity.ok(diplomaResponse);
     }

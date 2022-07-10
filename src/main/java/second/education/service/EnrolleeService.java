@@ -32,6 +32,7 @@ public class EnrolleeService {
     public DiplomaResponse createDiploma(Principal principal,
                                          String countryName,
                                          Integer institutionId,
+                                         Integer id,
                                          String eduFormName,
                                          String eduFinishingDate,
                                          String speciality,
@@ -42,8 +43,12 @@ public class EnrolleeService {
         try {
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
+            diploma.setInstitutionId(institutionId);
             University university = institutionRepository.findById(institutionId).get();
-            diploma.setUniversity(university);
+            diploma.setInstitutionName(university.getInstitutionName());
+            University old = institutionRepository.findById(id).get();
+            diploma.setInstitutionOldNameId(old.getId());
+            diploma.setInstitutionOldName(old.getNameOz());
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
@@ -66,6 +71,7 @@ public class EnrolleeService {
             int diplomaId,
             String countryName,
             Integer institutionId,
+           Integer id,
             String eduFormName,
             String eduFinishingDate,
             String speciality,
@@ -77,8 +83,12 @@ public class EnrolleeService {
         try {
             Diploma diploma = diplomaRepository.findById(diplomaId).get();
             diploma.setCountryName(countryName);
+            diploma.setInstitutionId(institutionId);
             University university = institutionRepository.findById(institutionId).get();
-            diploma.setUniversity(university);
+            diploma.setInstitutionName(university.getInstitutionName());
+            University old = institutionRepository.findById(id).get();
+            diploma.setInstitutionOldNameId(old.getId());
+            diploma.setInstitutionOldName(old.getNameOz());
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
