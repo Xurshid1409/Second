@@ -33,8 +33,9 @@ public class EduFormService {
            Direction direction = directionRepository.findById(request.getDirectionId()).get();
            eduForm.setDirection(direction);
            EduForm saveEduform = eduFormRepository.save(eduForm);
-           createLanguageAndQuota(request, saveEduform);
-           return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+           List<Language> languageAndQuota = createLanguageAndQuota(request, saveEduform);
+           List<LanguageResponse> languageResponses = languageAndQuota.stream().map(LanguageResponse::new).toList();
+           return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, new EduFormResponse(eduForm, languageResponses));
        } catch (Exception ex) {
            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
        }
@@ -56,14 +57,15 @@ public class EduFormService {
                 language.setEduForm(saveEduform);
                 languages.add(language);
             });
-            languageRepository.saveAll(languages);
-            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+            List<Language> languageList = languageRepository.saveAll(languages);
+            List<LanguageResponse> languageResponses = languageList.stream().map(LanguageResponse::new).toList();
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true, new EduFormResponse(eduForm, languageResponses));
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
     }
 
-    private void createLanguageAndQuota(EduFormRequest request, EduForm saveEduform) {
+    private List<Language> createLanguageAndQuota(EduFormRequest request, EduForm saveEduform) {
         List<Language> languages = new ArrayList<>();
         request.getLanguages().forEach(l -> {
             Language language = new Language();
@@ -72,7 +74,7 @@ public class EduFormService {
             language.setEduForm(saveEduform);
             languages.add(language);
         });
-        languageRepository.saveAll(languages);
+        return languageRepository.saveAll(languages);
     }
 
     @Transactional(readOnly = true)

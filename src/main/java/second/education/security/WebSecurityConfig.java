@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/public/**", "/api/auth/**", "/swagger-ui/**", "/api-docs/**", "/api/diploma/**").permitAll()
                 .antMatchers("/api/file/**").permitAll()
                 .antMatchers("/api/enroleeInfo/**", "/api/application/**").hasRole("ABITURIYENT")
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/admin/**", "/api/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

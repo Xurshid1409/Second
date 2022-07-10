@@ -115,7 +115,7 @@ public class EnrolleeService {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
-            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(principal.getName());
+            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
             applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
             return enrolleeResponse;
         } catch (Exception ex) {

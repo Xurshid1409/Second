@@ -4,18 +4,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import second.education.domain.classificator.Direction;
-import second.education.domain.classificator.FutureInstitution;
-import second.education.model.request.*;
+import second.education.model.request.DirectionRequest;
+import second.education.model.request.EduFormRequest;
+import second.education.model.request.FutureInstitutionRequest;
 import second.education.model.response.*;
 import second.education.service.DirectionService;
 import second.education.service.EduFormAndLanguageService;
-import second.education.service.FutureInstitutionService;
 import second.education.service.EduFormService;
+import second.education.service.FutureInstitutionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("admin/")
+@RequestMapping("/admin/")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "second")
 public class AdminController {

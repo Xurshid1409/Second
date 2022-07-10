@@ -32,7 +32,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "join direction d on ef.direction_id = d.id " +
             "join future_institution fi on d.future_institution_id = fi.id " +
             "join language l on a.language_id = l.id " +
-            "join enrollee_info ei on a.enrollee_info_id = ei.id " +
-            "join users u on ei.user_id = u.id where u.phone_number=?1")
-    Optional<ApplicationResponse> findByAppByPrincipal(String phoneNumber);
+            "join enrollee_info ei on a.enrollee_info_id = ei.id  where ei.id=?1")
+    Optional<ApplicationResponse> findByAppByPrincipal(Integer enrolleInfoId);
 }

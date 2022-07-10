@@ -1,18 +1,17 @@
 package second.education.controller;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import second.education.domain.classificator.Tillar;
 import second.education.model.response.Result;
 import second.education.model.response.SpecialitiesResponse;
 import second.education.model.response.UniversityResponse;
-import second.education.service.ApplicationService;
+import second.education.repository.TillarRepository;
 import second.education.service.api.DiplomaApi;
-
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ import java.util.List;
 public class DiplomaController {
 
     private final DiplomaApi diplomaApi;
-    private final ApplicationService applicationService;
+    private final TillarRepository tillarRepository;
 
     @GetMapping("/create/institution")
     public ResponseEntity<?> createInstitution() {
@@ -54,5 +53,9 @@ public class DiplomaController {
 //        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
 //    }
 
-
+      @GetMapping("language")
+      public List<Tillar> getTillar() {
+          List<Tillar> all = tillarRepository.findAll();
+          return all;
+      }
 }

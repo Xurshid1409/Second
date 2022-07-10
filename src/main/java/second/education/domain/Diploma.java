@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import second.education.domain.classificator.University;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -35,7 +36,7 @@ public class Diploma extends AbstractData<Integer> {
     private String countryName;
     private Boolean isActive = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private University university;
 
     @ManyToOne(fetch = FetchType.LAZY)

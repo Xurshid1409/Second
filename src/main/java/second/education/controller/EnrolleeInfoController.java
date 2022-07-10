@@ -32,7 +32,7 @@ public class EnrolleeInfoController {
     @PostMapping
     public ResponseEntity<?> createDiploma(Principal principal,
                                            @RequestParam(value = "countryName", required = false) String countryName,
-                                           @RequestParam(value = "institutionId") Integer institutionId,
+                                           @RequestParam(value = "institutionId", required = false) Integer institutionId,
                                            @RequestParam(value = "eduFormName", required = false) String eduFormName,
                                            @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
                                            @RequestParam(value = "speciality", required = false) String speciality,
@@ -48,7 +48,7 @@ public class EnrolleeInfoController {
     @PutMapping("{diplomaId}")
     public ResponseEntity<?> updateDiploma(@PathVariable int diplomaId,
                                            @RequestParam(value = "countryName", required = false) String countryName,
-                                           @RequestParam(value = "institutionId") Integer institutionId,
+                                           @RequestParam(value = "institutionId", required = false) Integer institutionId,
                                            @RequestParam(value = "eduFormName", required = false) String eduFormName,
                                            @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
                                            @RequestParam(value = "speciality", required = false) String speciality,
