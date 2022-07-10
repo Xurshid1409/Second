@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import second.education.domain.classificator.University;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,6 +34,9 @@ public class Diploma extends AbstractData<Integer> {
     private String diplomaSerialAndNumber;
     private String countryName;
     private Boolean isActive = Boolean.FALSE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private University university;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private EnrolleeInfo enrolleeInfo;

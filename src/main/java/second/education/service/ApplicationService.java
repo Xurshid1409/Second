@@ -15,6 +15,7 @@ import second.education.model.response.Result;
 import second.education.repository.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +67,7 @@ public class ApplicationService {
 
     public ApplicationResponse getApplicationByPrincipal(Principal principal) {
         EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-        return applicationRepository.findByAppByPrincipal(enrolleeInfo.getId()).get();
+        Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+        return applicationResponse.orElse(null);
     }
 }

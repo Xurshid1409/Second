@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import second.education.domain.Diploma;
 import second.education.domain.EnrolleeInfo;
+import second.education.domain.classificator.University;
 import second.education.model.response.*;
 import second.education.repository.ApplicationRepository;
 import second.education.repository.DiplomaRepository;
@@ -31,8 +32,7 @@ public class EnrolleeService {
     @Transactional
     public DiplomaResponse createDiploma(Principal principal,
                                          String countryName,
-//                                Integer institutionId,
-                                         String institutionName,
+                                         Integer institutionId,
                                          String eduFormName,
                                          String eduFinishingDate,
                                          String speciality,
@@ -43,7 +43,8 @@ public class EnrolleeService {
         try {
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
-            diploma.setInstitutionName(institutionName);
+            University university = institutionRepository.findById(institutionId).get();
+            diploma.setUniversity(university);
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
@@ -114,7 +115,6 @@ public class EnrolleeService {
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-            // TODO: 10.07.2022 nullga tekshirish kerak
             EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
             Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
             applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
