@@ -121,8 +121,8 @@ public class AdminController {
     @GetMapping("/getDirections")
     public ResponseEntity<?> getAllDirectionPageble(@RequestParam(value = "page", defaultValue = "0") int page,
                                     @RequestParam(value = "size", defaultValue = "30") int size) {
-        Page<FutureInstitutionResponse> allPage = futureInstitutionService.getAllPage(page, size);
-        return ResponseEntity.ok(allPage);
+        Page<DirectionResponse> directionPageable = directionService.getDirectionPageable(page, size);
+        return ResponseEntity.ok(directionPageable);
 
     }
     @GetMapping("/getEduForms")

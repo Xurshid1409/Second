@@ -12,8 +12,7 @@ import java.util.List;
 public interface EduFormRepository extends JpaRepository<EduForm, Integer> {
 
     @Query(nativeQuery = true, value = "select * from edu_form ef where ef.direction_id =?1")
-    Page<EduForm> findAllByDirectionId(Integer direction_id);
-
+    List<EduForm> findAllByDirectionIdPage(Integer direction_id);
 
     @Query("select l from Language l where l.eduForm.id=?1 ")
     List<Language> findAllLanguageByEduForm(Integer eduFormId);

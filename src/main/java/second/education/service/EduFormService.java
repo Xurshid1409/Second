@@ -107,7 +107,7 @@ public class EduFormService {
 
     @Transactional(readOnly = true)
     public List<EduFormResponse> getAllEduFormByDirection(Integer directionId) {
-        List<EduFormResponse> eduFormResponses = eduFormRepository.findAllByDirectionId(directionId)
+        List<EduFormResponse> eduFormResponses = eduFormRepository.findAllByDirectionIdPage(directionId)
                 .stream().map(EduFormResponse::new).toList();
             eduFormResponses.forEach(e -> {
             List<LanguageResponse> languageResponses = eduFormRepository.findAllLanguageByEduForm(e.getId())

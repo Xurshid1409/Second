@@ -51,7 +51,6 @@ public class ApplicationService {
 
     @Transactional
     public Result updateApplication(Principal principal, ApplicationRequest request) {
-
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             Application application = applicationRepository.findByEnrolleeInfoId(enrolleeInfo.getId()).get();

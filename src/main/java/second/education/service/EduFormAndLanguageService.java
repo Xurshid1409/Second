@@ -51,9 +51,9 @@ public class EduFormAndLanguageService {
         }
     }
 
-    public List<EduFormResponse> getAllEduForm(Integer directionId) {
-        return eduFormRepository.findAllByDirectionId(directionId).stream().map(EduFormResponse::new).toList();
-    }
+//    public List<EduFormResponse> getAllEduForm(Integer directionId) {
+//        return eduFormRepository.findAllByDirectionId(directionId).stream().map(EduFormResponse::new).toList();
+//    }
 
     public EduFormResponse getEduFormById(int eduFormId) {
         try {
