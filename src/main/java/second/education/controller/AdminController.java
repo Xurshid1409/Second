@@ -27,14 +27,14 @@ public class AdminController {
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
-        FutureInstitution futureInstitution = futureInstitutionService.createFutureInstitution(request);
-        return ResponseEntity.ok(futureInstitution);
+        Result result = futureInstitutionService.createFutureInstitution(request);
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
     }
 
     @PutMapping("futureInstitution/{futureInstId}")
     public ResponseEntity<?> updateFutureInstitution(@PathVariable int futureInstId, @RequestBody FutureInstitutionRequest request) {
-        FutureInstitution futureInstitution = futureInstitutionService.updateFutureInstitution(futureInstId, request);
-        return ResponseEntity.ok(futureInstitution);
+        Result result = futureInstitutionService.updateFutureInstitution(futureInstId, request);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
     @GetMapping("futureInstitution")
@@ -53,14 +53,14 @@ public class AdminController {
 
     @PostMapping("direction")
     public ResponseEntity<?> createDirection(@RequestBody DirectionRequest request) {
-        Direction direction = directionService.createDirection(request);
-        return ResponseEntity.ok(direction);
+        Result result = directionService.createDirection(request);
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
     }
 
     @PutMapping("direction/{directionId}")
     public ResponseEntity<?> updateDirection(@PathVariable int directionId, @RequestBody DirectionRequest request) {
-        Direction direction = directionService.updateDirection(directionId, request);
-        return ResponseEntity.ok(direction);
+        Result result = directionService.updateDirection(directionId, request);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
     @GetMapping("direction/futureInstitution/{futureInstitutionId}")

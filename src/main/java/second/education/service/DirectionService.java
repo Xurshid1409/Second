@@ -11,7 +11,6 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.DirectionRepository;
 import second.education.repository.FutureInstitutionRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class DirectionService {
     private final FutureInstitutionRepository futureInstitutionRepository;
 
     @Transactional
-    public Direction createDirection(DirectionRequest request) {
+    public Result createDirection(DirectionRequest request) {
 
         try {
             Direction direction = new Direction();
@@ -31,14 +30,14 @@ public class DirectionService {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
             direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return direction;
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, new DirectionResponse(direction));
         } catch (Exception ex) {
-            return new Direction();
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 
     @Transactional
-    public Direction updateDirection(int directionId, DirectionRequest request) {
+    public Result updateDirection(int directionId, DirectionRequest request) {
 
         try {
             Direction direction = directionRepository.findById(directionId).get();
@@ -46,9 +45,9 @@ public class DirectionService {
 //            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
 //            direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return direction;
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true,new DirectionResponse(direction));
         } catch (Exception ex) {
-            return new Direction();
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 

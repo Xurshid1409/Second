@@ -12,7 +12,6 @@ import second.education.repository.ApplicationRepository;
 import second.education.repository.DiplomaRepository;
 import second.education.repository.EnrolleInfoRepository;
 import second.education.repository.InstitutionRepository;
-
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -116,7 +115,7 @@ public class EnrolleeService {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
-            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(principal.getName());
             applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
             return enrolleeResponse;
         } catch (Exception ex) {

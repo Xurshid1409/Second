@@ -66,8 +66,7 @@ public class ApplicationService {
     }
 
     public ApplicationResponse getApplicationByPrincipal(Principal principal) {
-        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
-        Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+        Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(principal.getName());
         return applicationResponse.orElse(null);
     }
 }

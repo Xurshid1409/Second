@@ -11,6 +11,9 @@ public interface ApplicationResponse {
     String getDirectionName();
     Integer getFutureInstitutionId();
     String getFutureInstitutionName();
-    String getStatus();
+    String getAppStatus();
+    String getDiplomaStatus();
+    String getAppMessage();
+    String getDiplomaMessage();
     String getCreatedDate();
 }
