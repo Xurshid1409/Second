@@ -17,28 +17,27 @@ public class FutureInstitutionService {
 
     private final FutureInstitutionRepository futureInstitutionRepository;
 
-    public Result createFutureInstitution(FutureInstitutionRequest request) {
+    public FutureInstitution createFutureInstitution(FutureInstitutionRequest request) {
 
         try {
             FutureInstitution futureInstitution = new FutureInstitution();
             futureInstitution.setName(request.getName());
             futureInstitutionRepository.save(futureInstitution);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, futureInstitution);
+            return futureInstitution;
         } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
+            return new FutureInstitution();
         }
     }
 
-    public Result updateFutureInstitution(int id, FutureInstitutionRequest request) {
-
+    public FutureInstitution updateFutureInstitution(int id, FutureInstitutionRequest request) {
         try {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(id).get();
             futureInstitution.setName(request.getName());
             futureInstitution.setModifiedDate(LocalDateTime.now());
             futureInstitutionRepository.save(futureInstitution);
-            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true, futureInstitution);
+            return futureInstitution;
         } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
+            return new FutureInstitution();
         }
     }
 

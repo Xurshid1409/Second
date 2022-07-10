@@ -57,7 +57,7 @@ public class ApplicationController {
 
     @GetMapping("direction/futureInstitution/{futureInstitutionId}")
     public ResponseEntity<?> getAllDirection(@PathVariable int futureInstitutionId) {
-        List<DirectionResponse> allDirection = directionService.getAllDirection(futureInstitutionId);
+        List<DirectionResponse> allDirection = directionService.getAllDirectionByFutureInst(futureInstitutionId);
         return ResponseEntity.ok(allDirection);
     }
 

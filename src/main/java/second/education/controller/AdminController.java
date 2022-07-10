@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import second.education.domain.classificator.Direction;
+import second.education.domain.classificator.FutureInstitution;
 import second.education.model.request.*;
 import second.education.model.response.*;
 import second.education.service.DirectionService;
@@ -25,14 +27,14 @@ public class AdminController {
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
-        Result result = futureInstitutionService.createFutureInstitution(request);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+        FutureInstitution futureInstitution = futureInstitutionService.createFutureInstitution(request);
+        return ResponseEntity.ok(futureInstitution);
     }
 
     @PutMapping("futureInstitution/{futureInstId}")
     public ResponseEntity<?> updateFutureInstitution(@PathVariable int futureInstId, @RequestBody FutureInstitutionRequest request) {
-        Result result = futureInstitutionService.updateFutureInstitution(futureInstId, request);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+        FutureInstitution futureInstitution = futureInstitutionService.updateFutureInstitution(futureInstId, request);
+        return ResponseEntity.ok(futureInstitution);
     }
 
     @GetMapping("futureInstitution")
@@ -51,19 +53,19 @@ public class AdminController {
 
     @PostMapping("direction")
     public ResponseEntity<?> createDirection(@RequestBody DirectionRequest request) {
-        Result result = directionService.createDirection(request);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+        Direction direction = directionService.createDirection(request);
+        return ResponseEntity.ok(direction);
     }
 
     @PutMapping("direction/{directionId}")
     public ResponseEntity<?> updateDirection(@PathVariable int directionId, @RequestBody DirectionRequest request) {
-        Result result = directionService.updateDirection(directionId, request);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+        Direction direction = directionService.updateDirection(directionId, request);
+        return ResponseEntity.ok(direction);
     }
 
     @GetMapping("direction/futureInstitution/{futureInstitutionId}")
-    public ResponseEntity<?> getAllDirection(@PathVariable int futureInstitutionId) {
-        List<DirectionResponse> allDirection = directionService.getAllDirection(futureInstitutionId);
+    public ResponseEntity<?> getAllDirectionByFutureInst(@PathVariable int futureInstitutionId) {
+        List<DirectionResponse> allDirection = directionService.getAllDirectionByFutureInst(futureInstitutionId);
         return ResponseEntity.ok(allDirection);
     }
 
@@ -71,6 +73,12 @@ public class AdminController {
     public ResponseEntity<?> getDirectionById(@PathVariable int directionId) {
         DirectionResponse directionById = directionService.getDirectionById(directionId);
         return ResponseEntity.ok(directionById);
+    }
+
+    @GetMapping("direction")
+    public ResponseEntity<?> getAlldirection() {
+        List<DirectionResponse> allDirection = directionService.getAllDirection();
+        return ResponseEntity.ok(allDirection);
     }
 
     //Ta'lim tili

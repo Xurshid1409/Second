@@ -11,6 +11,8 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.DirectionRepository;
 import second.education.repository.FutureInstitutionRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +23,7 @@ public class DirectionService {
     private final FutureInstitutionRepository futureInstitutionRepository;
 
     @Transactional
-    public Result createDirection(DirectionRequest request) {
+    public Direction createDirection(DirectionRequest request) {
 
         try {
             Direction direction = new Direction();
@@ -29,14 +31,14 @@ public class DirectionService {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
             direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, direction);
+            return direction;
         } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
+            return new Direction();
         }
     }
 
     @Transactional
-    public Result updateDirection(int directionId, DirectionRequest request) {
+    public Direction updateDirection(int directionId, DirectionRequest request) {
 
         try {
             Direction direction = directionRepository.findById(directionId).get();
@@ -44,26 +46,58 @@ public class DirectionService {
 //            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
 //            direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, direction);
+            return direction;
         } catch (Exception ex) {
-            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
+            return new Direction();
         }
     }
 
-    public List<DirectionResponse> getAllDirection(Integer futureInstitutionId) {
-        return directionRepository.findAllByFutureInstitutionId(futureInstitutionId)
-                .stream().map(DirectionResponse::new).toList();
+    @Transactional(readOnly = true)
+    public List<DirectionResponse> getAllDirectionByFutureInst(Integer futureInstitutionId) {
+        List<Direction> directions = directionRepository.findAllByFutureInstitutionId(futureInstitutionId);
+        List<DirectionResponse> directionResponses = new ArrayList<>();
+        directions.forEach(d -> {
+            DirectionResponse directionResponse = new DirectionResponse();
+            directionResponse.setId(d.getId());
+            directionResponse.setName(d.getName());
+            directionResponse.setFutureInstitutionId(d.getFutureInstitution().getId());
+            directionResponse.setFutureInstitutionName(d.getFutureInstitution().getName());
+            directionResponses.add(directionResponse);
+        });
+        return directionResponses;
     }
 
+    @Transactional(readOnly = true)
+    public List<DirectionResponse> getAllDirection() {
+        List<Direction> directions = directionRepository.findAll();
+        List<DirectionResponse> directionResponses = new ArrayList<>();
+        directions.forEach(d -> {
+            DirectionResponse directionResponse = new DirectionResponse();
+            directionResponse.setId(d.getId());
+            directionResponse.setName(d.getName());
+            directionResponse.setFutureInstitutionId(d.getFutureInstitution().getId());
+            directionResponse.setFutureInstitutionName(d.getFutureInstitution().getName());
+            directionResponses.add(directionResponse);
+        });
+        return directionResponses;
+    }
+
+    @Transactional(readOnly = true)
     public DirectionResponse getDirectionById(int directionId) {
         try {
             Direction direction = directionRepository.findById(directionId).get();
-            return new DirectionResponse(direction);
+            DirectionResponse directionResponse = new DirectionResponse();
+            directionResponse.setId(direction.getId());
+            directionResponse.setName(direction.getName());
+            directionResponse.setFutureInstitutionId(direction.getFutureInstitution().getId());
+            directionResponse.setFutureInstitutionName(direction.getFutureInstitution().getName());
+            return directionResponse;
         } catch (Exception ex) {
             return new DirectionResponse();
         }
     }
 
+    @Transactional
     public Result deleteDirection(int directionId) {
         try {
             directionRepository.deleteById(directionId);

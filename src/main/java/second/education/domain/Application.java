@@ -18,6 +18,7 @@ public class Application extends AbstractData<Integer> {
     private String status;
     private Boolean diplomaStatus;
     private String message;
+    private String diplomaMessage;
 
     @OneToOne(fetch = FetchType.LAZY)
     private Language language;

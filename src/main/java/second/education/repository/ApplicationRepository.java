@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
 import second.education.model.response.ApplicationResponse;
-
 import java.util.Optional;
 
 @Repository
