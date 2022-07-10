@@ -21,7 +21,7 @@ public class AdminController {
     private final FutureInstitutionService futureInstitutionService;
     private final DirectionService directionService;
     private final EduFormAndLanguageService eduFormAndLanguageService;
-    private final EduFormService kvotaService;
+    private final EduFormService eduFormService;
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
@@ -73,57 +73,7 @@ public class AdminController {
         return ResponseEntity.ok(directionById);
     }
 
-    //Ta'lim shakli
-
-    @PostMapping("eduForm")
-    public ResponseEntity<?> createEduForm(@RequestBody EduFormRequest request) {
-        Result result = eduFormAndLanguageService.createEduForm(request);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
-    }
-
-    @PutMapping("eduForm/{eduFormId}")
-    public ResponseEntity<?> updateEduForm(@PathVariable int eduFormId , @RequestBody EduFormRequest request) {
-        Result result = eduFormAndLanguageService.updateEduForm(eduFormId, request);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
-    @GetMapping("eduForm/direction/{directionId}")
-    public ResponseEntity<?> getEduFormByDirection(@PathVariable int directionId) {
-        List<EduFormResponse> allEduForm = eduFormAndLanguageService.getAllEduForm(directionId);
-        return ResponseEntity.ok(allEduForm);
-    }
-
-    @GetMapping("eduForm/{eduFormId}")
-    public ResponseEntity<?> getEduFormById(@PathVariable int eduFormId) {
-        EduFormResponse eduFormById = eduFormAndLanguageService.getEduFormById(eduFormId);
-        return ResponseEntity.ok(eduFormById);
-    }
-
-    @DeleteMapping("eduForm/{eduFormId}")
-    public ResponseEntity<?> deleteEduForm(@PathVariable int eduFormId) {
-        Result result = eduFormAndLanguageService.deleteEduForm(eduFormId);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
     //Ta'lim tili
-
-    @PostMapping("language")
-    public ResponseEntity<?> createLanguage(@RequestBody LanguageRequest request) {
-        Result result = eduFormAndLanguageService.createLanguage(request);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
-    }
-
-    @PutMapping("language/{languageId}")
-    public ResponseEntity<?> updateLanguage(@PathVariable int languageId, @RequestBody LanguageRequest request) {
-        Result result = eduFormAndLanguageService.updateLanguage(languageId, request);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
-    @GetMapping("language/direction/{directionId}")
-    public ResponseEntity<?> getLanguageByDirection(@PathVariable int directionId) {
-        List<LanguageResponse> allLanguages = eduFormAndLanguageService.getAllLanguages(directionId);
-        return ResponseEntity.ok(allLanguages);
-    }
 
     @GetMapping("language/{languageId}")
     public ResponseEntity<?> getLanguageById(@PathVariable int languageId) {
@@ -135,5 +85,35 @@ public class AdminController {
     public ResponseEntity<?> deleteLanguage(@PathVariable int languageId) {
         Result result = eduFormAndLanguageService.deleteLanguage(languageId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @PostMapping("eduForm")
+    public ResponseEntity<?> createEduForm(@RequestBody EduFormRequest eduFormRequest) {
+        Result result = eduFormService.createEduForm(eduFormRequest);
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+    }
+
+    @PutMapping("eduForm")
+    public ResponseEntity<?> updateEduForm(@RequestBody EduFormRequest request) {
+        Result result = eduFormService.updateEduForm(request);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @GetMapping("eduForm/{eduFormId}")
+    public ResponseEntity<?> getEduFromById(@PathVariable Integer eduFormId) {
+        EduFormResponse eduFormResponse = eduFormService.getEduFormResponse(eduFormId);
+        return ResponseEntity.ok(eduFormResponse);
+    }
+
+    @GetMapping("eduForm")
+    public ResponseEntity<?> getAllEduForm() {
+        List<EduFormResponse> allEduFormResponse = eduFormService.getAllEduFormResponse();
+        return ResponseEntity.ok(allEduFormResponse);
+    }
+
+    @GetMapping("eduForm/direction/{directionId}")
+    public ResponseEntity<?> getEduFormByDirection(@PathVariable int directionId) {
+        List<EduFormResponse> allEduFormByDirection = eduFormService.getAllEduFormByDirection(directionId);
+        return ResponseEntity.ok(allEduFormByDirection);
     }
 }

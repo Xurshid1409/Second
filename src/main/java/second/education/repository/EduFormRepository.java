@@ -16,4 +16,6 @@ public interface EduFormRepository extends JpaRepository<EduForm, Integer> {
 
     @Query("select l from Language l where l.eduForm.id=?1 ")
     List<Language> findAllLanguageByEduForm(Integer eduFormId);
+
+
 }
