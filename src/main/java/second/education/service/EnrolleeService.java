@@ -66,8 +66,7 @@ public class EnrolleeService {
     public DiplomaResponse updateDiploma(
             int diplomaId,
             String countryName,
-//                                Integer institutionId,
-            String institutionName,
+            Integer institutionId,
             String eduFormName,
             String eduFinishingDate,
             String speciality,
@@ -79,7 +78,8 @@ public class EnrolleeService {
         try {
             Diploma diploma = diplomaRepository.findById(diplomaId).get();
             diploma.setCountryName(countryName);
-            diploma.setInstitutionName(institutionName);
+            University university = institutionRepository.findById(institutionId).get();
+            diploma.setUniversity(university);
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
@@ -119,7 +119,6 @@ public class EnrolleeService {
             Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
             applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
             return enrolleeResponse;
-
         } catch (Exception ex) {
             return new EnrolleeResponse();
         }
@@ -130,8 +129,11 @@ public class EnrolleeService {
         List<Diploma> diplomas = diplomaRepository.findAllByEnrolleeInfo(principal.getName());
         List<DiplomaResponse> diplomaResponses = new ArrayList<>();
         diplomas.forEach(diploma -> {
+            DiplomaResponse diplomaResponse = new DiplomaResponse(diploma);
             FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
-            DiplomaResponse diplomaResponse = new DiplomaResponse(diploma, fileResponse);
+            if (fileResponse != null) {
+                diplomaResponse.setFileResponse(fileResponse);
+            }
             diplomaResponses.add(diplomaResponse);
         });
         return diplomaResponses;

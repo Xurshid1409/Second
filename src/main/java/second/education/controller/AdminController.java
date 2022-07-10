@@ -8,7 +8,7 @@ import second.education.model.response.*;
 import second.education.service.DirectionService;
 import second.education.service.EduFormAndLanguageService;
 import second.education.service.FutureInstitutionService;
-import second.education.service.KvotaService;
+import second.education.service.EduFormService;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class AdminController {
     private final FutureInstitutionService futureInstitutionService;
     private final DirectionService directionService;
     private final EduFormAndLanguageService eduFormAndLanguageService;
-    private final KvotaService kvotaService;
+    private final EduFormService kvotaService;
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {

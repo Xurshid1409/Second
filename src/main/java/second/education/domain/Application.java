@@ -18,7 +18,10 @@ public class Application extends AbstractData<Integer> {
     private String status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private Kvota kvota;
+    private Language language;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private EduForm eduForm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private FutureInstitution futureInstitution;

@@ -21,8 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplicationService {
 
-    private final LanguageRepository languageRepository;
     private final EduFormRepository eduFormRepository;
+    private final LanguageRepository languageRepository;
     private final ApplicationRepository applicationRepository;
     private final EnrolleInfoRepository enrolleInfoRepository;
 
@@ -32,11 +32,11 @@ public class ApplicationService {
         try {
             Application application = new Application();
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            application.setEnrolleeInfo(enrolleeInfo);
             Language language = languageRepository.findById(request.getLanguageId()).get();
             application.setLanguage(language);
             EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
             application.setEduForm(eduForm);
-            application.setEnrolleeInfo(enrolleeInfo);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
             applicationRepository.save(application);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
@@ -51,11 +51,11 @@ public class ApplicationService {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
             Application application = applicationRepository.findByEnrolleeInfoId(enrolleeInfo.getId()).get();
+            application.setEnrolleeInfo(enrolleeInfo);
             Language language = languageRepository.findById(request.getLanguageId()).get();
             application.setLanguage(language);
             EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
             application.setEduForm(eduForm);
-            application.setEnrolleeInfo(enrolleeInfo);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
             application.setModifiedDate(LocalDateTime.now());
             applicationRepository.save(application);

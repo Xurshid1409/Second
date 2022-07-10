@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import second.education.domain.AbstractData;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -20,7 +18,8 @@ import javax.persistence.ManyToOne;
 public class Language extends AbstractData<Integer> {
 
     private String language;
+    private Integer kvotaSoni;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Direction direction;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private EduForm eduForm;
 }
