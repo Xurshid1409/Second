@@ -31,7 +31,7 @@ public class ApplicationService {
 
         try {
             Application application = new Application();
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             application.setEnrolleeInfo(enrolleeInfo);
             Language language = languageRepository.findById(request.getLanguageId()).get();
             application.setLanguage(language);
@@ -49,7 +49,7 @@ public class ApplicationService {
     public Result updateApplication(Principal principal, ApplicationRequest request) {
 
         try {
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             Application application = applicationRepository.findByEnrolleeInfoId(enrolleeInfo.getId()).get();
             application.setEnrolleeInfo(enrolleeInfo);
             Language language = languageRepository.findById(request.getLanguageId()).get();
@@ -67,7 +67,7 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse getApplicationByPrincipal(Principal principal) {
-        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+        EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
         Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
         return applicationResponse.orElse(null);
     }

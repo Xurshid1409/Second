@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import second.education.model.request.ApplicationRequest;
 import second.education.model.response.*;
-import second.education.service.ApplicationService;
-import second.education.service.DirectionService;
-import second.education.service.EduFormAndLanguageService;
-import second.education.service.FutureInstitutionService;
+import second.education.service.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,7 +20,7 @@ public class ApplicationController {
     private final ApplicationService applicationService;
     private final FutureInstitutionService futureInstitutionService;
     private final DirectionService directionService;
-    private final EduFormAndLanguageService eduFormAndLanguageService;
+    private final EduFormService eduFormService;
 
     @PostMapping
     public ResponseEntity<?> createApplication(Principal principal, @RequestBody ApplicationRequest request) {
@@ -69,26 +66,14 @@ public class ApplicationController {
 
     @GetMapping("eduForm/direction/{directionId}")
     public ResponseEntity<?> getEduFormByDirection(@PathVariable int directionId) {
-        List<EduFormResponse> allEduForm = eduFormAndLanguageService.getAllEduForm(directionId);
+        List<EduFormResponse> allEduForm = eduFormService.getAllEduFormByDirection(directionId);
         return ResponseEntity.ok(allEduForm);
     }
 
     @GetMapping("eduForm/{eduFormId}")
     public ResponseEntity<?> getEduFormById(@PathVariable int eduFormId) {
-        EduFormResponse eduFormById = eduFormAndLanguageService.getEduFormById(eduFormId);
+        EduFormResponse eduFormById = eduFormService.getEduFormResponse(eduFormId);
         return ResponseEntity.ok(eduFormById);
-    }
-
-    @GetMapping("language/direction/{directionId}")
-    public ResponseEntity<?> getLanguageByDirection(@PathVariable int directionId) {
-        List<LanguageResponse> allLanguages = eduFormAndLanguageService.getAllLanguages(directionId);
-        return ResponseEntity.ok(allLanguages);
-    }
-
-    @GetMapping("language/{languageId}")
-    public ResponseEntity<?> getLanguageById(@PathVariable int languageId) {
-        LanguageResponse languageById = eduFormAndLanguageService.getLanguageById(languageId);
-        return ResponseEntity.ok(languageById);
     }
 
 }

@@ -50,7 +50,7 @@ public class EnrolleeService {
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
             diploma.setDegreeId(2);
             diploma.setDegreeName("Bakalavr");
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             diploma.setEnrolleeInfo(enrolleeInfo);
             Diploma diplomaSave = diplomaRepository.save(diploma);
             documentService.documentSave(diplomaSave.getId(), diplomaCopy, diplomaIlova);
@@ -113,10 +113,12 @@ public class EnrolleeService {
     @Transactional(readOnly = true)
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByUser(principal.getName()).get();
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
             Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
-            applicationResponse.ifPresent(enrolleeResponse::setApplicationResponse);
+            if (applicationResponse.isPresent()) {
+                enrolleeResponse.setApplicationResponse(applicationResponse.get());
+            }
             return enrolleeResponse;
         } catch (Exception ex) {
             return new EnrolleeResponse();

@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class EduFormRequest {
 
-    private Integer id;
     private String name;
     private Integer directionId;
     private List<LanguageRequest> languages;

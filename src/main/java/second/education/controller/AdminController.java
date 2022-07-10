@@ -101,9 +101,9 @@ public class AdminController {
         return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
     }
 
-    @PutMapping("eduForm/update")
-    public ResponseEntity<?> updateEduForm(@RequestBody EduFormRequest request) {
-        Result result = eduFormService.updateEduForm(request);
+    @PutMapping("eduForm/update/{eduFormId}")
+    public ResponseEntity<?> updateEduForm(@PathVariable int eduFormId, @RequestBody EduFormRequest request) {
+        Result result = eduFormService.updateEduForm(eduFormId, request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 

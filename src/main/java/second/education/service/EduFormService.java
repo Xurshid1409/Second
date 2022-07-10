@@ -42,9 +42,9 @@ public class EduFormService {
     }
 
     @Transactional
-    public Result updateEduForm(EduFormRequest request) {
+    public Result updateEduForm(Integer eduFormId, EduFormRequest request) {
         try {
-            EduForm eduForm = eduFormRepository.findById(request.getId()).get();
+            EduForm eduForm = eduFormRepository.findById(eduFormId).get();
             eduForm.setName(request.getName());
             Direction direction = directionRepository.findById(request.getDirectionId()).get();
             eduForm.setDirection(direction);

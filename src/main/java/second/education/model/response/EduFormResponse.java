@@ -17,9 +17,9 @@ public class EduFormResponse {
 
     private Integer id;
     private String name;
-    private List<LanguageResponse> languages;
     private Integer directionId;
     private String directionName;
+    private List<LanguageResponse> languages;
 
     public EduFormResponse(EduForm eduForm, List<LanguageResponse> languages) {
         this.id = eduForm.getId();
