@@ -14,9 +14,11 @@ public class LanguageResponse {
 
     private Integer id;
     private String name;
+    private Integer kvota;
 
     public LanguageResponse(Language language) {
         this.id = language.getId();
         this.name = language.getLanguage();
+        this.kvota = language.getKvotaSoni();
     }
 }

@@ -13,5 +13,5 @@ public class EduFormRequest {
     private Integer id;
     private String name;
     private Integer directionId;
-    private List<Language> languages;
+    private List<LanguageRequest> languages;
 }

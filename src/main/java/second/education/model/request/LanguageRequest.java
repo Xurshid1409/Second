@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class LanguageRequest {
 
+    private Integer id;
     private String name;
-    private Integer directionId;
+    private Integer kvota;
 }

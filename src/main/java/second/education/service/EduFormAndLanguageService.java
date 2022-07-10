@@ -78,8 +78,6 @@ public class EduFormAndLanguageService {
         try {
             Language language = new Language();
             language.setLanguage(request.getName());
-            Direction direction = directionRepository.findById(request.getDirectionId()).get();
-            language.setDirection(direction);
             languageRepository.save(language);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {

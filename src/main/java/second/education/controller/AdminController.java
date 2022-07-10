@@ -1,5 +1,6 @@
 package second.education.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,12 +10,12 @@ import second.education.service.DirectionService;
 import second.education.service.EduFormAndLanguageService;
 import second.education.service.FutureInstitutionService;
 import second.education.service.EduFormService;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("admin/")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "second")
 public class AdminController {
 
     private final FutureInstitutionService futureInstitutionService;
@@ -134,29 +135,5 @@ public class AdminController {
     public ResponseEntity<?> deleteLanguage(@PathVariable int languageId) {
         Result result = eduFormAndLanguageService.deleteLanguage(languageId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
-    @PostMapping("kvota")
-    public ResponseEntity<?> createKvota(@RequestBody List<KvotaRequest> requests) {
-        Result result = kvotaService.createKvota(requests);
-        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
-    }
-
-    @PutMapping("kvota")
-    public ResponseEntity<?> updateKvota(@RequestBody List<KvotaRequest> requests) {
-        Result result = kvotaService.updateKvota(requests);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
-    @GetMapping("kvota")
-    public ResponseEntity<?> getAllKvota() {
-        List<KvotaResponse> kvotas = kvotaService.getAllKvota();
-        return ResponseEntity.ok(kvotas);
-    }
-
-    @GetMapping("kvota/{kvotaId}")
-    public ResponseEntity<?> getKvotaById(@PathVariable Integer kvotaId) {
-        KvotaResponse kvotaBYId = kvotaService.getKvotaBYId(kvotaId);
-        return ResponseEntity.status(kvotaBYId != null ? 200 : 404).body(kvotaBYId);
     }
 }

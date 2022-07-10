@@ -23,7 +23,7 @@ public class FutureInstitutionService {
             FutureInstitution futureInstitution = new FutureInstitution();
             futureInstitution.setName(request.getName());
             futureInstitutionRepository.save(futureInstitution);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, futureInstitution);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
@@ -36,7 +36,7 @@ public class FutureInstitutionService {
             futureInstitution.setName(request.getName());
             futureInstitution.setModifiedDate(LocalDateTime.now());
             futureInstitutionRepository.save(futureInstitution);
-            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true, futureInstitution);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }

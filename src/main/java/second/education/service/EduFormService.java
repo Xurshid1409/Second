@@ -7,7 +7,8 @@ import second.education.domain.classificator.Direction;
 import second.education.domain.classificator.EduForm;
 import second.education.domain.classificator.Language;
 import second.education.model.request.EduFormRequest;
-import second.education.model.response.KvotaResponse;
+import second.education.model.response.EduFormResponse;
+import second.education.model.response.LanguageResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.DirectionRepository;
@@ -44,10 +45,18 @@ public class EduFormService {
         try {
             EduForm eduForm = eduFormRepository.findById(request.getId()).get();
             eduForm.setName(request.getName());
-//            Direction direction = directionRepository.findById(request.getDirectionId()).get();
-//            eduForm.setDirection(direction);
+            Direction direction = directionRepository.findById(request.getDirectionId()).get();
+            eduForm.setDirection(direction);
             EduForm saveEduform = eduFormRepository.save(eduForm);
-
+            List<Language> languages = new ArrayList<>();
+            request.getLanguages().forEach(e -> {
+                Language language = languageRepository.findById(e.getId()).get();
+                language.setLanguage(e.getName());
+                language.setKvotaSoni(e.getKvota());
+                language.setEduForm(saveEduform);
+                languages.add(language);
+            });
+            languageRepository.saveAll(languages);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
@@ -58,8 +67,8 @@ public class EduFormService {
         List<Language> languages = new ArrayList<>();
         request.getLanguages().forEach(l -> {
             Language language = new Language();
-            language.setLanguage(l.getLanguage());
-            language.setKvotaSoni(l.getKvotaSoni());
+            language.setLanguage(l.getName());
+            language.setKvotaSoni(l.getKvota());
             language.setEduForm(saveEduform);
             languages.add(language);
         });
@@ -67,16 +76,27 @@ public class EduFormService {
     }
 
     @Transactional(readOnly = true)
-    public KvotaResponse getKvotaBYId() {
+    public EduFormResponse eduFormResponse(Integer eduFormId) {
         try {
-            return null;
+            EduForm eduForm = eduFormRepository.findById(eduFormId).get();
+            List<LanguageResponse> languageResponses = eduFormRepository.findAllLanguageByEduForm(eduFormId)
+                    .stream().map(LanguageResponse::new).toList();
+            return new EduFormResponse(eduForm, languageResponses);
         } catch (Exception ex) {
-            return null;
+            return new EduFormResponse();
         }
     }
 
-    @Transactional
-    public List<KvotaResponse> getAllKvota() {
-        return null;
+    @Transactional(readOnly = true)
+    public List<EduFormResponse> getAllEduFormResponse() {
+        List<EduFormResponse> eduFormResponses = eduFormRepository.findAll()
+                .stream().map(EduFormResponse::new).toList();
+        eduFormResponses.forEach(e -> {
+            EduForm eduForm = eduFormRepository.findById(e.getId()).get();
+            List<LanguageResponse> languageResponses = eduFormRepository.findAllLanguageByEduForm(eduForm.getId())
+                    .stream().map(LanguageResponse::new).toList();
+            e.setLanguages(languageResponses);
+        });
+        return eduFormResponses;
     }
 }
