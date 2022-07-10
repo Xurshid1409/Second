@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.Application;
 import second.education.domain.EnrolleeInfo;
 import second.education.domain.classificator.EduForm;
+import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.Language;
 import second.education.model.request.ApplicationRequest;
 import second.education.model.request.ApplicationStatus;
@@ -25,6 +26,7 @@ public class ApplicationService {
     private final LanguageRepository languageRepository;
     private final ApplicationRepository applicationRepository;
     private final EnrolleInfoRepository enrolleInfoRepository;
+    private final FutureInstitutionRepository futureInstitutionRepository;
 
     @Transactional
     public Result createApplication(Principal principal, ApplicationRequest request) {
@@ -37,6 +39,8 @@ public class ApplicationService {
             application.setLanguage(language);
             EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
             application.setEduForm(eduForm);
+            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
+            application.setFutureInstitution(futureInstitution);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
             applicationRepository.save(application);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
@@ -56,6 +60,8 @@ public class ApplicationService {
             application.setLanguage(language);
             EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
             application.setEduForm(eduForm);
+            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
+            application.setFutureInstitution(futureInstitution);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
             application.setModifiedDate(LocalDateTime.now());
             applicationRepository.save(application);
