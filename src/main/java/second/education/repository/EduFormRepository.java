@@ -1,5 +1,6 @@
 package second.education.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface EduFormRepository extends JpaRepository<EduForm, Integer> {
 
     @Query(nativeQuery = true, value = "select * from edu_form ef where ef.direction_id =?1")
-    List<EduForm> findAllByDirectionId(Integer direction_id);
+    Page<EduForm> findAllByDirectionId(Integer direction_id);
 
 
     @Query("select l from Language l where l.eduForm.id=?1 ")

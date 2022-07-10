@@ -1,7 +1,12 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.model.request.FutureInstitutionRequest;
 import second.education.model.response.FutureInstitutionResponse;
@@ -62,5 +67,14 @@ public class FutureInstitutionService {
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
         }
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<FutureInstitutionResponse> getAllPage(int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        return futureInstitutionRepository.findAll(pageable)
+                .map(FutureInstitutionResponse::new);
     }
 }

@@ -15,6 +15,7 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.DirectionRepository;
 import second.education.repository.FutureInstitutionRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class DirectionService {
 //            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
 //            direction.setFutureInstitution(futureInstitution);
             directionRepository.save(direction);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true,new DirectionResponse(direction));
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true, new DirectionResponse(direction));
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
@@ -112,10 +113,11 @@ public class DirectionService {
     }
 
     public Page<DirectionResponse> getDirectionPageable(int page, int size) {
-        if (page > 0) page = page -1;
+        if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        Page<Direction> directions = directionRepository.findAll(pageable);
-        return null;
+        return directionRepository.findAll(pageable).map(DirectionResponse::new);
+
     }
+
 
 }

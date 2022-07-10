@@ -2,6 +2,7 @@ package second.education.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import second.education.model.request.DirectionRequest;
@@ -9,7 +10,6 @@ import second.education.model.request.EduFormRequest;
 import second.education.model.request.FutureInstitutionRequest;
 import second.education.model.response.*;
 import second.education.service.DirectionService;
-import second.education.service.EduFormAndLanguageService;
 import second.education.service.EduFormService;
 import second.education.service.FutureInstitutionService;
 import java.util.List;
@@ -22,7 +22,6 @@ public class AdminController {
 
     private final FutureInstitutionService futureInstitutionService;
     private final DirectionService directionService;
-    private final EduFormAndLanguageService eduFormAndLanguageService;
     private final EduFormService eduFormService;
 
     @PostMapping("futureInstitution")
@@ -81,20 +80,6 @@ public class AdminController {
         return ResponseEntity.ok(allDirection);
     }
 
-    //Ta'lim tili
-
-    @GetMapping("language/{languageId}")
-    public ResponseEntity<?> getLanguageById(@PathVariable int languageId) {
-        LanguageResponse languageById = eduFormAndLanguageService.getLanguageById(languageId);
-        return ResponseEntity.ok(languageById);
-    }
-
-    @DeleteMapping("language/{languageId}")
-    public ResponseEntity<?> deleteLanguage(@PathVariable int languageId) {
-        Result result = eduFormAndLanguageService.deleteLanguage(languageId);
-        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
-
     @PostMapping("eduForm")
     public ResponseEntity<?> createEduForm(@RequestBody EduFormRequest eduFormRequest) {
         Result result = eduFormService.createEduForm(eduFormRequest);
@@ -123,5 +108,28 @@ public class AdminController {
     public ResponseEntity<?> getEduFormByDirection(@PathVariable int directionId) {
         List<EduFormResponse> allEduFormByDirection = eduFormService.getAllEduFormByDirection(directionId);
         return ResponseEntity.ok(allEduFormByDirection);
+    }
+
+    @GetMapping("/getFutureInstitutions")
+    public ResponseEntity<?> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
+                                    @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<FutureInstitutionResponse> allPage = futureInstitutionService.getAllPage(page, size);
+        return ResponseEntity.ok(allPage);
+
+    }
+
+    @GetMapping("/getDirections")
+    public ResponseEntity<?> getAllDirectionPageble(@RequestParam(value = "page", defaultValue = "0") int page,
+                                    @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<FutureInstitutionResponse> allPage = futureInstitutionService.getAllPage(page, size);
+        return ResponseEntity.ok(allPage);
+
+    }
+    @GetMapping("/getEduForms")
+    public ResponseEntity<?> getAllEduFormPageble(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                    @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<EduFormResponse> allEduFormPage = eduFormService.getAllEduFormPage(page, size);
+        return ResponseEntity.ok(allEduFormPage);
+
     }
 }

@@ -1,6 +1,10 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.classificator.Direction;
@@ -112,4 +116,18 @@ public class EduFormService {
         });
         return eduFormResponses;
     }
+    @Transactional(readOnly = true)
+    public Page<EduFormResponse> getAllEduFormPage(int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        Page<EduFormResponse> map = eduFormRepository.findAll(pageable).map(EduFormResponse::new);
+        map.forEach(e -> {
+            List<LanguageResponse> languageResponses = eduFormRepository.findAllLanguageByEduForm(e.getId())
+                    .stream().map(LanguageResponse::new).toList();
+            e.setLanguages(languageResponses);
+        });
+        return map;
+    }
+
+
 }
