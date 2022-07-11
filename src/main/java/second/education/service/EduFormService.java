@@ -11,10 +11,7 @@ import second.education.domain.classificator.Direction;
 import second.education.domain.classificator.EduForm;
 import second.education.domain.classificator.Language;
 import second.education.model.request.EduFormRequest;
-import second.education.model.response.EduFormResponse;
-import second.education.model.response.LanguageResponse;
-import second.education.model.response.ResponseMessage;
-import second.education.model.response.Result;
+import second.education.model.response.*;
 import second.education.repository.DirectionRepository;
 import second.education.repository.EduFormRepository;
 import second.education.repository.LanguageRepository;
@@ -127,5 +124,28 @@ public class EduFormService {
             e.setLanguages(languageResponses);
         });
         return map;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EduFormResponse> search(String text, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        Page<EduFormResponse> map = eduFormRepository.findEduFormByNameLike(text, pageable).map(EduFormResponse::new);
+        map.forEach(e -> {
+            List<LanguageResponse> languageResponses = eduFormRepository.findAllLanguageByEduForm(e.getId())
+                    .stream().map(LanguageResponse::new).toList();
+            e.setLanguages(languageResponses);
+        });
+        return map;
+    }
+
+    @Transactional
+    public Result deleteEduForm(Integer eduFormId) {
+        try {
+            eduFormRepository.deleteById(eduFormId);
+            return new Result(ResponseMessage.SUCCESSFULLY_DELETED.getMessage(), true);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
+        }
     }
 }

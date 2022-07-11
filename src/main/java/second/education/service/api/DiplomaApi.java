@@ -1,21 +1,23 @@
 package second.education.service.api;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import second.education.api_model.actual_inst_api.ActualInstitutionResponse;
+import second.education.api_model.actual_inst_api.Institutions;
 import second.education.api_model.diplom_api.DiplomaResponseInfo;
 import second.education.api_model.ins_api.DataItem;
 import second.education.api_model.ins_api.InstitutionResponse;
 import second.education.api_model.spec_api.SpecialistResponse;
+import second.education.domain.ActiveUniversity;
 import second.education.domain.classificator.Specialities;
 import second.education.domain.classificator.University;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.model.response.SpecialitiesResponse;
 import second.education.model.response.UniversityResponse;
+import second.education.repository.ActiveUniversityRepository;
 import second.education.repository.InstitutionRepository;
 import second.education.repository.SpecialistRepository;
 
@@ -29,6 +31,8 @@ public class DiplomaApi {
     private final WebClient webClient;
     private final InstitutionRepository institutionRepository;
     private final SpecialistRepository specialistRepository;
+    private final ActiveUniversityRepository activeUniversityRepository;
+
     String token = "jfqubdpWtR8qAOiUrFq5iPRlU8j1uOEaVWqHw6iLLgdV5Q_0-MBWEm3du3GjsZ726RFyuFSB_qRZrDlQj4kBAf3cBDxlpMwr_Ezp8LzbumTMIe5jTFsVCMuD7O3QjJtBWInZvjyzIs_8nEzFRVEBKsK4MJDSbEz56v58fAoRxk6HQpu9uuXUpgHcQaoTTtmuY21-Rtc";
 
     public List<DiplomaResponseInfo> getDiploma(String pinfl) {
@@ -63,6 +67,44 @@ public class DiplomaApi {
                 .bodyToMono(SpecialistResponse.class)
                 .block();
     }
+
+    private ActualInstitutionResponse getActualInstitutions() {
+        String ACTUAL_INSTITUTION_URL = "http://172.18.10.10/api/v2/reference/institutions";
+        return webClient.get()
+                .uri(ACTUAL_INSTITUTION_URL)
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(ActualInstitutionResponse.class)
+                .block();
+    }
+
+    @Transactional
+    public Result saveActualInstitution() {
+        try {
+
+            List<ActiveUniversity> activeUniversityList = activeUniversityRepository.findAll();
+            if (activeUniversityList.isEmpty()) {
+                Institutions institutions = getActualInstitutions().getData().getInstitutions();
+                List<ActiveUniversity> activeUniversities = new ArrayList<>();
+                institutions.getData().forEach(institution -> {
+                    ActiveUniversity activeUniversity = new ActiveUniversity();
+                    activeUniversity.setInstitutionId(institution.getId());
+                    activeUniversity.setNameUz(institution.getNameUz());
+                    activeUniversity.setNameOz(institution.getNameOz());
+                    activeUniversity.setNameRu(institution.getNameRu());
+                    activeUniversity.setNameEn(institution.getNameEn());
+                    activeUniversity.setRegionName(institution.getRegionName());
+                    activeUniversities.add(activeUniversity);
+                });
+                activeUniversityRepository.saveAll(activeUniversities);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+            return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+        } catch (Exception ex) {
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
+        }
+    }
+
 
     @Transactional
     public Result saveInstitution() {
@@ -122,6 +164,24 @@ public class DiplomaApi {
         } catch (Exception e) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<UniversityResponse> getActiveUniversities() {
+        List<ActiveUniversity> activeUniversityList = activeUniversityRepository.findAll();
+        List<UniversityResponse> universityResponses = new ArrayList<>();
+        activeUniversityList.forEach(activeUniversity -> {
+            UniversityResponse universityResponse = new UniversityResponse();
+            universityResponse.setId(activeUniversity.getId());
+            universityResponse.setInstitutionId(activeUniversity.getInstitutionId());
+            universityResponse.setNameUz(activeUniversity.getNameUz());
+            universityResponse.setNameOz(activeUniversity.getNameOz());
+            universityResponse.setNameRu(activeUniversity.getNameRu());
+            universityResponse.setNameEn(activeUniversity.getNameEn());
+            universityResponse.setRegionName(activeUniversity.getRegionName());
+            universityResponses.add(universityResponse);
+        });
+        return universityResponses;
     }
 
     @Transactional(readOnly = true)

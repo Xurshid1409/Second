@@ -111,6 +111,15 @@ public class AdminController {
         return ResponseEntity.ok(allEduFormByDirection);
     }
 
+    @GetMapping("searchEduForm/{text}")
+    public ResponseEntity<?> searchEduForm(@PathVariable String text,
+                                           @RequestParam(value = "page", defaultValue = "0") int page,
+                                           @RequestParam(value = "size", defaultValue = "30") int size){
+        Page<EduFormResponse> search = eduFormService.search(text, page, size);
+        return ResponseEntity.ok(search);
+    }
+
+
     @GetMapping("/getFutureInstitutions")
     public ResponseEntity<?> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
                                     @RequestParam(value = "size", defaultValue = "30") int size) {
@@ -141,5 +150,11 @@ public class AdminController {
                                              @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<DirectionResponse> search = directionService.search(text, page, size);
         return ResponseEntity.ok(search);
+    }
+
+    @DeleteMapping("eduForm{eduFormId}")
+    public ResponseEntity<?> deleteEduForm(@PathVariable int eduFormId) {
+        Result result = eduFormService.deleteEduForm(eduFormId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 }

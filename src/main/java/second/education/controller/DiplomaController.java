@@ -22,6 +22,12 @@ public class DiplomaController {
     private final DiplomaApi diplomaApi;
     private final TillarRepository tillarRepository;
 
+    @GetMapping("/create/active/institution")
+    public ResponseEntity<?> createActiveInstitution() {
+        Result result = diplomaApi.saveActualInstitution();
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+    }
+
     @GetMapping("/create/institution")
     public ResponseEntity<?> createInstitution() {
         Result result = diplomaApi.saveInstitution();
@@ -41,6 +47,12 @@ public class DiplomaController {
         return ResponseEntity.status(!universities.isEmpty() ? 200 : 404).body(universities);
     }
 
+    @GetMapping("active/getActiveUniversities")
+    public ResponseEntity<?> getActiveUniversities() {
+        List<UniversityResponse> universities = diplomaApi.getActiveUniversities();
+        return ResponseEntity.status(!universities.isEmpty() ? 200 : 404).body(universities);
+    }
+
     @GetMapping("getSpecialities/{universityId}")
     public ResponseEntity<?> getSpecialities(@PathVariable int universityId) {
         List<SpecialitiesResponse> specialities = diplomaApi.getSpecialitiesByUniversityId(universityId);
@@ -55,7 +67,6 @@ public class DiplomaController {
 
       @GetMapping("language")
       public List<Tillar> getTillar() {
-          List<Tillar> all = tillarRepository.findAll();
-          return all;
+          return tillarRepository.findAll();
       }
 }
