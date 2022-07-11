@@ -1,10 +1,7 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.classificator.Direction;
@@ -117,6 +114,13 @@ public class DirectionService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         return directionRepository.findAll(pageable).map(DirectionResponse::new);
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DirectionResponse> search(String text, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+  return directionRepository.findDirectionByNameLike(text, pageable).map(DirectionResponse::new);
     }
 
 

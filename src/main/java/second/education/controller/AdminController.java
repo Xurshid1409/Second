@@ -12,6 +12,7 @@ import second.education.model.response.*;
 import second.education.service.DirectionService;
 import second.education.service.EduFormService;
 import second.education.service.FutureInstitutionService;
+
 import java.util.List;
 
 @RestController
@@ -120,16 +121,25 @@ public class AdminController {
 
     @GetMapping("/getDirections")
     public ResponseEntity<?> getAllDirectionPageble(@RequestParam(value = "page", defaultValue = "0") int page,
-                                    @RequestParam(value = "size", defaultValue = "30") int size) {
+                                                    @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<DirectionResponse> directionPageable = directionService.getDirectionPageable(page, size);
         return ResponseEntity.ok(directionPageable);
 
     }
+
     @GetMapping("/getEduForms")
     public ResponseEntity<?> getAllEduFormPageble(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                    @RequestParam(value = "size", defaultValue = "30") int size) {
+                                                  @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<EduFormResponse> allEduFormPage = eduFormService.getAllEduFormPage(page, size);
         return ResponseEntity.ok(allEduFormPage);
 
+    }
+
+    @GetMapping("/searchDirection/{text}")
+    public ResponseEntity<?> searchDirection(@PathVariable String text,
+                                             @RequestParam(value = "page", defaultValue = "0") int page,
+                                             @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<DirectionResponse> search = directionService.search(text, page, size);
+        return ResponseEntity.ok(search);
     }
 }
