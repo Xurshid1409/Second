@@ -7,11 +7,11 @@ import second.education.domain.User;
 import second.education.model.response.Result;
 import second.education.repository.UserRepository;
 
-@Service
-@RequiredArgsConstructor
+//@Service
+//@RequiredArgsConstructor
 public class AdminService {
 
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
 
     @Transactional
     public Result createInstitutionAdmin() {

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
 import second.education.model.response.ApplicationResponse;
+import second.education.model.response.GetStatAllCountAndToday;
+
 import java.util.Optional;
 
 @Repository
@@ -34,4 +36,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "join language l on a.language_id = l.id " +
             "join enrollee_info ei on a.enrollee_info_id = ei.id  where ei.id=?1")
     Optional<ApplicationResponse> findByAppByPrincipal(Integer enrolleInfoId);
+
+    @Query(nativeQuery = true, value = "select count(a.id) as count_today, " +
+            "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
+    Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
+
 }
