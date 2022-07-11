@@ -19,6 +19,8 @@ public class EduFormResponse {
     private String name;
     private Integer directionId;
     private String directionName;
+    private Integer futureInsId;
+    private String futureInstName;
     private List<LanguageResponse> languages;
 
     public EduFormResponse(EduForm eduForm, List<LanguageResponse> languages) {
@@ -26,6 +28,8 @@ public class EduFormResponse {
         this.name = eduForm.getName();
         this.directionId = eduForm.getDirection().getId();
         this.directionName = eduForm.getDirection().getName();
+        this.futureInsId = eduForm.getDirection().getFutureInstitution().getId();
+        this.futureInstName = eduForm.getDirection().getFutureInstitution().getName();
         this.languages = languages;
     }
 
@@ -34,5 +38,7 @@ public class EduFormResponse {
         this.name = eduForm.getName();
         this.directionId = eduForm.getDirection().getId();
         this.directionName = eduForm.getDirection().getName();
+        this.futureInsId = eduForm.getDirection().getFutureInstitution().getId();
+        this.futureInstName = eduForm.getDirection().getFutureInstitution().getName();
     }
 }

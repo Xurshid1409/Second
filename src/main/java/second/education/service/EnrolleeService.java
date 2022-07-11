@@ -71,7 +71,7 @@ public class EnrolleeService {
             int diplomaId,
             String countryName,
             Integer institutionId,
-           Integer id,
+            Integer id,
             String eduFormName,
             String eduFinishingDate,
             String speciality,
