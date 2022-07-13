@@ -72,7 +72,7 @@ public class AuthService {
     public Result validateUser(ValidateCodeRequest request) {
 
         try {
-            List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findByPhoneNumber(request.getPhoneNumber());
+            List<CheckSMSEntity> checkSMSEntity = checkSMSRepository.findAllByPhoneNumber(request.getPhoneNumber());
             CheckSMSEntity check = new CheckSMSEntity();
             for (CheckSMSEntity smsEntity : checkSMSEntity) {
                 boolean matches = passwordEncoder.matches(request.getCode(), smsEntity.getCode());
@@ -123,7 +123,7 @@ public class AuthService {
 
     public Result validateCheckCode(ValidateCodeRequest request) {
 
-        List<CheckSMSEntity> byPhoneNumber = checkSMSRepository.findByPhoneNumber(request.getPhoneNumber());
+        List<CheckSMSEntity> byPhoneNumber = checkSMSRepository.findAllByPhoneNumber(request.getPhoneNumber());
         CheckSMSEntity getSmsEntity = new CheckSMSEntity();
         for (CheckSMSEntity checkSMSEntity : byPhoneNumber) {
             boolean matches = passwordEncoder.matches(request.getCode(), checkSMSEntity.getCode());
