@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IIBRequest {
+
     private String phoneNumber;
     private String pinfl;
     private String given_date; //yyyy-MM-dd formatda

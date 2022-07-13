@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.Role;
 
 import javax.persistence.*;
@@ -22,5 +23,7 @@ public class User extends AbstractData<Integer> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     private Role role;
 
+//    @OneToOne(fetch = FetchType.LAZY)
+//    private FutureInstitution futureInstitution;
 
 }
