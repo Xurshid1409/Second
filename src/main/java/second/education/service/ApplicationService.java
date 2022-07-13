@@ -14,6 +14,7 @@ import second.education.model.response.ApplicationResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.*;
+
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -32,18 +33,22 @@ public class ApplicationService {
     public Result createApplication(Principal principal, ApplicationRequest request) {
 
         try {
-            Application application = new Application();
-            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
-            application.setEnrolleeInfo(enrolleeInfo);
-            Language language = languageRepository.findById(request.getLanguageId()).get();
-            application.setLanguage(language);
-            EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
-            application.setEduForm(eduForm);
-            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
-            application.setFutureInstitution(futureInstitution);
-            application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
-            applicationRepository.save(application);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            Optional<Application> checkApp = applicationRepository.checkApp(principal.getName());
+            if (checkApp.isEmpty()) {
+                Application application = new Application();
+                EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
+                application.setEnrolleeInfo(enrolleeInfo);
+                Language language = languageRepository.findById(request.getLanguageId()).get();
+                application.setLanguage(language);
+                EduForm eduForm = eduFormRepository.findById(request.getEduFormId()).get();
+                application.setEduForm(eduForm);
+                FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
+                application.setFutureInstitution(futureInstitution);
+                application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
+                applicationRepository.save(application);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+            return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }

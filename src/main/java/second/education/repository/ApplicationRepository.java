@@ -41,4 +41,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
 
+
+    @Query("select a from Application as a where a.enrolleeInfo.user.phoneNumber=?1")
+    Optional<Application> checkApp(String phoneNumber);
+
 }
