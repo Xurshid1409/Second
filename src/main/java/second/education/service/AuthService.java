@@ -83,19 +83,23 @@ public class AuthService {
             if (check.getPhoneNumber() == null) {
                 return new Result("Kiritilgan kod xato", false);
             }
-            User user = new User();
-            user.setPhoneNumber(request.getPhoneNumber());
-            user.setPassword(check.getCode());
-            user.setRole(getRole());
-            User saveUser = userRepository.save(user);
-            IIBRequest iibRequest = new IIBRequest();
-            iibRequest.setPinfl(check.getPinfl());
-            iibRequest.setGiven_date(check.getGivenDate());
-            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-            Data data = iibResponse.getData();
-            EnrolleeInfo enrolleeInfo = saveEnrolleeInfo(saveUser, data);
+            Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(check.getPhoneNumber(), check.getPinfl());
+            if (byPhoneNumber.isEmpty()) {
+                User user = new User();
+                user.setPhoneNumber(request.getPhoneNumber());
+                user.setPassword(check.getCode());
+                user.setRole(getRole());
+                User saveUser = userRepository.save(user);
+                IIBRequest iibRequest = new IIBRequest();
+                iibRequest.setPinfl(check.getPinfl());
+                iibRequest.setGiven_date(check.getGivenDate());
+                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+                Data data = iibResponse.getData();
+                EnrolleeInfo enrolleeInfo = saveEnrolleeInfo(saveUser, data);
 //            diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+            return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
         } catch (Exception ex) {
             return new Result(request.getPhoneNumber() + " " + ResponseMessage.NOT_FOUND, false);
         }
@@ -137,7 +141,8 @@ public class AuthService {
         return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
     }
 
-    private EnrolleeInfo saveEnrolleeInfo(User saveUser, Data data) {
+    @Transactional
+    public EnrolleeInfo saveEnrolleeInfo(User saveUser, Data data) {
         EnrolleeInfo enrolleeInfo = new EnrolleeInfo();
         enrolleeInfo.setCitizenship(data.getCitizenship().getName());
         enrolleeInfo.setNationality(data.getNationality().getName());
@@ -148,10 +153,16 @@ public class AuthService {
         enrolleeInfo.setPhoneNumber(saveUser.getPhoneNumber());
         enrolleeInfo.setGender(data.getGender());
         enrolleeInfo.setDateOfBirth(data.getBirthDate());
-        enrolleeInfo.setPassportSerialAndNumber(data.getPassportSerial()+data.getPassportNumber());
-        enrolleeInfo.setPermanentRegion(data.getPermanentDistrict().getRegion().getName());
-        enrolleeInfo.setPermanentDistrict(data.getPermanentDistrict().getName());
-        enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
+        enrolleeInfo.setPassportSerialAndNumber(data.getPassportSerial() + data.getPassportNumber());
+        if (data.getPermanentDistrict().getRegion().getName()!=null) {
+            enrolleeInfo.setPermanentRegion(data.getPermanentDistrict().getRegion().getName());
+        }
+        if (data.getPermanentDistrict().getName()!=null) {
+            enrolleeInfo.setPermanentDistrict(data.getPermanentDistrict().getName());
+        }
+        if (data.getPermanentAddress()!=null) {
+            enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
+        }
         enrolleeInfo.setPassportGivenDate(data.getPassportGivenDate());
         enrolleeInfo.setUser(saveUser);
         return enrolleInfoRepository.save(enrolleeInfo);
