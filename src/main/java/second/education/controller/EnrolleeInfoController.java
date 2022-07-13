@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import second.education.model.request.DiplomaCheckRequest;
-import second.education.model.request.DiplomaRequest;
 import second.education.model.response.DiplomaResponse;
 import second.education.model.response.EnrolleeResponse;
 import second.education.model.response.Result;
@@ -42,6 +40,22 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
         DiplomaResponse response = enrolleeService.createDiploma(principal, countryName,
                 institutionId, id, eduFormName, eduFinishingDate, speciality,
+                diplomaNumberAndSerial, diploma, diplomaIlova);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("foreignDiploma")
+    public ResponseEntity<?> createForeignDiploma(Principal principal,
+                                           @RequestParam(value = "countryName", required = false) String countryName,
+                                           @RequestParam(value = "institutionName", required = false) String institutionName,
+                                           @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                           @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                           @RequestParam(value = "speciality", required = false) String speciality,
+                                           @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                           @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                           @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+        DiplomaResponse response = enrolleeService.createForeignDiploma(principal, countryName,
+                institutionName, eduFormName, eduFinishingDate, speciality,
                 diplomaNumberAndSerial, diploma, diplomaIlova);
         return ResponseEntity.ok(response);
     }
