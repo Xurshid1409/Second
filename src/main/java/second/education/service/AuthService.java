@@ -94,7 +94,7 @@ public class AuthService {
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
             Data data = iibResponse.getData();
             EnrolleeInfo enrolleeInfo = saveEnrolleeInfo(saveUser, data);
-            diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
+//            diplomaService.saveDiplomaByApi(enrolleeInfo.getPinfl(), enrolleeInfo);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
             return new Result(request.getPhoneNumber() + " " + ResponseMessage.NOT_FOUND, false);

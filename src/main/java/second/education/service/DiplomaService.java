@@ -30,32 +30,32 @@ public class DiplomaService {
     private final DocumentRepository documentRepository;
     private final ApplicationRepository applicationRepository;
 
-    @Transactional
-    public void saveDiplomaByApi(String pinfl, EnrolleeInfo enrolleeInfo) {
-            List<DiplomaResponseInfo> diplomas = diplomaApi.getDiploma(pinfl);
-            List<Diploma> diplomaList = new ArrayList<>();
-            diplomas.forEach(d -> {
-                Diploma diploma = new Diploma();
-                diploma.setCountryName("O'zbekiston");
-                diploma.setInstitutionId(d.getInstitutionId());
-                diploma.setInstitutionName(d.getInstitutionName());
-                diploma.setInstitutionOldNameId(d.getInstitutionOldNameId());
-                diploma.setInstitutionOldName(d.getInstitutionOldName());
-                diploma.setSpecialityId(d.getSpecialityId());
-                diploma.setSpecialityName(d.getSpecialityName());
-                diploma.setDiplomaSerialAndNumber(d.getDiplomaSerial()+d.getDiplomaNumber());
-                diploma.setDegreeId(d.getDegreeId());
-                diploma.setDegreeName(d.getDegreeName());
-                diploma.setEduFormId(d.getEduFormId());
-                diploma.setEduFormName(d.getEduFormName());
-                diploma.setEduFinishingDate(d.getEduFinishingDate());
-                diploma.setEnrolleeInfo(enrolleeInfo);
-                diplomaList.add(diploma);
-            });
-            if (diplomaList.size()>0){
-                diplomaRepository.saveAll(diplomaList);
-            }
-    }
+//    @Transactional
+//    public void saveDiplomaByApi(String pinfl, EnrolleeInfo enrolleeInfo) {
+//            List<DiplomaResponseInfo> diplomas = diplomaApi.getDiploma(pinfl);
+//            List<Diploma> diplomaList = new ArrayList<>();
+//            diplomas.forEach(d -> {
+//                Diploma diploma = new Diploma();
+//                diploma.setCountryName("O'zbekiston");
+//                diploma.setInstitutionId(d.getInstitutionId());
+//                diploma.setInstitutionName(d.getInstitutionName());
+//                diploma.setInstitutionOldNameId(d.getInstitutionOldNameId());
+//                diploma.setInstitutionOldName(d.getInstitutionOldName());
+//                diploma.setSpecialityId(d.getSpecialityId());
+//                diploma.setSpecialityName(d.getSpecialityName());
+//                diploma.setDiplomaSerialAndNumber(d.getDiplomaSerial()+d.getDiplomaNumber());
+//                diploma.setDegreeId(d.getDegreeId());
+//                diploma.setDegreeName(d.getDegreeName());
+//                diploma.setEduFormId(d.getEduFormId());
+//                diploma.setEduFormName(d.getEduFormName());
+//                diploma.setEduFinishingDate(d.getEduFinishingDate());
+//                diploma.setEnrolleeInfo(enrolleeInfo);
+//                diplomaList.add(diploma);
+//            });
+//            if (diplomaList.size()>0){
+//                diplomaRepository.saveAll(diplomaList);
+//            }
+//    }
 
     // Admin panel
 

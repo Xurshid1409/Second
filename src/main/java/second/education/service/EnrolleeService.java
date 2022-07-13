@@ -136,9 +136,9 @@ public class EnrolleeService {
     }
 
     @Transactional
-    public Result checkDiploma(int diplomaId) {
+    public Result checkDiploma(Principal principal, int diplomaId) {
         try {
-            List<Diploma> diplomas = diplomaRepository.findAll();
+            List<Diploma> diplomas = diplomaRepository.findAllDiplomaByEnrollee(principal.getName());
             diplomas.forEach(diploma -> {
                 diploma.setIsActive(Boolean.FALSE);
                 diplomaRepository.save(diploma);

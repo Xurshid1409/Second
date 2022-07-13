@@ -79,8 +79,8 @@ public class EnrolleeInfoController {
     }
 
     @PatchMapping("check/diplomas/{diplomaId}")
-    public ResponseEntity<?> checkDiploma(@PathVariable int diplomaId) {
-        Result result = enrolleeService.checkDiploma(diplomaId);
+    public ResponseEntity<?> checkDiploma(Principal principal, @PathVariable int diplomaId) {
+        Result result = enrolleeService.checkDiploma(principal, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
