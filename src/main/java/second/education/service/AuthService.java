@@ -67,7 +67,6 @@ public class AuthService {
             return new Result("Shaxsni tasdiqlovchi ma'lumotlar hato kiritilgan, iltimos tekshirib qayta urinib ko'ring", false);
         }
     }
-
     @Transactional
     public Result validateUser(ValidateCodeRequest request) {
 
