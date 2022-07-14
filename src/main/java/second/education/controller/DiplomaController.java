@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import second.education.domain.classificator.Country;
 import second.education.domain.classificator.Tillar;
 import second.education.model.response.Result;
 import second.education.model.response.SpecialitiesResponse;
 import second.education.model.response.UniversityResponse;
 import second.education.repository.TillarRepository;
+import second.education.service.DiplomaService;
 import second.education.service.api.DiplomaApi;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class DiplomaController {
 
     private final DiplomaApi diplomaApi;
     private final TillarRepository tillarRepository;
+    private final DiplomaService diplomaService;
 
     @GetMapping("/create/active/institution")
     public ResponseEntity<?> createActiveInstitution() {
@@ -68,5 +71,11 @@ public class DiplomaController {
       @GetMapping("language")
       public List<Tillar> getTillar() {
           return tillarRepository.findAll();
+      }
+
+
+      @GetMapping("countries")
+      public ResponseEntity<?> getAllCountry() {
+          return ResponseEntity.ok(diplomaService.getAllCountry());
       }
 }
