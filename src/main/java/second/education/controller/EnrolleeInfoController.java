@@ -68,11 +68,13 @@ public class EnrolleeInfoController {
                                                   @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
                                                   @RequestParam(value = "speciality", required = false) String speciality,
                                                   @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                                  @RequestParam(value = "diplomaCopyId", required = false) Integer diplomaCopyId,
                                                   @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                                  @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
                                                   @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
         DiplomaResponse response = enrolleeService.updateForeignDiploma(diplomaId, countryName,
                 institutionName, eduFormName, eduFinishingDate, speciality,
-                diplomaNumberAndSerial, diploma, diplomaIlova);
+                diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
         return ResponseEntity.ok(response);
     }
 
