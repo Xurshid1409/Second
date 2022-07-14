@@ -77,8 +77,13 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse getApplicationByPrincipal(Principal principal) {
+        Optional<Application> checkApp = applicationRepository.checkApp(principal.getName());
+        if (checkApp.isEmpty()) {
+            ApplicationResponse applicationResponse = null;
+            return applicationResponse;
+        }
         EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
         Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
-        return applicationResponse.orElse(null);
+        return applicationResponse.get();
     }
 }
