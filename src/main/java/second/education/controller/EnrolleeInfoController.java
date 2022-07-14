@@ -60,6 +60,22 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("update/foreignDiploma/{diplomaId}")
+    public ResponseEntity<?> updateForeignDiploma(@PathVariable Integer diplomaId,
+                                                  @RequestParam(value = "countryName", required = false) String countryName,
+                                                  @RequestParam(value = "institutionName", required = false) String institutionName,
+                                                  @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                                  @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                                  @RequestParam(value = "speciality", required = false) String speciality,
+                                                  @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                                  @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                                  @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+        DiplomaResponse response = enrolleeService.updateForeignDiploma(diplomaId, countryName,
+                institutionName, eduFormName, eduFinishingDate, speciality,
+                diplomaNumberAndSerial, diploma, diplomaIlova);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("{diplomaId}")
     public ResponseEntity<?> updateDiploma(@PathVariable int diplomaId,
                                            @RequestParam(value = "countryName", required = false) String countryName,

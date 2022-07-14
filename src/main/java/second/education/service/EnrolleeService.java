@@ -113,7 +113,6 @@ public class EnrolleeService {
                                                 String diplomaNumberAndSerial,
                                                 MultipartFile diplomaCopy,
                                                 MultipartFile diplomaIlova) {
-
         try {
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
@@ -126,6 +125,35 @@ public class EnrolleeService {
             diploma.setDegreeName("Bakalavr");
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
             diploma.setEnrolleeInfo(enrolleeInfo);
+            Diploma save = diplomaRepository.save(diploma);
+            documentService.documentSave(save.getId(), diplomaCopy, diplomaIlova);
+            FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
+            return new DiplomaResponse(diploma, fileResponse);
+        } catch (Exception ex) {
+            return new DiplomaResponse();
+        }
+    }
+
+    @Transactional
+    public DiplomaResponse updateForeignDiploma(Integer diplomaId,
+                                                String countryName,
+                                                String institutionName,
+                                                String eduFormName,
+                                                String eduFinishingDate,
+                                                String speciality,
+                                                String diplomaNumberAndSerial,
+                                                MultipartFile diplomaCopy,
+                                                MultipartFile diplomaIlova) {
+        try {
+            Diploma diploma = diplomaRepository.findById(diplomaId).get();
+            diploma.setCountryName(countryName);
+            diploma.setInstitutionName(institutionName);
+            diploma.setEduFormName(eduFormName);
+            diploma.setEduFinishingDate(eduFinishingDate);
+            diploma.setSpecialityName(speciality);
+            diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+            diploma.setDegreeId(2);
+            diploma.setDegreeName("Bakalavr");
             Diploma save = diplomaRepository.save(diploma);
             documentService.documentSave(save.getId(), diplomaCopy, diplomaIlova);
             FileResponse fileResponse = documentService.getFileResponse(diploma.getId());

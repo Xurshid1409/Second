@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.api_model.diplom_api.DiplomaResponseInfo;
 import second.education.domain.*;
+import second.education.domain.classificator.Country;
 import second.education.model.request.DiplomaRequest;
 import second.education.model.request.DiplomaStatusRequest;
 import second.education.model.response.*;
@@ -27,7 +28,7 @@ public class DiplomaService {
     private final DiplomaRepository diplomaRepository;
     private final DiplomaApi diplomaApi;
     private final UserRepository userRepository;
-    private final DocumentRepository documentRepository;
+    private final CountryRepository countryRepository;
     private final ApplicationRepository applicationRepository;
 
 //    @Transactional
@@ -103,5 +104,10 @@ public class DiplomaService {
 
     private User getCurrentUser(Principal principal) {
         return userRepository.findByPhoneNumber(principal.getName()).get();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Country> getAllCountry() {
+        return countryRepository.findAll();
     }
 }
