@@ -160,6 +160,8 @@ public class EnrolleeService {
             Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
             if (applicationResponse.isPresent()) {
                 enrolleeResponse.setApplicationResponse(applicationResponse.get());
+            }else {
+                enrolleeResponse.setApplicationResponse(null);
             }
             return enrolleeResponse;
         } catch (Exception ex) {
