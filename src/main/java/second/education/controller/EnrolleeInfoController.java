@@ -38,10 +38,10 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
                                            @RequestParam(value = "diploma", required = false) MultipartFile diploma,
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
-        DiplomaResponse response = enrolleeService.createDiploma(principal, countryName,
+        Result result = enrolleeService.createDiploma(principal, countryName,
                 institutionId, id, eduFormName, eduFinishingDate, speciality,
                 diplomaNumberAndSerial, diploma, diplomaIlova);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
     }
 
     @PostMapping("foreignDiploma")
@@ -91,9 +91,9 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diploma", required = false) MultipartFile diploma,
                                            @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
-        DiplomaResponse diplomaResponse = enrolleeService.updateDiploma(diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
+        Result result = enrolleeService.updateDiploma(diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
                 speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
-        return ResponseEntity.ok(diplomaResponse);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
     @PatchMapping("check/diplomas/{diplomaId}")

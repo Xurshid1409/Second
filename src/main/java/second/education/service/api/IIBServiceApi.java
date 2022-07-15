@@ -26,4 +26,15 @@ public class IIBServiceApi {
                 .bodyToMono(IIBResponse.class)
                 .block();
     }
+
+    public String checkIIB(IIBRequest iibRequest) {
+      return webClient.post()
+                .uri("http://172.18.9.169:9449/api/person-info-with-photo/")
+                .headers(httpHeaders -> httpHeaders.setBasicAuth(ApiConstant.IIB_API_LOGIN, ApiConstant.IIB_API_PASSWORD))
+                .bodyValue(iibRequest)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }

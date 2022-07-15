@@ -22,6 +22,4 @@ public class EduForm extends AbstractData<Integer> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Direction direction;
-
-
 }

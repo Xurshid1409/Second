@@ -31,7 +31,7 @@ public class EnrolleeService {
     private final DocumentRepository documentRepository;
 
     @Transactional
-    public DiplomaResponse createDiploma(Principal principal,
+    public Result createDiploma(Principal principal,
                                          String countryName,
                                          Integer institutionId,
                                          Integer id,
@@ -50,7 +50,7 @@ public class EnrolleeService {
             diploma.setInstitutionName(university.getInstitutionName());
             University old = institutionRepository.findById(id).get();
             diploma.setInstitutionOldNameId(old.getId());
-            diploma.setInstitutionOldName(old.getNameOz());
+            diploma.setInstitutionOldName(university.getNameOz());
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
@@ -63,15 +63,15 @@ public class EnrolleeService {
 //            documentService.documentSave(diplomaSave.getId(), diplomaCopy, diplomaIlova);
             documentSave(diplomaSave.getId(), diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
-            FileResponse fileResponse = getFileResponse(diplomaSave.getId());
-            return new DiplomaResponse(diploma, fileResponse);
+//            FileResponse fileResponse = getFileResponse(diplomaSave.getId());
+            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
-            return new DiplomaResponse();
+            return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
     }
 
     @Transactional
-    public DiplomaResponse updateDiploma(
+    public Result updateDiploma(
             int diplomaId,
             String countryName,
             Integer institutionId,
@@ -102,10 +102,9 @@ public class EnrolleeService {
 //            documentService.documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
-            FileResponse fileResponse = getFileResponse(diplomaSave.getId());
-            return new DiplomaResponse(diplomaSave, fileResponse);
+           return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
-            return new DiplomaResponse();
+            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
     }
 
