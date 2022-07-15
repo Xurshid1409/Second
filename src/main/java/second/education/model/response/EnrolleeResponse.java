@@ -26,7 +26,7 @@ public class EnrolleeResponse {
     private String permanentRegion;
     private String permanentDistrict;
     private String permanentAddress;
-    private ApplicationResponse applicationResponse;
+//    private ApplicationResponse applicationResponse;
 
 
     public EnrolleeResponse(EnrolleeInfo enrolleeInfo) {

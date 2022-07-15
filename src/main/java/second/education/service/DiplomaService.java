@@ -108,6 +108,6 @@ public class DiplomaService {
 
     @Transactional(readOnly = true)
     public List<Country> getAllCountry() {
-        return countryRepository.findAll();
+        return countryRepository.findAll(Sort.by("id"));
     }
 }

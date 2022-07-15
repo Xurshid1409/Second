@@ -45,8 +45,8 @@ public class EnrolleeService {
         try {
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
-            diploma.setInstitutionId(institutionId);
             University university = institutionRepository.findById(institutionId).get();
+            diploma.setInstitutionId(university.getInstitutionId());
             diploma.setInstitutionName(university.getInstitutionName());
             University old = institutionRepository.findById(id).get();
             diploma.setInstitutionOldNameId(old.getId());
@@ -135,7 +135,7 @@ public class EnrolleeService {
 //            documentService.documentSave(save.getId(), diplomaCopy, diplomaIlova);
             documentSave(save.getId(), diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
-            FileResponse fileResponse = getFileResponse(diploma.getId());
+            FileResponse fileResponse = getFileResponse(save.getId());
             return new DiplomaResponse(diploma, fileResponse);
         } catch (Exception ex) {
             return new DiplomaResponse();
@@ -166,7 +166,7 @@ public class EnrolleeService {
 //            documentService.documentUpdate(save, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             documentUpdate(save, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
-            FileResponse fileResponse = getFileResponse(diploma.getId());
+            FileResponse fileResponse = getFileResponse(save.getId());
             return new DiplomaResponse(diploma, fileResponse);
         } catch (Exception ex) {
             return new DiplomaResponse();
@@ -194,14 +194,13 @@ public class EnrolleeService {
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
-            EnrolleeResponse enrolleeResponse = new EnrolleeResponse(enrolleeInfo);
-            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
-            if (applicationResponse.isPresent()) {
-                enrolleeResponse.setApplicationResponse(applicationResponse.get());
-            }else {
-                enrolleeResponse.setApplicationResponse(null);
-            }
-            return enrolleeResponse;
+            //            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+//            if (applicationResponse.isPresent()) {
+//                enrolleeResponse.setApplicationResponse(applicationResponse.get());
+//            }else {
+//                enrolleeResponse.setApplicationResponse(null);
+//            }
+            return new EnrolleeResponse(enrolleeInfo);
         } catch (Exception ex) {
             return new EnrolleeResponse();
         }

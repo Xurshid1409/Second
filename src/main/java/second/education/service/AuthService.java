@@ -45,6 +45,17 @@ public class AuthService {
     @Transactional
     public Result checkUser(IIBRequest iibRequest) {
         try {
+
+            List<User> users = userRepository.findAllByPhoneNumber(iibRequest.getPhoneNumber());
+            if (users.size() > 1) {
+                return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), true);
+            }
+
+            Optional<EnrolleeInfo> byPinfl = enrolleInfoRepository.findByPinfl(iibRequest.getPinfl());
+            if (byPinfl.isPresent()) {
+                return new Result(iibRequest.getPinfl() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), true);
+            }
+
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
             Data data = iibResponse.getData();
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(iibRequest.getPhoneNumber(), data.getPinfl());
@@ -83,6 +94,12 @@ public class AuthService {
             if (check.getPhoneNumber() == null) {
                 return new Result("Kiritilgan kod xato", false);
             }
+
+            List<User> users = userRepository.findAllByPhoneNumber(request.getPhoneNumber());
+            if (users.size() > 1) {
+                return new Result(request.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), true);
+            }
+
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(check.getPhoneNumber(), check.getPinfl());
             if (byPhoneNumber.isEmpty()) {
                 User user = new User();

@@ -14,5 +14,7 @@ public interface EnrolleInfoRepository extends JpaRepository<EnrolleeInfo, Integ
             "where u.phone_number=?1")
     Optional<EnrolleeInfo> findByEnrolle(String phoneNumber);
 
+    @Query("select e from EnrolleeInfo e where e.pinfl = ?1")
+    Optional<EnrolleeInfo> findByPinfl(String pinfl);
 
 }
