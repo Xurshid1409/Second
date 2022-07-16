@@ -14,7 +14,7 @@ public class Data {
 
     private String pinfl;
     private String gender;
-    private String photo;
+//    private String photo;
     private Citizenship citizenship;
     private Nationality nationality;
     @JsonProperty("birth_date")
