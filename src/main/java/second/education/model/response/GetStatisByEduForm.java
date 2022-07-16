@@ -5,6 +5,6 @@ import java.util.List;
 public interface GetStatisByEduForm {
 
     Integer getEduFormId();
-    String getEduFormNAme();
+    String getEduFormName();
     List<GetStatisByLanguage> getStatisByLanguage();
 }

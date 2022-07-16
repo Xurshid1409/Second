@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Integer> {
 
-    @Query(nativeQuery = true, value = "select l.language as getLanguageName, l.kvota_soni as KvotaSoni, count(a.id) as Count " +
+    @Query(nativeQuery = true, value = "select l.language as languageName, l.kvota_soni as kvotaSoni, count(a.id) as count " +
             " from language l join application a on l.id = a.language_id where l.edu_form_id = ?1 group by l.language, l.kvota_soni")
     List<GetStatisByLanguage> findAllByEduFormId(Integer eduForm_id);
 }

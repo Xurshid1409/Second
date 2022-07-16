@@ -21,6 +21,6 @@ public interface DirectionRepository extends JpaRepository<Direction, Integer> {
     Page<Direction> findDirectionByNameLike(String name, Pageable pageable);
 
 
-    @Query(nativeQuery = true, value = "select d.id as DirectionId, d.name as DirectionName from direction d where d.future_institution_id = ?1")
+    @Query(nativeQuery = true, value = "select d.id as directionId, d.name as directionName from second_education.public.direction d where d.future_institution_id = ?1")
     List<GetStatisByDirection> getAllByFutureInstitutionId(Integer futureInstitution_id);
 }

@@ -36,6 +36,6 @@ public class StatController {
 
     @PostMapping("IIBCheck")
     public String checkIIB(@RequestBody IIBRequest request) {
-       return iibServiceApi.checkIIB(request);
+       return statService.checkIIB(request);
     }
 }
