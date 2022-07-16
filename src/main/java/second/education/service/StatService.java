@@ -13,6 +13,7 @@ import second.education.repository.EduFormRepository;
 import second.education.repository.LanguageRepository;
 import second.education.service.api.IIBServiceApi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,20 +26,22 @@ public class StatService {
     private final LanguageRepository languageRepository;
     private final IIBServiceApi iibServiceApi;
 
-    public List<GetStatisByDirection> getStatisByDirections(Integer futureInstId) {
-        List<GetStatisByDirection> directionList = directionRepository.getAllByFutureInstitutionId(futureInstId);
-        directionList.forEach(d -> {
-            List<GetStatisByEduForm> eduForms = eduFormRepository.findAllByDirectionId(d.getDirectionId());
-            eduForms.forEach(eduForm -> {
-                d.getStatisByEduForm().add(eduForm);
-                List<GetStatisByLanguage> languages = languageRepository.findAllByEduFormId(eduForm.getEduFormId());
-                languages.forEach(l -> {
-                    eduForm.getStatisByLanguage().add(l);
-                });
-            });
-        });
-        return directionList;
-    }
+//    public List<GetStatisByDirection> getStatisByDirections(Integer futureInstId) {
+//        List<GetStatisByDirection> directionList = directionRepository.getAllByFutureInstitutionId(futureInstId);
+//        List<GetStatisByDirection> getStatisByDirections = new ArrayList<>();
+//        directionList.forEach(d -> {
+//            List<GetStatisByEduForm> eduForms = eduFormRepository.findAllByDirectionId(d.getDirectionId());
+//            eduForms.forEach(eduForm -> {
+//                List<GetStatisByLanguage> languages = languageRepository.findAllByEduFormId(eduForm.getEduFormId());
+//                languages.forEach(l -> {
+//                    eduForm.getStatisByLanguage().add(l);
+//                });
+//                d.getStatisByEduForm().add(eduForm);
+//            });
+//            getStatisByDirections.add(d);
+//        });
+//        return getStatisByDirections;
+//    }
 
     @Transactional
     public String checkIIB(IIBRequest request) {

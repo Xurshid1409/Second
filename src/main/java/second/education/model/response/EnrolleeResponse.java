@@ -26,6 +26,7 @@ public class EnrolleeResponse {
     private String permanentRegion;
     private String permanentDistrict;
     private String permanentAddress;
+    private String photo;
 //    private ApplicationResponse applicationResponse;
 
 
@@ -43,6 +44,7 @@ public class EnrolleeResponse {
         this.permanentAddress = enrolleeInfo.getPermanentAddress();
         this.gender = enrolleeInfo.getGender();
         this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
+        this.photo = enrolleeInfo.getPhoto();
     }
 
 }

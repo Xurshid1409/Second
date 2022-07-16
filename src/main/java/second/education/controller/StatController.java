@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import second.education.api_model.iib_api.Data;
+import second.education.domain.classificator.Direction;
 import second.education.model.request.IIBRequest;
 import second.education.model.response.GetStatAllCountAndToday;
 import second.education.model.response.GetStatisByDirection;
 import second.education.repository.ApplicationRepository;
+import second.education.repository.DirectionRepository;
 import second.education.service.StatService;
 import second.education.service.api.IIBServiceApi;
 
@@ -21,6 +23,7 @@ public class StatController {
     private final ApplicationRepository applicationRepository;
     private final StatService statService;
     private final IIBServiceApi iibServiceApi;
+    private final DirectionRepository directionRepository;
 
     @GetMapping("count")
     public ResponseEntity<?> getCountAndTodayCount() {
@@ -28,10 +31,10 @@ public class StatController {
         return ResponseEntity.ok(getStatAllCountAndToday);
     }
 
-    @GetMapping("/{futureInstId}")
+    @GetMapping("{futureInstId}")
     public ResponseEntity<?> getStatByFutureInst(@PathVariable int futureInstId) {
-        List<GetStatisByDirection> statisByDirections = statService.getStatisByDirections(futureInstId);
-        return ResponseEntity.ok(statisByDirections);
+        List<Direction> allByFutureInstitutionId = directionRepository.findAllByFutureInstitutionId(futureInstId);
+        return ResponseEntity.ok(allByFutureInstitutionId);
     }
 
     @PostMapping("IIBCheck")

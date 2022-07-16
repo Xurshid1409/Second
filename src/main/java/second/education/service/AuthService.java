@@ -57,6 +57,10 @@ public class AuthService {
             }
 
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+            if (iibResponse == null) {
+                return new Result("Shaxsni tasdiqlovchi ma'lumotlar hato kiritilgan, iltimos tekshirib qayta urinib ko'ring yoki IIB ga murojaat qiling", false);
+            }
+
             Data data = iibResponse.getData();
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumberOrPinfl(iibRequest.getPhoneNumber(), data.getPinfl());
             if (byPhoneNumber.isEmpty()) {
@@ -129,6 +133,7 @@ public class AuthService {
                     enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
                 }
                 enrolleeInfo.setPassportGivenDate(data.getPassportGivenDate());
+                enrolleeInfo.setPhoto(data.getPhoto());
                 enrolleeInfo.setUser(saveUser);
                 enrolleInfoRepository.save(enrolleeInfo);
                 return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);

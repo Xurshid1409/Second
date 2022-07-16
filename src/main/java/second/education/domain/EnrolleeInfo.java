@@ -31,6 +31,7 @@ public class EnrolleeInfo extends AbstractData<Integer> {
     private String permanentRegion;
     private String permanentDistrict;
     private String permanentAddress;
+    private String photo;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     private User user;
