@@ -46,10 +46,10 @@ public class EnrolleeService {
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
             University university = institutionRepository.findById(institutionId).get();
-            diploma.setInstitutionId(university.getInstitutionId());
+            diploma.setInstitutionId(institutionId);
             diploma.setInstitutionName(university.getInstitutionName());
-            University old = institutionRepository.findById(id).get();
-            diploma.setInstitutionOldNameId(old.getId());
+//            University old = institutionRepository.findById(id).get();
+            diploma.setInstitutionOldNameId(id);
             diploma.setInstitutionOldName(university.getNameOz());
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);
@@ -90,8 +90,8 @@ public class EnrolleeService {
             diploma.setInstitutionId(institutionId);
             University university = institutionRepository.findById(institutionId).get();
             diploma.setInstitutionName(university.getInstitutionName());
-            University old = institutionRepository.findById(id).get();
-            diploma.setInstitutionOldNameId(old.getId());
+//            University old = institutionRepository.findById(id).get();
+            diploma.setInstitutionOldNameId(id);
             diploma.setInstitutionOldName(university.getNameOz());
             diploma.setEduFormName(eduFormName);
             diploma.setEduFinishingDate(eduFinishingDate);

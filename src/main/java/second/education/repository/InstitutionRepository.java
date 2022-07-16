@@ -10,4 +10,7 @@ import java.util.List;
 public interface InstitutionRepository extends JpaRepository<University, Integer> {
 
     List<University> findAllByInstitutionTypeIdBetween(Integer institutionTypeId, Integer institutionTypeId2);
+
+
+
 }
