@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.classificator.EduForm;
 import second.education.domain.classificator.Language;
-import second.education.model.response.GetStatisByEduForm;
+import second.education.model.response.StatisEduFormResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +26,6 @@ public interface EduFormRepository extends JpaRepository<EduForm, Integer> {
     @Query("Select ef from EduForm ef where ef.direction.name LIKE  %?1% or ef.direction.futureInstitution.name LIKE %?1%")
     Page<EduForm> findEduFormByNameLike(String name, Pageable pageable);
 
-    @Query(nativeQuery = true, value = "select ef.id as eduFormId, ef.name as eduFormName from second_education.public.edu_form ef where ef.direction_id = ?1")
-    List<GetStatisByEduForm> findAllByDirectionId(Integer direction_id);
-
+    @Query(nativeQuery = true, value = "select ef.id as eduFormId, ef.name as eduFormName from edu_form ef where ef.direction_id =?1 ")
+    List<StatisEduFormResponse> findAllByDirectionId(Integer direction_id);
 }

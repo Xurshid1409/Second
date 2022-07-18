@@ -1,6 +1,7 @@
 package second.education.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,9 @@ import second.education.model.response.Result;
 import second.education.security.JwtTokenProvider;
 import second.education.security.UserDetailsImpl;
 import second.education.service.AuthService;
+import second.education.service.api.OneIdServiceApi;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,6 +30,7 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final OneIdServiceApi oneIdServiceApi;
 
     @PostMapping("/checkUser")
     public ResponseEntity<?> checkUser(@RequestBody IIBRequest iibRequest) {
@@ -71,5 +75,13 @@ public class AuthController {
     public ResponseEntity<?> validateCode(@RequestBody ValidateCodeRequest request) {
         Result result = authService.validateCheckCode(request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @GetMapping("/oneId")
+    public ResponseEntity<?> getOneId() {
+        URI uri = oneIdServiceApi.redirectOneIdUrl();
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(uri)
+                .build();
     }
 }

@@ -19,6 +19,7 @@ public class User extends AbstractData<Integer> {
 
     private String phoneNumber;
     private String password;
+    private String pinfl;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     private Role role;

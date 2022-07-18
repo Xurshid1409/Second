@@ -1,17 +1,8 @@
 package second.education.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public interface StatisLanguageResponse {
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class StatisLanguageResponse {
-
-    private String languageName;
-    private Integer kvotaSoni;
-    private Integer count;
+    String getLanguage();
+    Integer getKvota();
+    Long getCount();
 }

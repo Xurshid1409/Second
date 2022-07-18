@@ -43,6 +43,10 @@ public class EnrolleeService {
                                          MultipartFile diplomaIlova) {
 
         try {
+            List<Diploma> allDiplomaByEnrollee = diplomaRepository.findAllDiplomaByEnrollee(principal.getName());
+            if (allDiplomaByEnrollee.size() > 1) {
+                return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+            }
             Diploma diploma = new Diploma();
             diploma.setCountryName(countryName);
             University university = institutionRepository.findById(institutionId).get();

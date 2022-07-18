@@ -1,11 +1,21 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import second.education.api_model.iib_api.Data;
 import second.education.api_model.iib_api.IIBResponse;
+import second.education.api_model.one_id.OneIdResponseToken;
+import second.education.api_model.one_id.OneIdResponseUserInfo;
 import second.education.api_model.sms_api.SMSAPIRequest;
 import second.education.domain.CheckSMSEntity;
 import second.education.domain.EnrolleeInfo;
@@ -15,19 +25,25 @@ import second.education.model.request.DefaultRole;
 import second.education.model.request.IIBRequest;
 import second.education.model.request.ValidateCodeRequest;
 import second.education.model.response.EnrolleeResponse;
+import second.education.model.response.JwtResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.CheckSMSRepository;
 import second.education.repository.EnrolleInfoRepository;
 import second.education.repository.RoleRepository;
 import second.education.repository.UserRepository;
+import second.education.security.JwtTokenProvider;
+import second.education.security.UserDetailsImpl;
 import second.education.service.api.IIBServiceApi;
+import second.education.service.api.OneIdServiceApi;
 import second.education.service.api.SmsServiceApi;
 
+import java.net.URI;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +56,9 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EnrolleInfoRepository enrolleInfoRepository;
-    private final DiplomaService diplomaService;
+    private final OneIdServiceApi oneIdServiceApi;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public Result checkUser(IIBRequest iibRequest) {
@@ -180,31 +198,27 @@ public class AuthService {
         return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
     }
 
+
     @Transactional
-    public EnrolleeInfo saveEnrolleeInfo(User saveUser, Data data) {
-        EnrolleeInfo enrolleeInfo = new EnrolleeInfo();
-        enrolleeInfo.setCitizenship(data.getCitizenship().getName());
-        enrolleeInfo.setNationality(data.getNationality().getName());
-        enrolleeInfo.setFirstname(data.getFirstName());
-        enrolleeInfo.setLastname(data.getLastName());
-        enrolleeInfo.setMiddleName(data.getMiddleName());
-        enrolleeInfo.setPinfl(data.getPinfl());
-        enrolleeInfo.setPhoneNumber(saveUser.getPhoneNumber());
-        enrolleeInfo.setGender(data.getGender());
-        enrolleeInfo.setDateOfBirth(data.getBirthDate());
-        enrolleeInfo.setPassportSerialAndNumber(data.getPassportSerial() + data.getPassportNumber());
-        if (data.getPermanentDistrict().getRegion().getName() != null) {
-            enrolleeInfo.setPermanentRegion(data.getPermanentDistrict().getRegion().getName());
+    public Result validateUsersOneId(String code) {
+
+        OneIdResponseToken oneIdToken = oneIdServiceApi.getAccessAndRefreshToken(code);
+        if (oneIdToken == null) {
+            return new Result("Token" + ResponseMessage.NOT_FOUND.getMessage(), false);
         }
-        if (data.getPermanentDistrict().getName() != null) {
-            enrolleeInfo.setPermanentDistrict(data.getPermanentDistrict().getName());
-        }
-        if (data.getPermanentAddress() != null) {
-            enrolleeInfo.setPermanentAddress(data.getPermanentAddress());
-        }
-        enrolleeInfo.setPassportGivenDate(data.getPassportGivenDate());
-        enrolleeInfo.setUser(saveUser);
-        return enrolleInfoRepository.save(enrolleeInfo);
+        OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
+        User user = userRepository.findByPinfl(oneIdUserInfo.getPin());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPinfl()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String authToken = jwtTokenProvider.generateToken(userDetails);
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), userDetails.getUsername(), authToken, roles);
+        return new Result(ResponseMessage.SUCCESSFULLY.getMessage(), true, jwtResponse);
     }
 
     private Role getRole() {

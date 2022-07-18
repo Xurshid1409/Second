@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
 import second.education.model.response.ApplicationResponse;
 import second.education.model.response.GetStatAllCountAndToday;
-import second.education.model.response.GetStatisByLanguage;
+import second.education.model.response.StatisLanguageResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +49,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a where a.enrolleeInfo.user.phoneNumber=?1")
     Optional<Application> checkApp(String phoneNumber);
 
-
-    @Query(nativeQuery = true, value = "select l.language, l.kvota_soni, count(a.id) from application a " +
+    @Query(nativeQuery = true, value = "select l.language as language, l.kvota_soni as kvota, count(a.id) as count from application a " +
             "join language l on l.id = a.language_id where l.edu_form_id=?1 group by l.language, l.kvota_soni")
-    List<GetStatisByLanguage> findAllByEduFormId(Integer eduForm_id);
-
+    List<StatisLanguageResponse> getStatisByEduForm(Integer eduFromId);
 }

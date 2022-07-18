@@ -4,16 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.model.request.IIBRequest;
-import second.education.model.response.GetStatisByDirection;
-import second.education.model.response.GetStatisByEduForm;
-import second.education.model.response.GetStatisByLanguage;
+import second.education.model.response.StatisDirectionResponse;
+import second.education.model.response.StatisEduFormResponse;
+import second.education.model.response.StatisLanguageResponse;
 import second.education.repository.ApplicationRepository;
 import second.education.repository.DirectionRepository;
 import second.education.repository.EduFormRepository;
 import second.education.repository.LanguageRepository;
 import second.education.service.api.IIBServiceApi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,22 +25,20 @@ public class StatService {
     private final LanguageRepository languageRepository;
     private final IIBServiceApi iibServiceApi;
 
-//    public List<GetStatisByDirection> getStatisByDirections(Integer futureInstId) {
-//        List<GetStatisByDirection> directionList = directionRepository.getAllByFutureInstitutionId(futureInstId);
-//        List<GetStatisByDirection> getStatisByDirections = new ArrayList<>();
-//        directionList.forEach(d -> {
-//            List<GetStatisByEduForm> eduForms = eduFormRepository.findAllByDirectionId(d.getDirectionId());
-//            eduForms.forEach(eduForm -> {
-//                List<GetStatisByLanguage> languages = languageRepository.findAllByEduFormId(eduForm.getEduFormId());
-//                languages.forEach(l -> {
-//                    eduForm.getStatisByLanguage().add(l);
-//                });
-//                d.getStatisByEduForm().add(eduForm);
+    @Transactional(readOnly = true)
+    public List<StatisDirectionResponse> getAllStatis(Integer futureInstId){
+        List<StatisDirectionResponse> directions = directionRepository.getAllDirectionByFutureInst(futureInstId);
+//        directions.forEach(d -> {
+//            List<StatisEduFormResponse> eduForm = eduFormRepository.findAllByDirectionId(d.getDirectionId());
+//
+//            eduForm.forEach(e -> {
+//                List<StatisLanguageResponse> languages = applicationRepository.getStatisByEduForm(e.getEduFormId());
 //            });
-//            getStatisByDirections.add(d);
 //        });
-//        return getStatisByDirections;
-//    }
+       return directions;
+    }
+
+
 
     @Transactional
     public String checkIIB(IIBRequest request) {

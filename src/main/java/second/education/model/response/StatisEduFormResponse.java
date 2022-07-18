@@ -1,18 +1,11 @@
 package second.education.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class StatisEduFormResponse {
+public interface StatisEduFormResponse {
 
-    private Integer eduFormId;
-    private String eduFormName;
-    private List<StatisLanguageResponse> statisLanguageResponses;
+    Integer getEduFormId();
+    String getEduFormName();
+    List<StatisLanguageResponse> getStatisLanguageResponses();
+
 }
