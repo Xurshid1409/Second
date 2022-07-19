@@ -38,7 +38,6 @@ public class AdminService {
             user.setPassword(passwordEncoder.encode(request.getPinfl()));
             Role role = roleRepository.findByName(DefaultRole.ROLE_UADMIN.getMessage()).get();
             user.setRole(role);
-            user.setPinfl(request.getPinfl());
             User saveUser = userRepository.save(user);
             AdminEntity adminEntity = new AdminEntity();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
@@ -64,7 +63,6 @@ public class AdminService {
             User user = new User();
             user.setPhoneNumber(request.getPhoneNumber());
             user.setPassword(passwordEncoder.encode(request.getPinfl()));
-            user.setPinfl(request.getPinfl());
             User saveUser = userRepository.save(user);
             AdminEntity adminEntity = new AdminEntity();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();

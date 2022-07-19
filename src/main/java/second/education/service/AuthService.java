@@ -206,7 +206,7 @@ public class AuthService {
         OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
         User user = userRepository.findByPinfl(oneIdUserInfo.getPin()).get();
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPinfl()));
+                new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String authToken = jwtTokenProvider.generateToken(userDetails);
