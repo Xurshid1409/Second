@@ -1,6 +1,7 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,11 @@ import second.education.model.request.DefaultRole;
 import second.education.model.request.UserRequest;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
+import second.education.model.response.UniversityResponse;
+import second.education.model.response.UAdminResponse;
 import second.education.repository.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +38,7 @@ public class AdminService {
 
         try {
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPinfl());
-            if (byPhoneNumber.isPresent()) {
+            if (byPhoneNumber.isEmpty()) {
                 User user = new User();
                 user.setPhoneNumber(request.getPinfl());
                 user.setPassword(passwordEncoder.encode(request.getPinfl()));
@@ -88,5 +92,36 @@ public class AdminService {
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UAdminResponse> getUAdmins(int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        Page<AdminEntity> allAdmins = adminEntityRepository.getAllAdmins(pageable);
+        List<UAdminResponse> uAdminResponses = new ArrayList<>();
+        allAdmins.forEach(adminEntity -> {
+            UAdminResponse uAdminResponse = new UAdminResponse();
+            uAdminResponse.setId(uAdminResponse.getId());
+            uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
+            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
+            uAdminResponses.add(uAdminResponse);
+        });
+        return new PageImpl<>(uAdminResponses, pageable, allAdmins.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public UAdminResponse getUAdminById(int adminEntityId) {
+
+        AdminEntity adminEntity = adminEntityRepository.getAdminById(adminEntityId).get();
+            UAdminResponse uAdminResponse = new UAdminResponse();
+            uAdminResponse.setId(uAdminResponse.getId());
+            uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
+            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
+           return uAdminResponse;
     }
 }

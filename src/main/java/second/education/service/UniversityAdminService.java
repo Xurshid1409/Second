@@ -8,7 +8,6 @@ import second.education.domain.*;
 import second.education.domain.classificator.University;
 import second.education.model.response.*;
 import second.education.repository.*;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
