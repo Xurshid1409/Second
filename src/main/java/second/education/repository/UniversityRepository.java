@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface UniversityRepository extends JpaRepository<University, Integer> {
 
+    @Query(" select u from University u where u.institutionId=?1 ")
+    List<University> findAllByInstitutionId(Integer institutionId);
 
 }

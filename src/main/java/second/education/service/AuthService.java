@@ -204,7 +204,7 @@ public class AuthService {
             return new Result("Token" + ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
-        User user = userRepository.findByPinfl(oneIdUserInfo.getPin()).get();
+        User user = userRepository.findByPhoneNumber(oneIdUserInfo.getPin()).get();
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);

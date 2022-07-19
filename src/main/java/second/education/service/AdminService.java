@@ -42,11 +42,7 @@ public class AdminService {
             AdminEntity adminEntity = new AdminEntity();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
-            List<University> universities = new ArrayList<>();
-            request.getUniversitiesId().forEach(u -> {
-                University university = universityRepository.findById(u).get();
-                universities.add(university);
-            });
+            List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
             adminEntity.setUniversities(universities);
             adminEntity.setUser(saveUser);
             adminEntityRepository.save(adminEntity);
@@ -64,11 +60,7 @@ public class AdminService {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();
-            List<University> universities = new ArrayList<>();
-            request.getUniversitiesId().forEach(u -> {
-                University university = universityRepository.findById(u).get();
-                universities.add(university);
-            });
+            List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
             adminEntity.setUniversities(universities);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
@@ -76,6 +68,4 @@ public class AdminService {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
     }
-
-
 }

@@ -84,4 +84,9 @@ public class AuthController {
                 .location(uri)
                 .build();
     }
+
+    @PostMapping("/oneId/signIn")
+    public Result signIn(@RequestParam(value = "code") String code) {
+        return authService.validateUsersOneId(code);
+    }
 }

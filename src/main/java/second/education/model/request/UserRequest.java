@@ -12,6 +12,6 @@ public class UserRequest {
     private String phoneNumber;
     private String password;
     private Integer futureInstId;
-    private List<Integer> universitiesId;
+    private Integer universityId;
     private String pinfl;
 }
