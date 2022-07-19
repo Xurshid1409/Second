@@ -21,7 +21,7 @@ public class AdminEntity extends AbstractData<Integer> {
     private FutureInstitution futureInstitution;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "admin_entity_id")
+    @JoinColumn(name = "university_id")
     private List<University> universities = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
