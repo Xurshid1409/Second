@@ -35,7 +35,7 @@ public class AdminService {
         try {
             User user = new User();
             user.setPhoneNumber(request.getPhoneNumber());
-            user.setPassword(passwordEncoder.encode(request.getPinfl()));
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             Role role = roleRepository.findByName(DefaultRole.ROLE_UADMIN.getMessage()).get();
             user.setRole(role);
             User saveUser = userRepository.save(user);
@@ -57,14 +57,10 @@ public class AdminService {
     }
 
     @Transactional
-    public Result updateInstitutionAdmin(UserRequest request) {
+    public Result updateInstitutionAdmin(int adminEntityId, UserRequest request) {
 
         try {
-            User user = new User();
-            user.setPhoneNumber(request.getPhoneNumber());
-            user.setPassword(passwordEncoder.encode(request.getPinfl()));
-            User saveUser = userRepository.save(user);
-            AdminEntity adminEntity = new AdminEntity();
+            AdminEntity adminEntity = adminEntityRepository.findById(adminEntityId).get();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();
@@ -74,7 +70,6 @@ public class AdminService {
                 universities.add(university);
             });
             adminEntity.setUniversities(universities);
-            adminEntity.setUser(saveUser);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {

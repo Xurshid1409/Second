@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import second.education.model.request.DirectionRequest;
 import second.education.model.request.EduFormRequest;
 import second.education.model.request.FutureInstitutionRequest;
+import second.education.model.request.UserRequest;
 import second.education.model.response.*;
+import second.education.service.AdminService;
 import second.education.service.DirectionService;
 import second.education.service.EduFormService;
 import second.education.service.FutureInstitutionService;
@@ -24,6 +26,7 @@ public class AdminController {
     private final FutureInstitutionService futureInstitutionService;
     private final DirectionService directionService;
     private final EduFormService eduFormService;
+    private final AdminService adminService;
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
@@ -155,6 +158,18 @@ public class AdminController {
     @DeleteMapping("eduForm{eduFormId}")
     public ResponseEntity<?> deleteEduForm(@PathVariable int eduFormId) {
         Result result = eduFormService.deleteEduForm(eduFormId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+
+    @PostMapping("/uadmin")
+    public ResponseEntity<?> createUAdmin(@RequestBody UserRequest request) {
+        Result result = adminService.createInstitutionAdmin(request);
+        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
+    }
+
+    @PutMapping("update/uadmin/{adminEntityId}")
+    public ResponseEntity<?> updateUAdmin(@PathVariable int adminEntityId, @RequestBody UserRequest request) {
+        Result result = adminService.updateInstitutionAdmin(adminEntityId, request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 }
