@@ -17,6 +17,7 @@ import second.education.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,20 +34,24 @@ public class AdminService {
     public Result createInstitutionAdmin(UserRequest request) {
 
         try {
-            User user = new User();
-            user.setPhoneNumber(request.getPhoneNumber());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-            Role role = roleRepository.findByName(DefaultRole.ROLE_UADMIN.getMessage()).get();
-            user.setRole(role);
-            User saveUser = userRepository.save(user);
-            AdminEntity adminEntity = new AdminEntity();
-            FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
-            adminEntity.setFutureInstitution(futureInstitution);
-            List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
-            adminEntity.setUniversities(universities);
-            adminEntity.setUser(saveUser);
-            adminEntityRepository.save(adminEntity);
-            return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPhoneNumber());
+            if (byPhoneNumber.isPresent()) {
+                User user = new User();
+                user.setPhoneNumber(request.getPhoneNumber());
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+                Role role = roleRepository.findByName(DefaultRole.ROLE_UADMIN.getMessage()).get();
+                user.setRole(role);
+                User saveUser = userRepository.save(user);
+                AdminEntity adminEntity = new AdminEntity();
+                FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
+                adminEntity.setFutureInstitution(futureInstitution);
+                List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
+                adminEntity.setUniversities(universities);
+                adminEntity.setUser(saveUser);
+                adminEntityRepository.save(adminEntity);
+                return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
+            }
+            return new Result(ResponseMessage.ALREADY_EXISTS.getMessage(), false);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
         }
