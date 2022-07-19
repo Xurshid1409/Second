@@ -16,7 +16,7 @@ public class OneIdServiceApi {
 
     private final String client_id = "vakansiya.edu.uz";
     private final String scope = "second.edu.uz";
-    private final String redirect_uri = "http://localhost:8080/api/public/oneId/signIn/qabul.jsp";
+    private final String redirect_uri = "http://localhost:8080/api/auth/oneId/signIn/qabul.jsp";
     private final String client_secret = "EN8CdZBJtqWpMfhK7ASj6rUb";
     private final WebClient webClient;
 
