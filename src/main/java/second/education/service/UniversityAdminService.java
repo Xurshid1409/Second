@@ -39,6 +39,7 @@ public class UniversityAdminService {
     }
 
 
+    @Transactional(readOnly = true)
     public Result getDiplomaById(Integer diplomaId, Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
@@ -49,4 +50,5 @@ public class UniversityAdminService {
 
         return new Result("diploma",true,new DiplomaResponse(diploma.get()));
     }
+
 }

@@ -15,7 +15,6 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +44,7 @@ public class AdminService {
                 AdminEntity adminEntity = new AdminEntity();
                 FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                 adminEntity.setFutureInstitution(futureInstitution);
-                List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
+                List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
                 adminEntity.setUniversities(universities);
                 adminEntity.setUser(saveUser);
                 adminEntityRepository.save(adminEntity);
@@ -66,10 +65,11 @@ public class AdminService {
             if (byPhoneNumber.isPresent()) {
                 if (adminEntityId.equals(byPhoneNumber.get().getId())) {
                     byPhoneNumber.get().setPhoneNumber(request.getPinfl());
+                    byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
                     FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                     adminEntity.setFutureInstitution(futureInstitution);
                     adminEntity.getUniversities().clear();
-                    List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
+                    List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
                     adminEntity.setUniversities(universities);
                     adminEntityRepository.save(adminEntity);
                     return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
@@ -77,10 +77,11 @@ public class AdminService {
                 return new Result("bu pinfl oldin qo'shilgan", false);
             }
             byPhoneNumber.get().setPhoneNumber(request.getPinfl());
+            byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();
-            List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
+            List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
             adminEntity.setUniversities(universities);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
