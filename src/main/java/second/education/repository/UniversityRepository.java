@@ -2,10 +2,8 @@ package second.education.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import second.education.domain.AdminEntity;
-import java.util.Optional;
+import second.education.domain.classificator.University;
 
 @Repository
-public interface AdminEntityRepository extends JpaRepository<AdminEntity, Integer> {
-
+public interface UniversityRepository extends JpaRepository<University, Integer> {
 }

@@ -28,10 +28,7 @@ import second.education.model.response.EnrolleeResponse;
 import second.education.model.response.JwtResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
-import second.education.repository.CheckSMSRepository;
-import second.education.repository.EnrolleInfoRepository;
-import second.education.repository.RoleRepository;
-import second.education.repository.UserRepository;
+import second.education.repository.*;
 import second.education.security.JwtTokenProvider;
 import second.education.security.UserDetailsImpl;
 import second.education.service.api.IIBServiceApi;
@@ -207,8 +204,7 @@ public class AuthService {
             return new Result("Token" + ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
-        User user = userRepository.findByPinfl(oneIdUserInfo.getPin());
-
+        User user = userRepository.findByPinfl(oneIdUserInfo.getPin()).get();
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPinfl()));
         SecurityContextHolder.getContext().setAuthentication(authentication);

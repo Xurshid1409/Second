@@ -5,8 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import second.education.domain.AbstractData;
+import second.education.domain.AdminEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
@@ -26,4 +30,7 @@ public class University extends AbstractData<Integer> {
     private String nameRu;
     private Integer regionSoatoId;
     private String regionName;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private AdminEntity adminEntity;
 }
