@@ -34,11 +34,11 @@ public class AdminService {
     public Result createInstitutionAdmin(UserRequest request) {
 
         try {
-            Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPhoneNumber());
+            Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPinfl());
             if (byPhoneNumber.isPresent()) {
                 User user = new User();
-                user.setPhoneNumber(request.getPhoneNumber());
-                user.setPassword(passwordEncoder.encode(request.getPassword()));
+                user.setPhoneNumber(request.getPinfl());
+                user.setPassword(passwordEncoder.encode(request.getPinfl()));
                 Role role = roleRepository.findByName(DefaultRole.ROLE_UADMIN.getMessage()).get();
                 user.setRole(role);
                 User saveUser = userRepository.save(user);
@@ -58,10 +58,25 @@ public class AdminService {
     }
 
     @Transactional
-    public Result updateInstitutionAdmin(int adminEntityId, UserRequest request) {
+    public Result updateInstitutionAdmin(Integer adminEntityId, UserRequest request) {
 
         try {
             AdminEntity adminEntity = adminEntityRepository.findById(adminEntityId).get();
+            Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPinfl());
+            if (byPhoneNumber.isPresent()) {
+                if (adminEntityId.equals(byPhoneNumber.get().getId())) {
+                    byPhoneNumber.get().setPhoneNumber(request.getPinfl());
+                    FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
+                    adminEntity.setFutureInstitution(futureInstitution);
+                    adminEntity.getUniversities().clear();
+                    List<University> universities = universityRepository.findAllByInstitutionId(request.getUniversityId());
+                    adminEntity.setUniversities(universities);
+                    adminEntityRepository.save(adminEntity);
+                    return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+                }
+                return new Result("bu pinfl oldin qo'shilgan", false);
+            }
+            byPhoneNumber.get().setPhoneNumber(request.getPinfl());
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();

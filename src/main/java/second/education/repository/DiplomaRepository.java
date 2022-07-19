@@ -1,5 +1,7 @@
 package second.education.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -31,4 +33,13 @@ public interface DiplomaRepository extends JpaRepository<Diploma, Integer> {
             "join enrollee_info ei on ei.id = d.enrollee_info_id " +
             "join users u on ei.user_id = u.id where u.phone_number = ?1 ")
     List<Diploma> findAllDiplomaByEnrollee(String phoneNumber);
+
+
+    @Query("select d from  Diploma  as d where d.institutionId=?1 and d.isActive=true ")
+    Page<Diploma> getAllDiplomebyUAdmin(Integer id, Pageable pageable);
+
+
+    @Query("select d from  Diploma  as d where d.institutionId=?1 and d.isActive=true and d.id=?2 ")
+    Optional<Diploma> getByIdDiplomebyUAdmin(Integer institutionId,Integer diplomaId);
+
 }
