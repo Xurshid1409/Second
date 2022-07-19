@@ -25,7 +25,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("select u from User u where u.phoneNumber = ?1")
     List<User> findAllByPhoneNumber(String phoneNumber);
 
-    @Query("select u from User u where u.role.id = 3")
-    Page<User> findAllByRole(Pageable pageable);
 
 }

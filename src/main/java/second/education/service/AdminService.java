@@ -70,11 +70,13 @@ public class AdminService {
                 if (adminEntityId.equals(byPhoneNumber.get().getId())) {
                     byPhoneNumber.get().setPhoneNumber(request.getPinfl());
                     byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
+                    User save = userRepository.save(byPhoneNumber.get());
                     FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                     adminEntity.setFutureInstitution(futureInstitution);
                     adminEntity.getUniversities().clear();
                     List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
                     adminEntity.setUniversities(universities);
+                    adminEntity.setUser(save);
                     adminEntityRepository.save(adminEntity);
                     return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
                 }
@@ -82,11 +84,13 @@ public class AdminService {
             }
             byPhoneNumber.get().setPhoneNumber(request.getPinfl());
             byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
+            User save = userRepository.save(byPhoneNumber.get());
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();
             List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
             adminEntity.setUniversities(universities);
+            adminEntity.setUser(save);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
