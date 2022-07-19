@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import second.education.domain.classificator.University;
 
 @Getter
 @Setter
@@ -24,4 +25,11 @@ public class UniversityResponse {
     private String terminationDate;
     private Integer regionSoatoId;
     private String regionName;
+
+    public UniversityResponse(University university) {
+        this.id = university.getId();
+        this.institutionName = university.getInstitutionName();
+        this.institutionId = university.getInstitutionId();
+        this.nameOz = university.getNameOz();
+    }
 }

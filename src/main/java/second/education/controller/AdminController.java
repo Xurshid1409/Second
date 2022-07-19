@@ -172,4 +172,17 @@ public class AdminController {
         Result result = adminService.updateInstitutionAdmin(adminEntityId, request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+
+    @GetMapping("/getAllUAdmins")
+    public ResponseEntity<?> getAllUAdmins( @RequestParam(value = "page", defaultValue = "0") int page,
+                                            @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<UAdminResponse> uAdmins = adminService.getUAdmins(page, size);
+        return ResponseEntity.ok(uAdmins);
+    }
+
+    @GetMapping("/getUAdmin/{id}")
+    public ResponseEntity<?> getUAdmin(@PathVariable Integer id) {
+        UAdminResponse uAdminById = adminService.getUAdminById(id);
+        return ResponseEntity.ok(uAdminById);
+    }
 }
