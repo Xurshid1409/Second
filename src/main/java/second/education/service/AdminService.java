@@ -15,6 +15,9 @@ import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
 import second.education.repository.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -40,10 +43,12 @@ public class AdminService {
             AdminEntity adminEntity = new AdminEntity();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
+            List<University> universities = new ArrayList<>();
             request.getUniversitiesId().forEach(u -> {
                 University university = universityRepository.findById(u).get();
-                adminEntity.addUniversities(university);
+                universities.add(university);
             });
+            adminEntity.setUniversities(universities);
             adminEntity.setUser(saveUser);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
@@ -64,10 +69,13 @@ public class AdminService {
             AdminEntity adminEntity = new AdminEntity();
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
+            adminEntity.getUniversities().clear();
+            List<University> universities = new ArrayList<>();
             request.getUniversitiesId().forEach(u -> {
                 University university = universityRepository.findById(u).get();
-                adminEntity.addUniversities(university);
+                universities.add(university);
             });
+            adminEntity.setUniversities(universities);
             adminEntity.setUser(saveUser);
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);

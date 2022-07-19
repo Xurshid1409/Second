@@ -26,14 +26,4 @@ public class AdminEntity extends AbstractData<Integer> {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
-
-    public void addUniversities(University university) {
-        this.universities.add(university);
-        university.setAdminEntity(this);
-    }
-
-    public void removeUniversity(University university) {
-        universities.remove(university);
-        university.setAdminEntity(null);
-    }
 }

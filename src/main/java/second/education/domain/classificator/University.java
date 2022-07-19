@@ -31,6 +31,4 @@ public class University extends AbstractData<Integer> {
     private Integer regionSoatoId;
     private String regionName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private AdminEntity adminEntity;
 }
