@@ -67,7 +67,7 @@ public class AdminService {
             AdminEntity adminEntity = adminEntityRepository.findById(adminEntityId).get();
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPinfl());
             if (byPhoneNumber.isPresent()) {
-                if (adminEntityId.equals(byPhoneNumber.get().getId())) {
+                if (adminEntity.getUser().getId().equals(byPhoneNumber.get().getId())) {
                     byPhoneNumber.get().setPhoneNumber(request.getPinfl());
                     byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
                     User save = userRepository.save(byPhoneNumber.get());
@@ -120,12 +120,12 @@ public class AdminService {
     public UAdminResponse getUAdminById(int adminEntityId) {
 
         AdminEntity adminEntity = adminEntityRepository.getAdminById(adminEntityId).get();
-            UAdminResponse uAdminResponse = new UAdminResponse();
-            uAdminResponse.setId(adminEntity.getId());
-            uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
-            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
-            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
-            uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
-           return uAdminResponse;
+        UAdminResponse uAdminResponse = new UAdminResponse();
+        uAdminResponse.setId(adminEntity.getId());
+        uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
+        uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+        uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+        uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
+        return uAdminResponse;
     }
 }

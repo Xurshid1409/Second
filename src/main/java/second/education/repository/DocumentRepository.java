@@ -13,6 +13,6 @@ public interface DocumentRepository extends JpaRepository<Document, Integer> {
 
     List<Document> findAllByDiplomaId(Integer diploma_id);
 
-    @Query("select d from Document as d where d.diploma.enrolleeInfo.id=?")
+    @Query("select d from Document as d where d.diploma.enrolleeInfo.id=?1")
     List<Document> getAllDocumentByEnrollId(Integer enrollId);
 }
