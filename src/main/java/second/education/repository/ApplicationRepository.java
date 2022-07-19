@@ -1,5 +1,7 @@
 package second.education.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -40,7 +42,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     Optional<ApplicationResponse> findByAppByPrincipal(Integer enrolleInfoId);
 
 
-
     @Query(nativeQuery = true, value = "select count(a.id) as count_today, " +
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
@@ -52,4 +53,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(nativeQuery = true, value = "select l.language as language, l.kvota_soni as kvota, count(a.id) as count from application a " +
             "join language l on l.id = a.language_id where l.edu_form_id=?1 group by l.language, l.kvota_soni")
     List<StatisLanguageResponse> getStatisByEduForm(Integer eduFromId);
+
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true ")
+    Page<Application> getAllApp(Integer instId, Pageable pageable);
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true ")
+    Optional<Application> getAppOne(Integer instId);
+
 }
