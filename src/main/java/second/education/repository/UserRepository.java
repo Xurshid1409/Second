@@ -21,11 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "where u.phoneNumber=?1 or ei.pinfl=?2")
     Optional<User> findByPhoneNumberOrPinfl(String phoneNumber, String pinfl);
 
-
     @Query("select u from User u where u.phoneNumber = ?1")
     List<User> findAllByPhoneNumber(String phoneNumber);
-
-    @Query("select u from User u where u.role.id = 3")
-    Page<User> findAllByRole(Pageable pageable);
 
 }

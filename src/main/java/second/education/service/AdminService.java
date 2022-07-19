@@ -102,7 +102,7 @@ public class AdminService {
         List<UAdminResponse> uAdminResponses = new ArrayList<>();
         allAdmins.forEach(adminEntity -> {
             UAdminResponse uAdminResponse = new UAdminResponse();
-            uAdminResponse.setId(uAdminResponse.getId());
+            uAdminResponse.setId(adminEntity.getId());
             uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
             uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
             uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
