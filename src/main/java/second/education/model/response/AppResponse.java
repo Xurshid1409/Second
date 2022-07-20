@@ -16,16 +16,14 @@ public class AppResponse {
 
     private EnrolleeResponse enrolleeResponse;
     private DiplomaResponse diplomaResponse;
-    private String phoneNumber;
-    private ApplicationResponse applicationResponse;
 
-    Integer Id;
+    Integer id;
 
     private Integer tilId;
 
     private String tilName;
 
-    Integer ShaklId;
+    Integer shaklId;
 
     String shaklName;
 
@@ -43,14 +41,18 @@ public class AppResponse {
 
     String createdDate;
 
-    public AppResponse(Application application){
-        tilId=application.getLanguage().getId();
-        tilName=application.getLanguage().getLanguage();
-        directionId=application.getEduForm().getDirection().getId();
-        directionName=application.getEduForm().getDirection().getName();
-        futureInstitutionId=application.getFutureInstitution().getId();
-        futureInstitutionName=application.getFutureInstitution().getName();
-        appStatus=application.getStatus();
-        diplomaStatus=application.getDiplomaStatus();
+    public AppResponse(Application application) {
+        this.id = application.getId();
+        this.tilId = application.getLanguage().getId();
+        this.shaklId=application.getEduForm().getId();
+        this.shaklName=application.getEduForm().getName();
+        this.tilName = application.getLanguage().getLanguage();
+        this.directionId = application.getEduForm().getDirection().getId();
+        this.directionName = application.getEduForm().getDirection().getName();
+        this.futureInstitutionId = application.getFutureInstitution().getId();
+        this.futureInstitutionName = application.getFutureInstitution().getName();
+        this.appStatus = application.getStatus();
+        this.diplomaStatus = application.getDiplomaStatus();
+       this.createdDate=application.getCreatedDate().toString();
     }
 }

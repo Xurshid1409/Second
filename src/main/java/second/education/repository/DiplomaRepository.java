@@ -35,7 +35,7 @@ public interface DiplomaRepository extends JpaRepository<Diploma, Integer> {
     List<Diploma> findAllDiplomaByEnrollee(String phoneNumber);
 
 
-    @Query("select d from  Diploma  as d where d.institutionId=?1 and d.isActive=true ")
+    @Query(value = "select d from   Diploma  d where d.institutionId=?1 and d.isActive=true ")
     Page<Diploma> getAllDiplomebyUAdmin(Integer id, Pageable pageable);
 
 

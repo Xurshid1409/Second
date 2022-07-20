@@ -20,7 +20,7 @@ public class AdminEntity extends AbstractData<Integer> {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FutureInstitution futureInstitution;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<University> universities = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -18,6 +18,7 @@ import second.education.model.response.UniversityResponse;
 import second.education.model.response.UAdminResponse;
 import second.education.repository.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,8 +69,8 @@ public class AdminService {
             Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(request.getPinfl());
             if (byPhoneNumber.isPresent()) {
                 if (adminEntity.getUser().getId().equals(byPhoneNumber.get().getId())) {
-                    byPhoneNumber.get().setPhoneNumber(request.getPinfl());
-                    byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
+                    adminEntity.getUser().setPhoneNumber(request.getPinfl());
+                    adminEntity.getUser().setPassword(passwordEncoder.encode(request.getPinfl()));
                     User save = userRepository.save(byPhoneNumber.get());
                     FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                     adminEntity.setFutureInstitution(futureInstitution);
@@ -82,15 +83,16 @@ public class AdminService {
                 }
                 return new Result("bu pinfl oldin qo'shilgan", false);
             }
-            byPhoneNumber.get().setPhoneNumber(request.getPinfl());
-            byPhoneNumber.get().setPassword(passwordEncoder.encode(request.getPinfl()));
-            User save = userRepository.save(byPhoneNumber.get());
+            adminEntity.getUser().setPhoneNumber(request.getPinfl());
+            adminEntity.getUser().setPassword(passwordEncoder.encode(request.getPinfl()));
+            User save = userRepository.save(adminEntity.getUser());
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
             adminEntity.setFutureInstitution(futureInstitution);
             adminEntity.getUniversities().clear();
             List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
             adminEntity.setUniversities(universities);
             adminEntity.setUser(save);
+            adminEntity.setModifiedDate(LocalDateTime.now());
             adminEntityRepository.save(adminEntity);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {

@@ -8,6 +8,7 @@ import second.education.domain.*;
 import second.education.domain.classificator.University;
 import second.education.model.response.*;
 import second.education.repository.*;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,46 @@ public class UniversityAdminService {
     private final AdminEntityRepository adminEntityRepository;
 
     @Transactional(readOnly = true)
-    public Page<DiplomaResponse> getDiplomas(Principal principal, int page, int size) {
+    public Page<DiplomResponseAdmin> getDiplomas(Principal principal, String status, int page, int size) {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-        return diplomaRepository.getAllDiplomebyUAdmin(institutionId, pageable).map(DiplomaResponse::new);
+        List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
+        if (status.equals("true")||status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDiplomaByEnrollId(institutionId, aBoolean, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+
+        } else {
+            Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDiplomaByEnrollAppDiplomStatusNull(institutionId, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+        }
+
     }
 
 
@@ -40,12 +75,19 @@ public class UniversityAdminService {
     public Result getDiplomaById(Integer diplomaId, Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-        Optional<Diploma> diploma = diplomaRepository.getByIdDiplomebyUAdmin(institutionId, diplomaId);
-        if (diploma.isEmpty()) {
+        Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
+        if (application.isEmpty()) {
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         }
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo());
+        Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
 
-        return new Result("diploma", true, new DiplomaResponse(diploma.get()));
+        FileResponse fileResponse = getFileResponse(diploma.getId());
+        DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+        diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+
+
+        return new Result("diploma", true, diplomResponseAdmin);
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +99,6 @@ public class UniversityAdminService {
         Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
-            appResponse.setPhoneNumber(application.getEnrolleeInfo().getUser().getPhoneNumber());
             appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
             Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
             FileResponse fileResponse = getFileResponse(diploma.getId());
@@ -75,33 +116,32 @@ public class UniversityAdminService {
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         AppResponse appResponse = new AppResponse(optional.get());
-        appResponse.setPhoneNumber(optional.get().getEnrolleeInfo().getUser().getPhoneNumber());
         appResponse.setEnrolleeResponse(new EnrolleeResponse(optional.get().getEnrolleeInfo()));
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(optional.get().getEnrolleeInfo().getId()).get();
         FileResponse fileResponse = getFileResponse(diploma.getId());
         appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
-        return new Result("one app",true,appResponse);
+        return new Result("one app", true, appResponse);
     }
 
 
-        public FileResponse getFileResponse (Integer diplomaId){
-            List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
-            FileResponse fileResponse = new FileResponse();
-            documents.forEach(document -> {
-                if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
-                    DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
-                    diplomaCopyResponse.setId(document.getId());
-                    diplomaCopyResponse.setUrl(document.getUrl());
-                    fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
-                }
-                if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
-                    DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
-                    diplomaIlovaResponse.setId(document.getId());
-                    diplomaIlovaResponse.setUrl(document.getUrl());
-                    fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
-                }
-            });
-            return fileResponse;
-        }
-
+    public FileResponse getFileResponse(Integer diplomaId) {
+        List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
+        FileResponse fileResponse = new FileResponse();
+        documents.forEach(document -> {
+            if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
+                DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
+                diplomaCopyResponse.setId(document.getId());
+                diplomaCopyResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
+            }
+            if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
+                DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
+                diplomaIlovaResponse.setId(document.getId());
+                diplomaIlovaResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
+            }
+        });
+        return fileResponse;
     }
+
+}
