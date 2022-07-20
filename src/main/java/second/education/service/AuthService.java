@@ -204,9 +204,12 @@ public class AuthService {
             return new Result("Token" + ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
-        User user = userRepository.findByPhoneNumber(oneIdUserInfo.getPin()).get();
+        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(oneIdUserInfo.getPin());
+        if (byPhoneNumber.isEmpty()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), user.getPassword()));
+                new UsernamePasswordAuthenticationToken(byPhoneNumber.get().getPhoneNumber(), byPhoneNumber.get().getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String authToken = jwtTokenProvider.generateToken(userDetails);
