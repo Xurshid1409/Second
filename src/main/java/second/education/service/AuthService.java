@@ -209,7 +209,7 @@ public class AuthService {
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(byPhoneNumber.get().getPhoneNumber(), byPhoneNumber.get().getPassword()));
+                new UsernamePasswordAuthenticationToken(byPhoneNumber.get().getPhoneNumber(), byPhoneNumber.get().getPhoneNumber()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String authToken = jwtTokenProvider.generateToken(userDetails);

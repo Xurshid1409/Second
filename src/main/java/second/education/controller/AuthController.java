@@ -86,7 +86,8 @@ public class AuthController {
     }
 
     @PostMapping("/oneId/signIn")
-    public Result signIn(@RequestParam(value = "code") String code) {
-        return authService.validateUsersOneId(code);
+    public ResponseEntity<?> signIn(@RequestParam(value = "code") String code) {
+        Result result = authService.validateUsersOneId(code);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 404).body(result);
     }
 }
