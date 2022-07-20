@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.University;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminEntity extends AbstractData<Integer> {
 
+    private String fistName;
+    private String lastname;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FutureInstitution futureInstitution;
 

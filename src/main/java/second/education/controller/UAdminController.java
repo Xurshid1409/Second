@@ -38,8 +38,15 @@ public class UAdminController {
     }
     @GetMapping("/getAllApp")
     public ResponseEntity<?> getAllApp(@RequestParam(value = "page", defaultValue = "0") int page,
-                                    @RequestParam(value = "size", defaultValue = "30") int size,Principal principal) {
-        Page<AppResponse> allAppByUAdmin = universityAdminService.getAllAppByUAdmin(principal, page, size);
+                                    @RequestParam(value = "size", defaultValue = "30") int size,
+                                       @RequestParam(value = "status") String status,
+                                       Principal principal) {
+        Page<AppResponse> allAppByUAdmin = universityAdminService.getAllAppByUAdmin(principal, status, page, size);
         return ResponseEntity.ok(allAppByUAdmin);
+    }    @GetMapping("/getAppOne/{appId}")
+    public ResponseEntity<?> getAppById(@PathVariable Integer appId,
+                                       Principal principal) {
+        Result appById = universityAdminService.getAppById(appId, principal);
+        return ResponseEntity.status(appById.isSuccess()?200:400).body(appById);
     }
 }

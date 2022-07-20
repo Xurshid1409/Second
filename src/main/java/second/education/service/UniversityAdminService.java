@@ -91,12 +91,12 @@ public class UniversityAdminService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AppResponse> getAllAppByUAdmin(Principal principal, int page, int size) {
+    public Page<AppResponse> getAllAppByUAdmin(Principal principal, String status, int page, int size) {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
-        Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), pageable);
+        Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), status,pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
             appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
@@ -109,9 +109,9 @@ public class UniversityAdminService {
     }
 
     @Transactional(readOnly = true)
-    public Result getAppById(Integer id, Principal principal) {
+    public Result getAppById(Integer AppId, Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        Optional<Application> optional = applicationRepository.getAppOne(adminEntity.getFutureInstitution().getId());
+        Optional<Application> optional = applicationRepository.getAppOne(adminEntity.getFutureInstitution().getId(),AppId);
         if (optional.isEmpty()) {
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         }

@@ -54,11 +54,11 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "join language l on l.id = a.language_id where l.edu_form_id=?1 group by l.language, l.kvota_soni")
     List<StatisLanguageResponse> getStatisByEduForm(Integer eduFromId);
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true ")
-    Page<Application> getAllApp(Integer instId, Pageable pageable);
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 ")
+    Page<Application> getAllApp(Integer instId,String status, Pageable pageable);
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true ")
-    Optional<Application> getAppOne(Integer instId);
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true and a.id=?2")
+    Optional<Application> getAppOne(Integer instId,Integer appId);
 
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionId=?1 and d.isActive=true and a.diplomaStatus=?2")
     Page<Application> getAppDiplomaByEnrollId(Integer id ,Boolean status, Pageable pageable);
