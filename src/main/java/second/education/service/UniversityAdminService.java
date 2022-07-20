@@ -144,4 +144,10 @@ public class UniversityAdminService {
         return fileResponse;
     }
 
+    @Transactional(readOnly = true)
+    public UAdminInfoResponse getUAdmin(Principal principal) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        return new UAdminInfoResponse(adminEntity);
+    }
+
 }
