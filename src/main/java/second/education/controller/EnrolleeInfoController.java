@@ -46,14 +46,14 @@ public class EnrolleeInfoController {
 
     @PostMapping("foreignDiploma")
     public ResponseEntity<?> createForeignDiploma(Principal principal,
-                                           @RequestParam(value = "countryName", required = false) String countryName,
-                                           @RequestParam(value = "institutionName", required = false) String institutionName,
-                                           @RequestParam(value = "eduFormName", required = false) String eduFormName,
-                                           @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
-                                           @RequestParam(value = "speciality", required = false) String speciality,
-                                           @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
-                                           @RequestParam(value = "diploma", required = false) MultipartFile diploma,
-                                           @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+                                                  @RequestParam(value = "countryName", required = false) String countryName,
+                                                  @RequestParam(value = "institutionName", required = false) String institutionName,
+                                                  @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                                  @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                                  @RequestParam(value = "speciality", required = false) String speciality,
+                                                  @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                                  @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                                  @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
         DiplomaResponse response = enrolleeService.createForeignDiploma(principal, countryName,
                 institutionName, eduFormName, eduFinishingDate, speciality,
                 diplomaNumberAndSerial, diploma, diplomaIlova);
@@ -118,5 +118,11 @@ public class EnrolleeInfoController {
     public ResponseEntity<?> getDiplomaProfile(Principal principal) {
         DiplomaResponse diplomaByIdAndEnrolleInfo = enrolleeService.getDiplomaProfile(principal);
         return ResponseEntity.ok(diplomaByIdAndEnrolleInfo);
+    }
+
+    @DeleteMapping("/deleteDiploma/{dipplomaId}")
+    public ResponseEntity<?> deleteDiploma(@PathVariable Integer dipplomaId, Principal principal) {
+        Result result = enrolleeService.deleteDiploma(dipplomaId, principal);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 }
