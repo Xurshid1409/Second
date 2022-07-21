@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
         http.csrf().disable();
-        http.headers().frameOptions().and().contentSecurityPolicy("frame-ancestors 'self' http://localhost:8080 http://*");
+        http.headers().frameOptions().and().contentSecurityPolicy("frame-ancestors 'self' https://localhost:8081 https://*");
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
