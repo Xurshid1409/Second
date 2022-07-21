@@ -65,12 +65,12 @@ public class AuthService {
 
             List<User> users = userRepository.findAllByPhoneNumber(iibRequest.getPhoneNumber());
             if (users.size() >= 1) {
-                return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), true);
+                return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
             }
 
             List<EnrolleeInfo> byPinfl = enrolleInfoRepository.getEnroll(iibRequest.getPinfl());
             if (byPinfl.size()>=1) {
-                return new Result(iibRequest.getPinfl() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), true);
+                return new Result(iibRequest.getPinfl() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
             }
 
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
