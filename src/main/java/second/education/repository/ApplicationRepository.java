@@ -64,7 +64,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     Page<Application> getAppDiplomaByEnrollId(Integer id ,Boolean status, Pageable pageable);
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionId=?1 and d.isActive=true and a.diplomaStatus is null ")
     Page<Application> getAppDiplomaByEnrollAppDiplomStatusNull(Integer id , Pageable pageable);
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionId=?1 and d.isActive=true and d.id=?2")
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndDiplomaById(Integer id, Integer diplomaId);
 
 }
