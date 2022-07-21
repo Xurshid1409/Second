@@ -17,6 +17,7 @@ import second.education.api_model.iib_api.IIBResponse;
 import second.education.api_model.one_id.OneIdResponseToken;
 import second.education.api_model.one_id.OneIdResponseUserInfo;
 import second.education.api_model.sms_api.SMSAPIRequest;
+import second.education.domain.AdminEntity;
 import second.education.domain.CheckSMSEntity;
 import second.education.domain.EnrolleeInfo;
 import second.education.domain.User;
@@ -56,6 +57,7 @@ public class AuthService {
     private final OneIdServiceApi oneIdServiceApi;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AdminEntityRepository adminEntityRepository;
 
     @Transactional
     public Result checkUser(IIBRequest iibRequest) {
@@ -204,12 +206,19 @@ public class AuthService {
             return new Result("Token" + ResponseMessage.NOT_FOUND.getMessage(), false);
         }
         OneIdResponseUserInfo oneIdUserInfo = oneIdServiceApi.getUserInfo(oneIdToken.getAccess_token());
-        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(oneIdUserInfo.getPin());
-        if (byPhoneNumber.isEmpty()) {
+//        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(oneIdUserInfo.getPin());
+        Optional<AdminEntity> uadmin = adminEntityRepository.getAdminUniversity(oneIdUserInfo.getPin());
+        if (uadmin.isEmpty()) {
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         }
+        if (uadmin.get().getFistName() == null) {
+            uadmin.get().setFistName(oneIdUserInfo.getFirstName());
+            uadmin.get().setLastname(oneIdUserInfo.getSurName());
+            adminEntityRepository.save(uadmin.get());
+        }
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(byPhoneNumber.get().getPhoneNumber(), byPhoneNumber.get().getPhoneNumber()));
+                new UsernamePasswordAuthenticationToken(uadmin.get().getUser().getPhoneNumber(), uadmin.get().getUser().getPhoneNumber()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String authToken = jwtTokenProvider.generateToken(userDetails);
