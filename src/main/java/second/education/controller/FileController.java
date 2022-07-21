@@ -55,7 +55,7 @@ public class FileController {
             HttpHeaders headers = new HttpHeaders();
             MediaType contType;
             headers.add("content-disposition", "inline; filename=" + resource.getFilename());
-            if (Objects.requireNonNull(resource.getFilename()).endsWith("pdf")) {
+            if (Objects.requireNonNull(resource.getFilename()).endsWith("pdf")||Objects.requireNonNull(resource.getFilename()).endsWith("PDF")) {
                 headers.setContentType(MediaType.parseMediaType("application/pdf"));
                 headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
                 contType = MediaType.APPLICATION_PDF;
