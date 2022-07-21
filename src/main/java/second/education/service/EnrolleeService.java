@@ -32,15 +32,15 @@ public class EnrolleeService {
 
     @Transactional
     public Result createDiploma(Principal principal,
-                                         String countryName,
-                                         Integer institutionId,
-                                         Integer id,
-                                         String eduFormName,
-                                         String eduFinishingDate,
-                                         String speciality,
-                                         String diplomaNumberAndSerial,
-                                         MultipartFile diplomaCopy,
-                                         MultipartFile diplomaIlova) {
+                                String countryName,
+                                Integer institutionId,
+                                Integer id,
+                                String eduFormName,
+                                String eduFinishingDate,
+                                String speciality,
+                                String diplomaNumberAndSerial,
+                                MultipartFile diplomaCopy,
+                                MultipartFile diplomaIlova) {
 
         try {
             List<Diploma> allDiplomaByEnrollee = diplomaRepository.findAllDiplomaByEnrollee(principal.getName());
@@ -106,7 +106,7 @@ public class EnrolleeService {
 //            documentService.documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
-           return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
@@ -247,7 +247,7 @@ public class EnrolleeService {
     }
 
     @Transactional
-    public Result documentSave(int diplomaId, MultipartFile diplomaCopy, MultipartFile diplomaIlova){
+    public Result documentSave(int diplomaId, MultipartFile diplomaCopy, MultipartFile diplomaIlova) {
 
         try {
             Diploma diploma = diplomaRepository.findById(diplomaId).get();
@@ -278,7 +278,7 @@ public class EnrolleeService {
     }
 
     @Transactional
-    public Result documentUpdate(Diploma diploma, Integer docDiplomId, Integer docIlovaId, MultipartFile docDiplom, MultipartFile docIlova){
+    public Result documentUpdate(Diploma diploma, Integer docDiplomId, Integer docIlovaId, MultipartFile docDiplom, MultipartFile docIlova) {
         try {
             List<Document> documents = new ArrayList<>();
             if (docDiplomId != null) {
@@ -301,7 +301,7 @@ public class EnrolleeService {
                 document.setDiploma(diploma);
                 documents.add(document);
             }
-            if (docIlovaId != null ) {
+            if (docIlovaId != null) {
                 if (docIlova != null) {
                     Document documentIlova = documentRepository.findById(docIlovaId).get();
                     fileService.deleteDocument(documentIlova);
@@ -350,6 +350,25 @@ public class EnrolleeService {
             }
         });
         return fileResponse;
+    }
+
+    @Transactional
+    public Result deleteDiploma(Integer diplomaId, Principal principal) {
+        try {
+            Optional<Diploma> byId = diplomaRepository.findById(diplomaId);
+            EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
+            if (byId.isPresent()) {
+                if (byId.get().getEnrolleeInfo().getId().equals(enrolleeInfo.getId())) {
+                    diplomaRepository.deleteById(diplomaId);
+                    return new Result(ResponseMessage.SUCCESSFULLY_DELETED.getMessage(), true);
+                }
+                return new Result("bu sizning diplomingiz emas", false);
+            }
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
+        }
+
     }
 
     private String getCurrentUrl(String fileName) {
