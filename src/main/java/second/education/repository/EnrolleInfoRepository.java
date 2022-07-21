@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.EnrolleeInfo;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,5 +17,8 @@ public interface EnrolleInfoRepository extends JpaRepository<EnrolleeInfo, Integ
 
     @Query("select e from EnrolleeInfo e where e.pinfl = ?1")
     Optional<EnrolleeInfo> findByPinfl(String pinfl);
+
+    @Query("select * from  EnrolleeInfo as e where e.pinfl=?1")
+    List<EnrolleeInfo> getEnroll(String pinfl);
 
 }
