@@ -57,4 +57,19 @@ public class UAdminController {
         return ResponseEntity.status(uAdmin != null ? 200 : 404).body(uAdmin);
     }
 
+    @GetMapping("/getForeignDiploma")
+    public ResponseEntity<?> getAllForeignDiploma(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                  @RequestParam(value = "size", defaultValue = "30") int size,
+                                                  @RequestParam(value = "status") String status,
+                                                  Principal principal) {
+        Page<DiplomResponseAdmin> diplomas = universityAdminService.getForeignDiplomas(principal, status, page, size);
+        return ResponseEntity.ok(diplomas);
+    }
+
+    @GetMapping("/getForeignDiplom/{id}")
+    public ResponseEntity<?> getForeignDiplomById(@PathVariable Integer id, Principal principal) {
+        Result diplomaById = universityAdminService.getForeignDiplomaById(id, principal);
+        return ResponseEntity.ok(diplomaById);
+    }
+
 }
