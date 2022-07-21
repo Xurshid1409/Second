@@ -76,7 +76,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     ///
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null ")
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null ")
     Page<Application> getAppForeignDipStatusNull(Integer id, Pageable pageable);
 
 
