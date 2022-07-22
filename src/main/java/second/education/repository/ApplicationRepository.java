@@ -86,4 +86,25 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1")
     Optional<Application> getAppByDiplomId(Integer diplomaId);
 
+    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or   a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%)")
+    Page<Application> searchAppByFirstnameAndLastname(Integer futureInstId, String status, String search, Pageable pageable);
+
+
+    @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
+            " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.enrolleeInfo.pinfl like %?3% or " +
+            " d.enrolleeInfo.phoneNumber like %?3%) ")
+    Page<Application> searchDiplomaByUAdmin(Integer id, Boolean status, String search, Pageable pageable);
+
+    @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus is null and " +
+            " (d.enrolleeInfo.firstname like %?2% or d.enrolleeInfo.lastname like %?2% or d.enrolleeInfo.middleName like %?2% or d.enrolleeInfo.pinfl like %?2% or d.enrolleeInfo.phoneNumber like %?2%) ")
+    Page<Application> searchDiplomStatusNull(Integer id, String search, Pageable pageable);
+
+    ///
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus=?2 and " +
+            " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.enrolleeInfo.pinfl like %?3% or d.enrolleeInfo.phoneNumber like %?3%) ")
+    Page<Application> searchForeignDiplomas(Integer id, Boolean status, String search, Pageable pageable);
+
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null and " +
+            " (d.enrolleeInfo.firstname like %?2% or d.enrolleeInfo.lastname like %?2% or d.enrolleeInfo.middleName like %?2% or d.enrolleeInfo.pinfl like %?2% or d.enrolleeInfo.phoneNumber like %?2%) ")
+    Page<Application> searchForeignDiplomaStatusNull(Integer id, String search, Pageable pageable);
 }

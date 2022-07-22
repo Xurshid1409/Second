@@ -82,6 +82,7 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusDiploma(principal, updateDiplomaStatus, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+
     @PutMapping("/updateAppStatus/{appId}")
     public ResponseEntity<?> updateAppStatus(@PathVariable Integer appId,
                                              @RequestBody UpdateAppStatus updateAppStatus,
@@ -90,5 +91,33 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusApp(principal, updateAppStatus, appId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+
+    @GetMapping("/searchApp")
+    public ResponseEntity<?> searchAppByUAdmin(@RequestParam(value = "text") String text,
+                                               @RequestParam(value = "status") String status,
+                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "size", defaultValue = "30") int size, Principal principal) {
+        Page<AppResponse> appResponses = universityAdminService.searchAllAppByUAdmin(principal, status, text, page, size);
+        return ResponseEntity.ok(appResponses);
+    }
+
+    @GetMapping("/searchDiploma")
+    public ResponseEntity<?> searchDiplomaByUAdmin(@RequestParam(value = "text") String text,
+                                                   @RequestParam(value = "status") String status,
+                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                   @RequestParam(value = "size", defaultValue = "30") int size, Principal principal) {
+        Page<DiplomResponseAdmin> diplomResponseAdmins = universityAdminService.searchDiplomasByUAdmin(principal, status, text, page, size);
+        return ResponseEntity.ok(diplomResponseAdmins);
+    }
+
+    @GetMapping("/searchForeignDiploma")
+    public ResponseEntity<?> searchForeignDiplomaByUAdmin(@RequestParam(value = "text") String text,
+                                                          @RequestParam(value = "status") String status,
+                                                          @RequestParam(value = "page", defaultValue = "0") int page,
+                                                          @RequestParam(value = "size", defaultValue = "30") int size, Principal principal) {
+        Page<DiplomResponseAdmin> diplomResponseAdmins = universityAdminService.searchForeignDiplomas(principal, status, text, page, size);
+        return ResponseEntity.ok(diplomResponseAdmins);
+    }
+
 
 }

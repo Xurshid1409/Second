@@ -338,5 +338,147 @@ public class UniversityAdminService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Page<AppResponse> searchAllAppByUAdmin(Principal principal, String status, String search, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        List<AppResponse> responses = new ArrayList<>();
+        Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, search, pageable);
+        allApp.forEach(application -> {
+            AppResponse appResponse = new AppResponse(application);
+            IIBRequest iibRequest = new IIBRequest();
+            iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
+            iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
+            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+            Data data = iibResponse.getData();
+            ImageResponse imageResponse = new ImageResponse();
+            if (!data.getPhoto().isEmpty()) {
+                imageResponse.setImage(data.getPhoto());
+            }
+            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse));
+            Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+            FileResponse fileResponse = getFileResponse(diploma.getId());
+            appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+            responses.add(appResponse);
+        });
+        return new PageImpl<>(responses, pageable, allApp.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DiplomResponseAdmin> searchDiplomasByUAdmin(Principal principal, String status, String search, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomaByUAdmin(institutionId, aBoolean, search, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+                IIBRequest iibRequest = new IIBRequest();
+                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
+                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
+                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+                Data data = iibResponse.getData();
+                ImageResponse imageResponse = new ImageResponse();
+                if (!data.getPhoto().isEmpty()) {
+                    imageResponse.setImage(data.getPhoto());
+                }
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+
+        } else {
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomStatusNull(institutionId, search, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+                IIBRequest iibRequest = new IIBRequest();
+                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
+                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
+                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+                Data data = iibResponse.getData();
+                ImageResponse imageResponse = new ImageResponse();
+                if (!data.getPhoto().isEmpty()) {
+                    imageResponse.setImage(data.getPhoto());
+                }
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+        }
+    }
+
+    //horijiy diplomlarni obshiysi
+    @Transactional(readOnly = true)
+    public Page<DiplomResponseAdmin> searchForeignDiplomas(Principal principal, String status, String search, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomas(adminEntity.getFutureInstitution().getId(), aBoolean, search, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+                IIBRequest iibRequest = new IIBRequest();
+                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
+                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
+                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+                Data data = iibResponse.getData();
+                ImageResponse imageResponse = new ImageResponse();
+                if (!data.getPhoto().isEmpty()) {
+                    imageResponse.setImage(data.getPhoto());
+                }
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+        } else {
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomaStatusNull(adminEntity.getFutureInstitution().getId(), search, pageable);
+            allDiplomebyUAdmin.forEach(application -> {
+                IIBRequest iibRequest = new IIBRequest();
+                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
+                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
+                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+                Data data = iibResponse.getData();
+                ImageResponse imageResponse = new ImageResponse();
+                if (!data.getPhoto().isEmpty()) {
+                    imageResponse.setImage(data.getPhoto());
+                }
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                if (application.getDiplomaStatus() != null) {
+                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
+                }
+                diplomResponseAdmins.add(diplomResponseAdmin);
+            });
+            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+        }
+    }
+
 
 }
