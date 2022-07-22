@@ -47,7 +47,7 @@ public class AdminService {
                 user.setRole(role);
                 User saveUser = userRepository.save(user);
                 AdminEntity adminEntity = new AdminEntity();
-                if(request.getFutureInstId()!=null) {
+                if (request.getFutureInstId() != null) {
                     FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                     adminEntity.setFutureInstitution(futureInstitution);
                 }
@@ -131,5 +131,23 @@ public class AdminService {
         uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
         uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
         return uAdminResponse;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UAdminResponse> searchUAdmin(String text, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        Page<AdminEntity> allAdmins = adminEntityRepository.searchUAdmin(text, pageable);
+        List<UAdminResponse> uAdminResponses = new ArrayList<>();
+        allAdmins.forEach(adminEntity -> {
+            UAdminResponse uAdminResponse = new UAdminResponse();
+            uAdminResponse.setId(adminEntity.getId());
+            uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
+            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
+            uAdminResponses.add(uAdminResponse);
+        });
+        return new PageImpl<>(uAdminResponses, pageable, allAdmins.getTotalElements());
     }
 }

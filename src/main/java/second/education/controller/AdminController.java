@@ -187,11 +187,21 @@ public class AdminController {
     }
 
     @GetMapping("/searchFutureInst")
-    public ResponseEntity<?> searchFutureInst(@RequestParam(value = "text", defaultValue = "0") String text,
-                                              @RequestParam(value = "page", defaultValue = "0") int page,
-                                              @RequestParam(value = "size", defaultValue = "30") int size) {
+    public ResponseEntity<?> searchFutureInst(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "text", defaultValue = "0") String text) {
         Page<FutureInstitutionResponse> futureInstitutionResponses = futureInstitutionService.searchFutureInst(text, page, size);
         return ResponseEntity.ok(futureInstitutionResponses);
+    }
+
+    @GetMapping("/searchFutureInst")
+    public ResponseEntity<?> searchUAdmin(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "text", defaultValue = "0") String text) {
+        Page<UAdminResponse> uAdminResponses = adminService.searchUAdmin(text, page, size);
+        return ResponseEntity.ok(uAdminResponses);
     }
 
 }
