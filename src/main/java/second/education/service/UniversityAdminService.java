@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.*;
 import second.education.domain.classificator.University;
+import second.education.model.request.UpdateAppStatus;
+import second.education.model.request.UpdateDiplomaStatus;
 import second.education.model.response.*;
 import second.education.repository.*;
 
@@ -19,9 +21,7 @@ import java.util.Optional;
 public class UniversityAdminService {
 
     private final DiplomaRepository diplomaRepository;
-    private final FutureInstitutionRepository futureInstitutionRepository;
-    private final UniversityRepository universityRepository;
-    private final UserRepository userRepository;
+
     private final ApplicationRepository applicationRepository;
     private final DocumentRepository documentRepository;
 
@@ -69,13 +69,13 @@ public class UniversityAdminService {
         }
 
     }
-//horijiy diplomlarni obshiysi
+
+    //horijiy diplomlarni obshiysi
     @Transactional(readOnly = true)
-    public Page<DiplomResponseAdmin> getForeignDiplomas(Principal principal,String status, int page, int size) {
+    public Page<DiplomResponseAdmin> getForeignDiplomas(Principal principal, String status, int page, int size) {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
-
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         if (status.equals("true") || status.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(status);
@@ -109,6 +109,7 @@ public class UniversityAdminService {
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
         }
     }
+
     //horijiy diplomning bir donasi id orqali
     @Transactional(readOnly = true)
     public Result getForeignDiplomaById(Integer diplomaId, Principal principal) {
@@ -207,5 +208,55 @@ public class UniversityAdminService {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         return new UAdminInfoResponse(adminEntity);
     }
+
+
+    @Transactional
+    public Result updateStatusDiploma(Principal principal, UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId) {
+        try {
+            AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+            Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+            Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
+            if (application.isPresent()) {
+                String status = application.get().getDiplomaStatus().toString();
+                if (status.equals("false") || status.equals("null")) {
+                    application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                    application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                    applicationRepository.save(application.get());
+                    return new Result("Muvaffaqiyatli tasdiqlandi", true);
+                }
+                return new Result("diplom tasdiqlangan", false);
+            }
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result("Tasdiqlashda xatolik", false);
+        }
+    }
+
+    @Transactional
+    public Result updateStatusApp(Principal principal, UpdateAppStatus updateAppStatus , Integer appId) {
+        try {
+            AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+            Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+            Optional<Application> application = applicationRepository.getAppOne(institutionId, appId);
+            if (application.isPresent()) {
+                String status = application.get().getDiplomaStatus().toString();
+                switch (status) {
+                    case "true":
+                        application.get().setStatus(updateAppStatus.getAppStatus());
+                        application.get().setMessage(updateAppStatus.getAppMessage());
+                        applicationRepository.save(application.get());
+                        return new Result("Muvaffaqiyatli tasdiqlandi", true);
+                    case "false":
+                        return new Result("bu arizaning diplomi rad etilgan", false);
+                    case "null":
+                        return new Result("ariza diplomi holi tasdiqlanmagan ", false);
+                }
+            }
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result("Tasdiqlashda xatolik", false);
+        }
+    }
+
 
 }

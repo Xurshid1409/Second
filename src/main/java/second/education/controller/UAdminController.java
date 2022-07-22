@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import second.education.model.request.UpdateAppStatus;
+import second.education.model.request.UpdateDiplomaStatus;
 import second.education.model.response.*;
 import second.education.service.UniversityAdminService;
 
@@ -72,4 +74,20 @@ public class UAdminController {
         return ResponseEntity.ok(diplomaById);
     }
 
+    @PutMapping("/updateDiplomaStatus/{diplomaId}")
+    public ResponseEntity<?> updateDiplomaStatus(@PathVariable Integer diplomaId,
+                                                 @RequestBody UpdateDiplomaStatus updateDiplomaStatus,
+                                                 Principal principal) {
+
+        Result result = universityAdminService.updateStatusDiploma(principal, updateDiplomaStatus, diplomaId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+    @PutMapping("/updateAppStatus/{appId}")
+    public ResponseEntity<?> updateAppStatus(@PathVariable Integer appId,
+                                             @RequestBody UpdateAppStatus updateAppStatus,
+                                             Principal principal) {
+
+        Result result = universityAdminService.updateStatusApp(principal, updateAppStatus, appId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
 }

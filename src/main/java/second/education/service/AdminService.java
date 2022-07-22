@@ -47,8 +47,10 @@ public class AdminService {
                 user.setRole(role);
                 User saveUser = userRepository.save(user);
                 AdminEntity adminEntity = new AdminEntity();
-                FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
-                adminEntity.setFutureInstitution(futureInstitution);
+                if(request.getFutureInstId()!=null) {
+                    FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
+                    adminEntity.setFutureInstitution(futureInstitution);
+                }
                 List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
                 adminEntity.setUniversities(universities);
                 adminEntity.setUser(saveUser);
