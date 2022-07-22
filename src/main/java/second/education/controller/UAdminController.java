@@ -96,8 +96,9 @@ public class UAdminController {
     public ResponseEntity<?> searchAppByUAdmin(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "status") String status,
             @RequestParam(value = "text") String text,
-            @RequestParam(value = "status") String status, Principal principal) {
+            Principal principal) {
         Page<AppResponse> appResponses = universityAdminService.searchAllAppByUAdmin(principal, status, text, page, size);
         return ResponseEntity.ok(appResponses);
     }
@@ -106,8 +107,8 @@ public class UAdminController {
     public ResponseEntity<?> searchDiplomaByUAdmin(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "30") int size,
-            @RequestParam(value = "text") String text,
             @RequestParam(value = "status") String status,
+            @RequestParam(value = "text") String text,
             Principal principal) {
         Page<DiplomResponseAdmin> diplomResponseAdmins = universityAdminService.searchDiplomasByUAdmin(principal, status, text, page, size);
         return ResponseEntity.ok(diplomResponseAdmins);
@@ -117,8 +118,8 @@ public class UAdminController {
     public ResponseEntity<?> searchForeignDiplomaByUAdmin(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "30") int size,
-            @RequestParam(value = "text") String text,
             @RequestParam(value = "status") String status,
+            @RequestParam(value = "text") String text,
             Principal principal) {
         Page<DiplomResponseAdmin> diplomResponseAdmins = universityAdminService.searchForeignDiplomas(principal, status, text, page, size);
         return ResponseEntity.ok(diplomResponseAdmins);
