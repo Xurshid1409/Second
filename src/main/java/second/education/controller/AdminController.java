@@ -117,7 +117,7 @@ public class AdminController {
     @GetMapping("searchEduForm/{text}")
     public ResponseEntity<?> searchEduForm(@PathVariable String text,
                                            @RequestParam(value = "page", defaultValue = "0") int page,
-                                           @RequestParam(value = "size", defaultValue = "30") int size){
+                                           @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<EduFormResponse> search = eduFormService.search(text, page, size);
         return ResponseEntity.ok(search);
     }
@@ -174,8 +174,8 @@ public class AdminController {
     }
 
     @GetMapping("/getAllUAdmins")
-    public ResponseEntity<?> getAllUAdmins( @RequestParam(value = "page", defaultValue = "0") int page,
-                                            @RequestParam(value = "size", defaultValue = "30") int size) {
+    public ResponseEntity<?> getAllUAdmins(@RequestParam(value = "page", defaultValue = "0") int page,
+                                           @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<UAdminResponse> uAdmins = adminService.getUAdmins(page, size);
         return ResponseEntity.ok(uAdmins);
     }
@@ -185,4 +185,13 @@ public class AdminController {
         UAdminResponse uAdminById = adminService.getUAdminById(id);
         return ResponseEntity.ok(uAdminById);
     }
+
+    @GetMapping("/searchFutureInst")
+    public ResponseEntity<?> searchFutureInst(@RequestParam(value = "text", defaultValue = "0") String text,
+                                              @RequestParam(value = "page", defaultValue = "0") int page,
+                                              @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<FutureInstitutionResponse> futureInstitutionResponses = futureInstitutionService.searchFutureInst(text, page, size);
+        return ResponseEntity.ok(futureInstitutionResponses);
+    }
+
 }

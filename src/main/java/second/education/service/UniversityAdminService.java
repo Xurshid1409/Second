@@ -18,6 +18,7 @@ import second.education.service.api.IIBServiceApi;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -340,11 +341,12 @@ public class UniversityAdminService {
 
     @Transactional(readOnly = true)
     public Page<AppResponse> searchAllAppByUAdmin(Principal principal, String status, String search, int page, int size) {
+        String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
-        Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, search, pageable);
+        Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, s,pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
             IIBRequest iibRequest = new IIBRequest();
@@ -367,6 +369,8 @@ public class UniversityAdminService {
 
     @Transactional(readOnly = true)
     public Page<DiplomResponseAdmin> searchDiplomasByUAdmin(Principal principal, String status, String search, int page, int size) {
+        String s = search.toUpperCase();
+
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
@@ -374,7 +378,7 @@ public class UniversityAdminService {
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
         if (status.equals("true") || status.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(status);
-            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomaByUAdmin(institutionId, aBoolean, search, pageable);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomaByUAdmin(institutionId, aBoolean, s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
                 IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
@@ -398,7 +402,7 @@ public class UniversityAdminService {
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
 
         } else {
-            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomStatusNull(institutionId, search, pageable);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomStatusNull(institutionId, s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
                 IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
@@ -426,13 +430,14 @@ public class UniversityAdminService {
     //horijiy diplomlarni obshiysi
     @Transactional(readOnly = true)
     public Page<DiplomResponseAdmin> searchForeignDiplomas(Principal principal, String status, String search, int page, int size) {
+        String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         if (status.equals("true") || status.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(status);
-            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomas(adminEntity.getFutureInstitution().getId(), aBoolean, search, pageable);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomas(adminEntity.getFutureInstitution().getId(), aBoolean, s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
                 IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
@@ -455,7 +460,7 @@ public class UniversityAdminService {
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
         } else {
-            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomaStatusNull(adminEntity.getFutureInstitution().getId(), search, pageable);
+            Page<Application> allDiplomebyUAdmin = applicationRepository.searchForeignDiplomaStatusNull(adminEntity.getFutureInstitution().getId(), s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
                 IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
