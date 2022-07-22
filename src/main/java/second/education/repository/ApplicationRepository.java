@@ -83,4 +83,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndForeignDiplomaById(Integer id, Integer diplomaId);
 
+    @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1")
+    Optional<Application> getAppByDiplomId(Integer diplomaId);
+
 }

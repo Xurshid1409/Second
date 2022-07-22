@@ -217,7 +217,7 @@ public class UniversityAdminService {
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
             Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
             if (application.isPresent()) {
-                String status = application.get().getDiplomaStatus().toString();
+                String status = String.valueOf(application.get().getDiplomaStatus());
                 if (status.equals("false") || status.equals("null")) {
                     application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
                     application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
@@ -239,7 +239,7 @@ public class UniversityAdminService {
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
             Optional<Application> application = applicationRepository.getAppOne(institutionId, appId);
             if (application.isPresent()) {
-                String status = application.get().getDiplomaStatus().toString();
+                String status = String.valueOf(application.get().getDiplomaStatus());
                 switch (status) {
                     case "true":
                         application.get().setStatus(updateAppStatus.getAppStatus());

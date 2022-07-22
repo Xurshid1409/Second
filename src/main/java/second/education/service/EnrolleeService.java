@@ -5,12 +5,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import second.education.api_model.iib_api.Data;
+import second.education.api_model.iib_api.IIBResponse;
+import second.education.domain.Application;
 import second.education.domain.Diploma;
 import second.education.domain.Document;
 import second.education.domain.EnrolleeInfo;
 import second.education.domain.classificator.University;
+import second.education.model.request.IIBRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
+import second.education.service.api.IIBServiceApi;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -27,6 +32,8 @@ public class EnrolleeService {
     private final DocumentService documentService;
     private final ApplicationRepository applicationRepository;
     private final InstitutionRepository institutionRepository;
+    private final IIBServiceApi iibServiceApi;
+
     private final FileService fileService;
     private final DocumentRepository documentRepository;
 
@@ -102,6 +109,11 @@ public class EnrolleeService {
             diploma.setSpecialityName(speciality);
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
             diploma.setModifiedDate(LocalDateTime.now());
+            Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
+            if (appByDiplomId.isPresent()) {
+                appByDiplomId.get().setDiplomaStatus(null);
+                applicationRepository.save(appByDiplomId.get());
+            }
             Diploma diplomaSave = diplomaRepository.save(diploma);
 //            documentService.documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
@@ -165,6 +177,12 @@ public class EnrolleeService {
             diploma.setEduFinishingDate(eduFinishingDate);
             diploma.setSpecialityName(speciality);
             diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+
+            Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
+            if (appByDiplomId.isPresent()) {
+                appByDiplomId.get().setDiplomaStatus(null);
+                applicationRepository.save(appByDiplomId.get());
+            }
             Diploma save = diplomaRepository.save(diploma);
 //            documentService.documentUpdate(save, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
             documentUpdate(save, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
@@ -197,13 +215,22 @@ public class EnrolleeService {
     public EnrolleeResponse getEnrolleeResponse(Principal principal) {
         try {
             EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
+            IIBRequest iibRequest = new IIBRequest();
+            iibRequest.setPinfl(enrolleeInfo.getPinfl());
+            iibRequest.setGiven_date(enrolleeInfo.getPassportGivenDate());
+            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+            Data data = iibResponse.getData();
+            ImageResponse imageResponse = new ImageResponse();
+            if (!data.getPhoto().isEmpty()) {
+                imageResponse.setImage(data.getPhoto());
+            }
             //            Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
 //            if (applicationResponse.isPresent()) {
 //                enrolleeResponse.setApplicationResponse(applicationResponse.get());
 //            }else {
 //                enrolleeResponse.setApplicationResponse(null);
 //            }
-            return new EnrolleeResponse(enrolleeInfo);
+            return new EnrolleeResponse(enrolleeInfo, imageResponse);
         } catch (Exception ex) {
             return new EnrolleeResponse();
         }

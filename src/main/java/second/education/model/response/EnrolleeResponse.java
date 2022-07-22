@@ -26,10 +26,26 @@ public class EnrolleeResponse {
     private String permanentRegion;
     private String permanentDistrict;
     private String permanentAddress;
-    private String photo;
+    private ImageResponse photo;
 //    private ApplicationResponse applicationResponse;
 
 
+    public EnrolleeResponse(EnrolleeInfo enrolleeInfo, ImageResponse imageResponse) {
+        this.citizenship = enrolleeInfo.getCitizenship();
+        this.nationality = enrolleeInfo.getNationality();
+        this.passportSerialAndNumber = enrolleeInfo.getPassportSerialAndNumber();
+        this.pinfl = enrolleeInfo.getPinfl();
+        this.firstname = enrolleeInfo.getFirstname();
+        this.lastname = enrolleeInfo.getLastname();
+        this.middleName = enrolleeInfo.getMiddleName();
+        this.dateOfBirth = enrolleeInfo.getDateOfBirth();
+        this.permanentRegion = enrolleeInfo.getPermanentRegion();
+        this.permanentDistrict = enrolleeInfo.getPermanentDistrict();
+        this.permanentAddress = enrolleeInfo.getPermanentAddress();
+        this.gender = enrolleeInfo.getGender();
+        this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
+        this.photo = imageResponse;
+    }
     public EnrolleeResponse(EnrolleeInfo enrolleeInfo) {
         this.citizenship = enrolleeInfo.getCitizenship();
         this.nationality = enrolleeInfo.getNationality();
@@ -44,7 +60,6 @@ public class EnrolleeResponse {
         this.permanentAddress = enrolleeInfo.getPermanentAddress();
         this.gender = enrolleeInfo.getGender();
         this.phoneNumber = enrolleeInfo.getUser().getPhoneNumber();
-        this.photo = enrolleeInfo.getPhoto();
     }
 
 }
