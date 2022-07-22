@@ -90,4 +90,5 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusApp(principal, updateAppStatus, appId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+
 }

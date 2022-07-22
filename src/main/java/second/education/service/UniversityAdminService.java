@@ -294,13 +294,17 @@ public class UniversityAdminService {
             Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
             if (application.isPresent()) {
                 String status = String.valueOf(application.get().getDiplomaStatus());
-                if (status.equals("false") || status.equals("null")) {
+                if (status.equals("null")) {
                     application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
                     application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
                     applicationRepository.save(application.get());
                     return new Result("Muvaffaqiyatli tasdiqlandi", true);
+                } else if (status.equals("true")) {
+                    return new Result("diplom tasdiqlangan", false);
+                } else if (status.equals("false")) {
+                    return new Result("diplom rad etilgan o'zgarishini kuting", false);
                 }
-                return new Result("diplom tasdiqlangan", false);
+
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
