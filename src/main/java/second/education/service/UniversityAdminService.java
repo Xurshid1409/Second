@@ -18,7 +18,6 @@ import second.education.service.api.IIBServiceApi;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -45,7 +44,7 @@ public class UniversityAdminService {
             Boolean aBoolean = Boolean.valueOf(status);
             Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDiplomaByEnrollId(institutionId, aBoolean, pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
+              /*  IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
                 iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
                 IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
@@ -53,15 +52,14 @@ public class UniversityAdminService {
                 ImageResponse imageResponse = new ImageResponse();
                 if (!data.getPhoto().isEmpty()) {
                     imageResponse.setImage(data.getPhoto());
-                }
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                }*/
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                if (application.getDiplomaStatus() != null) {
-                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
-                }
+                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
+
                 diplomResponseAdmins.add(diplomResponseAdmin);
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
@@ -69,7 +67,7 @@ public class UniversityAdminService {
         } else {
             Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDiplomaByEnrollAppDiplomStatusNull(institutionId, pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
+               /* IIBRequest iibRequest = new IIBRequest();
                 iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
                 iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
                 IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
@@ -77,15 +75,13 @@ public class UniversityAdminService {
                 ImageResponse imageResponse = new ImageResponse();
                 if (!data.getPhoto().isEmpty()) {
                     imageResponse.setImage(data.getPhoto());
-                }
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                }*/
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                if (application.getDiplomaStatus() != null) {
-                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
-                }
+                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
                 diplomResponseAdmins.add(diplomResponseAdmin);
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
@@ -104,47 +100,26 @@ public class UniversityAdminService {
             Boolean aBoolean = Boolean.valueOf(status);
             Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDipForeign(adminEntity.getFutureInstitution().getId(), aBoolean, pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
-                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
-                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
-                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-                Data data = iibResponse.getData();
-                ImageResponse imageResponse = new ImageResponse();
-                if (!data.getPhoto().isEmpty()) {
-                    imageResponse.setImage(data.getPhoto());
-                }
-
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                if (application.getDiplomaStatus() != null) {
-                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
-                }
+                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
                 diplomResponseAdmins.add(diplomResponseAdmin);
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
         } else {
             Page<Application> allDiplomebyUAdmin = applicationRepository.getAppForeignDipStatusNull(adminEntity.getFutureInstitution().getId(), pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
-                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
-                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
-                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-                Data data = iibResponse.getData();
-                ImageResponse imageResponse = new ImageResponse();
-                if (!data.getPhoto().isEmpty()) {
-                    imageResponse.setImage(data.getPhoto());
-                }
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                if (application.getDiplomaStatus() != null) {
-                    diplomResponseAdmin.setDiplomaStatus(application.getDiplomaStatus().toString());
-                }
+                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
+
                 diplomResponseAdmins.add(diplomResponseAdmin);
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
@@ -168,13 +143,14 @@ public class UniversityAdminService {
         if (!data.getPhoto().isEmpty()) {
             imageResponse.setImage(data.getPhoto());
         }
+
         EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
 
         FileResponse fileResponse = getFileResponse(diploma.getId());
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-
+        diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
 
         return new Result("diploma", true, diplomResponseAdmin);
     }
@@ -203,6 +179,7 @@ public class UniversityAdminService {
         FileResponse fileResponse = getFileResponse(diploma.getId());
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+        diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
 
 
         return new Result("diploma", true, diplomResponseAdmin);
@@ -217,7 +194,7 @@ public class UniversityAdminService {
         Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), status, pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
-            IIBRequest iibRequest = new IIBRequest();
+          /*  IIBRequest iibRequest = new IIBRequest();
             iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
             iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
@@ -225,8 +202,8 @@ public class UniversityAdminService {
             ImageResponse imageResponse = new ImageResponse();
             if (!data.getPhoto().isEmpty()) {
                 imageResponse.setImage(data.getPhoto());
-            }
-            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse));
+            }*/
+            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
             Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
             FileResponse fileResponse = getFileResponse(diploma.getId());
             appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
@@ -317,8 +294,7 @@ public class UniversityAdminService {
     public Result updateStatusApp(Principal principal, UpdateAppStatus updateAppStatus, Integer appId) {
         try {
             AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-            Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-            Optional<Application> application = applicationRepository.getAppOne(institutionId, appId);
+            Optional<Application> application = applicationRepository.getAppOne(adminEntity.getFutureInstitution().getId(), appId);
             if (application.isPresent()) {
                 String status = String.valueOf(application.get().getDiplomaStatus());
                 switch (status) {
@@ -330,7 +306,7 @@ public class UniversityAdminService {
                     case "false":
                         return new Result("bu arizaning diplomi rad etilgan", false);
                     case "null":
-                        return new Result("ariza diplomi holi tasdiqlanmagan ", false);
+                        return new Result("ariza diplomi hali tasdiqlanmagan ", false);
                 }
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
@@ -346,7 +322,7 @@ public class UniversityAdminService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
-        Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, s,pageable);
+        Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, s, pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
             IIBRequest iibRequest = new IIBRequest();
@@ -483,6 +459,22 @@ public class UniversityAdminService {
             });
             return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public CountByUAdmin getAllCountByUAdmin(Principal principal) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        List<CountApp> countApp = applicationRepository.getCountApp(adminEntity.getFutureInstitution().getId());
+        List<CountApp> countForeignDiploma = applicationRepository.getCountForeignDiploma(adminEntity.getFutureInstitution().getId());
+        List<CountApp> countDiploma = applicationRepository.getCountDiploma(institutionId);
+        CountByUAdmin response = new CountByUAdmin();
+        response.setCountApp(countApp);
+        response.setCountForeignDiploma(countForeignDiploma);
+        response.setCountDiploma(countDiploma);
+        return response;
+
+
     }
 
 

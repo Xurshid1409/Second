@@ -47,7 +47,9 @@ public class AdminService {
                 user.setRole(role);
                 User saveUser = userRepository.save(user);
                 AdminEntity adminEntity = new AdminEntity();
-                if (request.getFutureInstId() != null) {
+                if (request.getFutureInstId() == null) {
+                    adminEntity.setFutureInstitution(null);
+                } else {
                     FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
                     adminEntity.setFutureInstitution(futureInstitution);
                 }
@@ -74,8 +76,12 @@ public class AdminService {
                     adminEntity.getUser().setPhoneNumber(request.getPinfl());
                     adminEntity.getUser().setPassword(passwordEncoder.encode(request.getPinfl()));
                     User save = userRepository.save(byPhoneNumber.get());
-                    FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
-                    adminEntity.setFutureInstitution(futureInstitution);
+                    if (request.getFutureInstId() == null) {
+                        adminEntity.setFutureInstitution(null);
+                    } else {
+                        FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstId()).get();
+                        adminEntity.setFutureInstitution(futureInstitution);
+                    }
                     adminEntity.getUniversities().clear();
                     List<University> universities = universityRepository.findAllByInstitutionId(request.getInstitutionId());
                     adminEntity.setUniversities(universities);
@@ -112,8 +118,13 @@ public class AdminService {
             UAdminResponse uAdminResponse = new UAdminResponse();
             uAdminResponse.setId(adminEntity.getId());
             uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
-            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
-            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            if (adminEntity.getFutureInstitution() != null) {
+                uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+                uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            } else {
+                uAdminResponse.setFutureInstId(0);
+                uAdminResponse.setFutureInstName(null);
+            }
             uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
             uAdminResponses.add(uAdminResponse);
         });
@@ -127,8 +138,13 @@ public class AdminService {
         UAdminResponse uAdminResponse = new UAdminResponse();
         uAdminResponse.setId(adminEntity.getId());
         uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
-        uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
-        uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+        if (adminEntity.getFutureInstitution() != null) {
+            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+        } else {
+            uAdminResponse.setFutureInstId(0);
+            uAdminResponse.setFutureInstName(null);
+        }
         uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
         return uAdminResponse;
     }
@@ -143,8 +159,13 @@ public class AdminService {
             UAdminResponse uAdminResponse = new UAdminResponse();
             uAdminResponse.setId(adminEntity.getId());
             uAdminResponse.setPinfl(adminEntity.getUser().getPhoneNumber());
-            uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
-            uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            if (adminEntity.getFutureInstitution() != null) {
+                uAdminResponse.setFutureInstId(adminEntity.getFutureInstitution().getId());
+                uAdminResponse.setFutureInstName(adminEntity.getFutureInstitution().getName());
+            } else {
+                uAdminResponse.setFutureInstId(0);
+                uAdminResponse.setFutureInstName(null);
+            }
             uAdminResponse.setUniversityResponses(adminEntity.getUniversities().stream().map(UniversityResponse::new).toList());
             uAdminResponses.add(uAdminResponse);
         });

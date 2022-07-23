@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
         http.csrf().disable();
-        http.headers().frameOptions().and().contentSecurityPolicy("frame-ancestors 'self' https://localhost:8081 https://*");
+        http.headers().frameOptions().sameOrigin().disable();
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

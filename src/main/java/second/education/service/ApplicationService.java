@@ -67,6 +67,7 @@ public class ApplicationService {
             FutureInstitution futureInstitution = futureInstitutionRepository.findById(request.getFutureInstitutionId()).get();
             application.setFutureInstitution(futureInstitution);
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
+            application.setMessage(null);
             application.setModifiedDate(LocalDateTime.now());
             applicationRepository.save(application);
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);

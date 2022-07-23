@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
+import second.education.model.response.CountApp;
 import second.education.model.response.ApplicationResponse;
 import second.education.model.response.GetStatAllCountAndToday;
 import second.education.model.response.StatisLanguageResponse;
@@ -107,4 +108,18 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null and " +
             " (d.enrolleeInfo.firstname like %?2% or d.enrolleeInfo.lastname like %?2% or d.enrolleeInfo.middleName like %?2% or d.enrolleeInfo.pinfl like %?2% or d.enrolleeInfo.phoneNumber like %?2%) ")
     Page<Application> searchForeignDiplomaStatusNull(Integer id, String search, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "select count(a.id) ,a.status from application as a inner join future_institution fi on fi.id = a.future_institution_id where fi.id=?1 group by a.status  ")
+    List<CountApp> getCountApp(Integer futureInsId);
+
+
+    @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status  from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where fi.id=?1 and d.institution_old_name_id is null group by a.diploma_status")
+    List<CountApp> getCountForeignDiploma(Integer id);
+
+    @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where d.institution_old_name_id=?1 group by a.diploma_status")
+    List<CountApp> getCountDiploma(Integer institutionId);
+
+
 }

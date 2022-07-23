@@ -112,6 +112,7 @@ public class EnrolleeService {
             Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
             if (appByDiplomId.isPresent()) {
                 appByDiplomId.get().setDiplomaStatus(null);
+                appByDiplomId.get().setDiplomaMessage(null);
                 applicationRepository.save(appByDiplomId.get());
             }
             Diploma diplomaSave = diplomaRepository.save(diploma);
@@ -181,6 +182,7 @@ public class EnrolleeService {
             Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
             if (appByDiplomId.isPresent()) {
                 appByDiplomId.get().setDiplomaStatus(null);
+                appByDiplomId.get().setDiplomaMessage(null);
                 applicationRepository.save(appByDiplomId.get());
             }
             Diploma save = diplomaRepository.save(diploma);

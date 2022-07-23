@@ -19,7 +19,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("api/file/")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "second")
+
 public class FileController {
 
     private final FileService fileService;

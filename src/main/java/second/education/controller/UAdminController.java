@@ -125,5 +125,11 @@ public class UAdminController {
         return ResponseEntity.ok(diplomResponseAdmins);
     }
 
+    @GetMapping("/countAll")
+    public ResponseEntity<?> countAll(Principal principal) {
+        CountByUAdmin allCountByUAdmin = universityAdminService.getAllCountByUAdmin(principal);
+        return ResponseEntity.ok(allCountByUAdmin);
+    }
+
 
 }

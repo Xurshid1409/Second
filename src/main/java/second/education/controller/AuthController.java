@@ -60,7 +60,7 @@ public class AuthController {
                         roles
                 ));
             } catch (Exception ex) {
-                return ResponseEntity.badRequest().body(new Result("Telefon raqam yoki parol hato kiritilgan, " +
+                return ResponseEntity.status(400).body(new Result("Telefon raqam yoki parol hato kiritilgan, " +
                         "iltimos tekshirib qayta urinib ko'ring", false));
             }
     }

@@ -37,22 +37,22 @@ public class AppResponse {
 
     String appStatus;
 
-    Boolean diplomaStatus;
+    String diplomaStatus;
 
     String createdDate;
 
     public AppResponse(Application application) {
         this.id = application.getId();
         this.tilId = application.getLanguage().getId();
-        this.shaklId=application.getEduForm().getId();
-        this.shaklName=application.getEduForm().getName();
+        this.shaklId = application.getEduForm().getId();
+        this.shaklName = application.getEduForm().getName();
         this.tilName = application.getLanguage().getLanguage();
         this.directionId = application.getEduForm().getDirection().getId();
         this.directionName = application.getEduForm().getDirection().getName();
         this.futureInstitutionId = application.getFutureInstitution().getId();
         this.futureInstitutionName = application.getFutureInstitution().getName();
         this.appStatus = application.getStatus();
-        this.diplomaStatus = application.getDiplomaStatus();
-       this.createdDate=application.getCreatedDate().toString();
+        this.diplomaStatus = String.valueOf(application.getDiplomaStatus());
+        this.createdDate = application.getCreatedDate().toString();
     }
 }
