@@ -195,7 +195,7 @@ public class AdminController {
         return ResponseEntity.ok(futureInstitutionResponses);
     }
 
-    @GetMapping("/searchFutureInst")
+    @GetMapping("/searchUAdmin")
     public ResponseEntity<?> searchUAdmin(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "30") int size,
