@@ -11,10 +11,15 @@ public class UAdminInfoResponse {
     private Integer id;
     private String firstname;
     private String lastname;
+    private Integer futureInstitutionId;
+    private String futureInstitutionName;
+
 
     public UAdminInfoResponse(AdminEntity adminEntity) {
         this.id = adminEntity.getId();
         this.firstname = adminEntity.getFistName();
         this.lastname = adminEntity.getLastname();
+        this.futureInstitutionId = adminEntity.getFutureInstitution().getId();
+        this.futureInstitutionName = adminEntity.getFutureInstitution().getName();
     }
 }
