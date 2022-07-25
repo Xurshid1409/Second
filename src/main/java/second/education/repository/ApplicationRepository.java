@@ -124,5 +124,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where d.institution_old_name_id=?1 and d.is_active=true group by a.diploma_status")
     List<CountApp> getCountDiploma(Integer institutionId);
 
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and a.diplomaStatus=?2 and d.isActive=true and a.status=?3 ")
+    Page<Application> getAllAppByDiplomaStatusAndAppstatus(Integer instId, Boolean diplomStatus, String appStatus, Pageable pageable);
+
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and a.diplomaStatus is null and d.isActive=true and a.status=?2 ")
+    Page<Application> getAllAppByDiplomaStatusIsNullAndAppstatus(Integer instId, String appStatus, Pageable pageable);
 
 }

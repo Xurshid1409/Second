@@ -30,6 +30,7 @@ public class UAdminController {
         return ResponseEntity.ok(diplomas);
     }
 
+
     @GetMapping("/getDiplom/{id}")
     public ResponseEntity<?> getDiplomById(@PathVariable Integer id, Principal principal) {
 
@@ -43,6 +44,16 @@ public class UAdminController {
                                        @RequestParam(value = "status") String status,
                                        Principal principal) {
         Page<AppResponse> allAppByUAdmin = universityAdminService.getAllAppByUAdmin(principal, status, page, size);
+        return ResponseEntity.ok(allAppByUAdmin);
+    }
+
+    @GetMapping("/getAllAppByDiplomaStatusAndAppStatus")
+    public ResponseEntity<?> getAllAppByDiplomaStatus(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                      @RequestParam(value = "size", defaultValue = "30") int size,
+                                                      @RequestParam(value = "appStatus") String appStatus,
+                                                      @RequestParam(value = "diplomaStatus") String diplomaStatus,
+                                                      Principal principal) {
+        Page<AppResponse> allAppByUAdmin = universityAdminService.getAllAppDplomaStatusByUAdmin(principal, diplomaStatus, appStatus, page, size);
         return ResponseEntity.ok(allAppByUAdmin);
     }
 
