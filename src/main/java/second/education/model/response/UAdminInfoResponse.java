@@ -5,6 +5,8 @@ import lombok.Setter;
 import second.education.domain.AdminEntity;
 import second.education.domain.classificator.University;
 
+import java.util.Optional;
+
 @Getter
 @Setter
 public class UAdminInfoResponse {
@@ -25,9 +27,9 @@ public class UAdminInfoResponse {
             this.futureInstitutionName = adminEntity.getFutureInstitution().getName();
 
         } else {
-            University university = adminEntity.getUniversities().stream().findFirst().get();
-            this.futureInstitutionId = university.getInstitutionId();
-            this.futureInstitutionName = university.getInstitutionName();
+            String university = adminEntity.getUniversities().stream().map(University::getInstitutionName).findFirst().get();
+            this.futureInstitutionId =null;
+            this.futureInstitutionName =university;
         }
     }
 }

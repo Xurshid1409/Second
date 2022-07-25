@@ -115,6 +115,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "group by a.status ")
     List<CountApp> getCountApp(Integer futureInsId);
 
+    @Query(nativeQuery = true, value = " select count(a.id) ,a.diploma_status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join diploma d on a.enrollee_info_id = d.enrollee_info_id " +
+            "where fi.id = ?1 and d.is_active=true " +
+            "group by a.diploma_status ")
+    List<CountApp> getCountAppByDiplomaStatus(Integer futureInsId);
+
 
     @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status  from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where fi.id=?1 and d.institution_old_name_id is null and d.is_active=true group by a.diploma_status")
@@ -123,6 +129,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where d.institution_old_name_id=?1 and d.is_active=true group by a.diploma_status")
     List<CountApp> getCountDiploma(Integer institutionId);
+
 
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and a.diplomaStatus=?2 and d.isActive=true and a.status=?3 ")
     Page<Application> getAllAppByDiplomaStatusAndAppstatus(Integer instId, Boolean diplomStatus, String appStatus, Pageable pageable);

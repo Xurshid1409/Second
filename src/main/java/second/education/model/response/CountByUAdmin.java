@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CountByUAdmin {
-
+    private List<CountApp> countAppByDiplomaStatus;
     private List<CountApp> countApp;
     private List<CountApp> countForeignDiploma;
     private List<CountApp> countDiploma;

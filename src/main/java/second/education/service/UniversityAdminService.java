@@ -470,16 +470,18 @@ public class UniversityAdminService {
     public CountByUAdmin getAllCountByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-        List<CountApp> countApp = applicationRepository.getCountApp(adminEntity.getFutureInstitution().getId());
-        List<CountApp> countForeignDiploma = applicationRepository.getCountForeignDiploma(adminEntity.getFutureInstitution().getId());
         List<CountApp> countDiploma = applicationRepository.getCountDiploma(institutionId);
         CountByUAdmin response = new CountByUAdmin();
-        response.setCountApp(countApp);
-        response.setCountForeignDiploma(countForeignDiploma);
+        if (adminEntity.getFutureInstitution() != null) {
+            List<CountApp> countApp = applicationRepository.getCountApp(adminEntity.getFutureInstitution().getId());
+            List<CountApp> countAppByDiplomaStatus = applicationRepository.getCountAppByDiplomaStatus(adminEntity.getFutureInstitution().getId());
+            List<CountApp> countForeignDiploma = applicationRepository.getCountForeignDiploma(adminEntity.getFutureInstitution().getId());
+            response.setCountApp(countApp);
+            response.setCountForeignDiploma(countForeignDiploma);
+            response.setCountAppByDiplomaStatus(countAppByDiplomaStatus);
+        }
         response.setCountDiploma(countDiploma);
         return response;
-
-
     }
 
 
