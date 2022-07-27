@@ -7,10 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import second.education.api_model.iib_api.Data;
 import second.education.api_model.iib_api.IIBResponse;
-import second.education.domain.Application;
-import second.education.domain.Diploma;
-import second.education.domain.Document;
-import second.education.domain.EnrolleeInfo;
+import second.education.domain.*;
 import second.education.domain.classificator.University;
 import second.education.model.request.IIBRequest;
 import second.education.model.response.*;
@@ -33,9 +30,9 @@ public class EnrolleeService {
     private final ApplicationRepository applicationRepository;
     private final InstitutionRepository institutionRepository;
     private final IIBServiceApi iibServiceApi;
-
     private final FileService fileService;
     private final DocumentRepository documentRepository;
+    private final StoryMessageRepository storyMessageRepository;
 
     @Transactional
     public Result createDiploma(Principal principal,
@@ -83,6 +80,7 @@ public class EnrolleeService {
 
     @Transactional
     public Result updateDiploma(
+            Principal principal,
             int diplomaId,
             String countryName,
             Integer institutionId,
@@ -96,30 +94,43 @@ public class EnrolleeService {
             Integer diplomaIlovaId,
             MultipartFile diplomaIlova) {
         try {
-            Diploma diploma = diplomaRepository.findById(diplomaId).get();
-            diploma.setCountryName(countryName);
-            diploma.setInstitutionId(institutionId);
-            University university = institutionRepository.findById(institutionId).get();
-            diploma.setInstitutionName(university.getInstitutionName());
-//            University old = institutionRepository.findById(id).get();
-            diploma.setInstitutionOldNameId(id);
-            diploma.setInstitutionOldName(university.getNameOz());
-            diploma.setEduFormName(eduFormName);
-            diploma.setEduFinishingDate(eduFinishingDate);
-            diploma.setSpecialityName(speciality);
-            diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
-            diploma.setModifiedDate(LocalDateTime.now());
-            Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
-            if (appByDiplomId.isPresent()) {
-                appByDiplomId.get().setDiplomaStatus(null);
-                appByDiplomId.get().setDiplomaMessage(null);
-                applicationRepository.save(appByDiplomId.get());
+
+            List<Diploma> diplomas = diplomaRepository.findAllDiplomaByEnrollee(principal.getName());
+            for (Diploma diploma : diplomas) {
+                if (diploma.getId() == diplomaId) {
+                    diploma.setCountryName(countryName);
+                    diploma.setInstitutionId(institutionId);
+                    University university = institutionRepository.findById(institutionId).get();
+                    diploma.setInstitutionName(university.getInstitutionName());
+                    diploma.setInstitutionOldNameId(id);
+                    diploma.setInstitutionOldName(university.getNameOz());
+                    diploma.setEduFormName(eduFormName);
+                    diploma.setEduFinishingDate(eduFinishingDate);
+                    diploma.setSpecialityName(speciality);
+                    diploma.setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+                    Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
+                    if (appByDiplomId.isPresent()) {
+                        appByDiplomId.get().setDiplomaStatus(null);
+                        appByDiplomId.get().setDiplomaMessage(null);
+                        Application save = applicationRepository.save(appByDiplomId.get());
+
+                        StoryMessage storyMessage = new StoryMessage();
+                        storyMessage.setMessage(save.getDiplomaMessage());
+                        String status = String.valueOf(save.getDiplomaStatus());
+                        storyMessage.setStatus(status);
+                        storyMessage.setPinfl(principal.getName());
+                        storyMessage.setFirstname(save.getEnrolleeInfo().getFirstname());
+                        storyMessage.setLastname(save.getEnrolleeInfo().getLastname());
+                        storyMessage.setApplication(save);
+                        storyMessageRepository.save(storyMessage);
+                    }
+                    diploma.setModifiedDate(LocalDateTime.now());
+                    Diploma diplomaSave = diplomaRepository.save(diploma);
+                    documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
+                }
+                return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
             }
-            Diploma diplomaSave = diplomaRepository.save(diploma);
-//            documentService.documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
-            documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
-//            FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
-            return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
         }
@@ -397,7 +408,6 @@ public class EnrolleeService {
         } catch (Exception e) {
             return new Result(ResponseMessage.ERROR_DELETED.getMessage(), false);
         }
-
     }
 
     private String getCurrentUrl(String fileName) {

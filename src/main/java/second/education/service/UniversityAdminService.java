@@ -14,7 +14,6 @@ import second.education.model.request.UpdateDiplomaStatus;
 import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +25,7 @@ public class UniversityAdminService {
 
     private final DiplomaRepository diplomaRepository;
     private final IIBServiceApi iibServiceApi;
-
-
+    private final StoryMessageRepository storyMessageRepository;
     private final ApplicationRepository applicationRepository;
     private final DocumentRepository documentRepository;
 
@@ -216,8 +214,6 @@ public class UniversityAdminService {
             });
             return new PageImpl<>(responsese, pageable, allApp.getTotalElements());
         }
-
-
     }
 
     @Transactional(readOnly = true)
@@ -283,14 +279,22 @@ public class UniversityAdminService {
                 if (status.equals("null")) {
                     application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
                     application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
-                    applicationRepository.save(application.get());
+                    Application save = applicationRepository.save(application.get());
+                    StoryMessage storyMessage = new StoryMessage();
+                    storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
+                    String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
+                    storyMessage.setStatus(status1);
+                    storyMessage.setFirstname(adminEntity.getFistName());
+                    storyMessage.setLastname(adminEntity.getLastname());
+                    storyMessage.setPinfl(principal.getName());
+                    storyMessage.setApplication(save);
+                    storyMessageRepository.save(storyMessage);
                     return new Result("Muvaffaqiyatli tasdiqlandi", true);
                 } else if (status.equals("true")) {
                     return new Result("diplom tasdiqlangan", false);
                 } else if (status.equals("false")) {
                     return new Result("diplom rad etilgan o'zgarishini kuting", false);
                 }
-
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
@@ -310,6 +314,14 @@ public class UniversityAdminService {
                         application.get().setStatus(updateAppStatus.getAppStatus());
                         application.get().setMessage(updateAppStatus.getAppMessage());
                         applicationRepository.save(application.get());
+                        StoryMessage storyMessage = new StoryMessage();
+                        storyMessage.setMessage(updateAppStatus.getAppMessage());
+                        storyMessage.setStatus(updateAppStatus.getAppStatus());
+                        storyMessage.setFirstname(adminEntity.getFistName());
+                        storyMessage.setLastname(adminEntity.getLastname());
+                        storyMessage.setPinfl(principal.getName());
+                        storyMessage.setApplication(application.get());
+                        storyMessageRepository.save(storyMessage);
                         return new Result("Muvaffaqiyatli tasdiqlandi", true);
                     case "false":
                         return new Result("bu arizaning diplomi rad etilgan", false);

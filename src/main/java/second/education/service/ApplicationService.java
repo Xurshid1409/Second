@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.Application;
 import second.education.domain.EnrolleeInfo;
+import second.education.domain.StoryMessage;
 import second.education.domain.classificator.EduForm;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.Language;
@@ -28,6 +29,7 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final EnrolleInfoRepository enrolleInfoRepository;
     private final FutureInstitutionRepository futureInstitutionRepository;
+    private final StoryMessageRepository storyMessageRepository;
 
     @Transactional
     public Result createApplication(Principal principal, ApplicationRequest request) {
@@ -69,7 +71,17 @@ public class ApplicationService {
             application.setStatus(ApplicationStatus.DEFAULT_STATUS.getMessage());
             application.setMessage(null);
             application.setModifiedDate(LocalDateTime.now());
-            applicationRepository.save(application);
+            Application save = applicationRepository.save(application);
+
+            StoryMessage storyMessage = new StoryMessage();
+            storyMessage.setMessage(save.getMessage());
+            storyMessage.setStatus(save.getStatus());
+            storyMessage.setPinfl(principal.getName());
+            storyMessage.setFirstname(enrolleeInfo.getFirstname());
+            storyMessage.setLastname(enrolleeInfo.getLastname());
+            storyMessage.setApplication(save);
+            storyMessageRepository.save(storyMessage);
+
             return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);

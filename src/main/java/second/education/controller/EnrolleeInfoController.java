@@ -79,7 +79,8 @@ public class EnrolleeInfoController {
     }
 
     @PutMapping("{diplomaId}")
-    public ResponseEntity<?> updateDiploma(@PathVariable int diplomaId,
+    public ResponseEntity<?> updateDiploma(Principal principal,
+                                           @PathVariable int diplomaId,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,
                                            @RequestParam(value = "id", required = false) Integer id,
@@ -91,7 +92,7 @@ public class EnrolleeInfoController {
                                            @RequestParam(value = "diploma", required = false) MultipartFile diploma,
                                            @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
                                            @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
-        Result result = enrolleeService.updateDiploma(diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
+        Result result = enrolleeService.updateDiploma(principal, diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
                 speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
