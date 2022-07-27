@@ -62,7 +62,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "inner join diploma d on ei.id = d.enrollee_info_id " +
             " where a.future_institution_id=?1 " +
             " group by CAST(d.created_date AS DATE) " +
-            " order by sana")
+            " order by sana ")
     List<GetCountAppallDate> getForeignDiplomaCountTodayByUAdmin(Integer instId);
 
     @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id where a.future_institution_id=?1 group by ei.gender")
@@ -80,7 +80,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id=?1 " +
+            "where d.institution_old_name_id=?1 " +
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGender(Integer institutionId);
 

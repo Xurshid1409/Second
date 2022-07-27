@@ -534,12 +534,13 @@ public class UniversityAdminService {
         response.setCountDiploma(countDiploma);
         return response;
     }
-
+    @Transactional(readOnly = true)
     public List<GetCountAppallDate> getCountAppandTodayByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         return applicationRepository.getAppCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
     }
 
+    @Transactional(readOnly = true)
     public List<GetAppByGender> getCountAppandGenderByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderByUAdmin(adminEntity.getFutureInstitution().getId());
@@ -547,6 +548,7 @@ public class UniversityAdminService {
         return counAppAndGenderByUAdmin;
     }
 
+    @Transactional(readOnly = true)
     public CountGenderAndDiplomaAndApp getCountForeignAndDiplomaandGenderAndTodayByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
