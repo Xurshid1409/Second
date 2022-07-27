@@ -44,14 +44,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
 
-    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a where a.future_institution_id=?1 group by CAST(a.created_date AS DATE)  order by sana ")
+    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where a.future_institution_id=?1 and d.is_active=true group by CAST(a.created_date AS DATE)  order by sana ")
     List<GetCountAppallDate> getAppCountTodayByUAdmin(Integer instId);
 
     @Query(nativeQuery = true, value = "select count(a.id) as count, CAST(d.created_date AS DATE) as sana " +
             "from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.institution_old_name_id=?1 " +
+            "where d.institution_old_name_id=?1 and d.is_active=true " +
             "group by CAST(d.created_date AS DATE) " +
             "order by sana")
     List<GetCountAppallDate> getDiplomaCountTodayByUAdmin(Integer instId);
@@ -60,19 +61,20 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where a.future_institution_id=?1 " +
+            " where a.future_institution_id=?1 and d.is_active=true " +
             " group by CAST(d.created_date AS DATE) " +
             " order by sana ")
     List<GetCountAppallDate> getForeignDiplomaCountTodayByUAdmin(Integer instId);
 
-    @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id where a.future_institution_id=?1 group by ei.gender")
+    @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id " +
+            "    where a.future_institution_id=?1 and d.is_active=true group by ei.gender")
     List<GetAppByGender> getCounAppAndGenderByUAdmin(Integer instId);
 
     @Query(nativeQuery = true, value = " select count(a.id) as count, ei.gender as gender " +
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.institution_old_name_id=?1 " +
+            "where d.institution_old_name_id=?1 and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountDiplomaAndGender(Integer institutionId);
 
@@ -80,7 +82,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id=?1 " +
+            "where a.future_institution_id=?1 and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGender(Integer institutionId);
 
@@ -121,17 +123,17 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndForeignDiplomaById(Integer id, Integer diplomaId);
 
-    @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1")
+    @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1 and d.isActive=true ")
     Optional<Application> getAppByDiplomId(Integer diplomaId);
 
-    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or   a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%)")
+    @Query(" select a from Application a join Diploma as d on d.enrolleeInfo.id=a.enrolleeInfo.id  where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or   a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%)")
     Page<Application> searchAppByFirstnameAndLastname(Integer futureInstId, String status, String search, Pageable pageable);
 
 
-    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
+    @Query(" select a from Application a join Diploma as d on  d.enrolleeInfo.id=a.enrolleeInfo.id    where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatus(Integer futureInstId, String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
 
-    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and a.diplomaStatus is null and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%) ")
+    @Query(" select a from Application a join Diploma as d on d.enrolleeInfo.id=a.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus is null and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%) ")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatusIsNull(Integer futureInstId, String appStatus, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
