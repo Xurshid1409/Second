@@ -6,10 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
-import second.education.model.response.CountApp;
-import second.education.model.response.ApplicationResponse;
-import second.education.model.response.GetStatAllCountAndToday;
-import second.education.model.response.StatisLanguageResponse;
+import second.education.model.response.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +43,11 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(nativeQuery = true, value = "select count(a.id) as count_today, " +
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
+    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a where a.future_institution_id=?1 group by CAST(a.created_date AS DATE)")
+    List<GetCountAppallDate> getCountTodayByUAdmin(Integer instId);
 
+    @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id where a.future_institution_id=?1 group by ei.gender")
+    List<GetAppByGender> getCounAppAndGenderByUAdmin(Integer instId);
 
     @Query("select a from Application as a where a.enrolleeInfo.user.phoneNumber=?1")
     Optional<Application> checkApp(String phoneNumber);
@@ -91,6 +92,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     Page<Application> searchAppByFirstnameAndLastname(Integer futureInstId, String status, String search, Pageable pageable);
 
 
+    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
+    Page<Application> searchAppByFirstnameAndLastnameByDiplomastatus(Integer futureInstId, String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
+
+    @Query(" select a from Application a where a.futureInstitution.id=?1 and a.status=?2 and a.diplomaStatus is null and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%) ")
+    Page<Application> searchAppByFirstnameAndLastnameByDiplomastatusIsNull(Integer futureInstId, String appStatus, String search, Pageable pageable);
+
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
             " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.enrolleeInfo.pinfl like %?3% or " +
             " d.enrolleeInfo.phoneNumber like %?3%) ")
@@ -115,9 +122,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "group by a.status ")
     List<CountApp> getCountApp(Integer futureInsId);
 
-    @Query(nativeQuery = true, value = " select count(a.id) ,a.diploma_status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
+    @Query(nativeQuery = true, value = " select count(a.id) ,a.diploma_status as status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join diploma d on a.enrollee_info_id = d.enrollee_info_id " +
-            "where fi.id = ?1 and d.is_active=true " +
+            "where fi.id = ?1 and d.is_active=true and a.status='Ariza yuborildi' " +
             "group by a.diploma_status ")
     List<CountApp> getCountAppByDiplomaStatus(Integer futureInsId);
 
@@ -126,15 +133,16 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where fi.id=?1 and d.institution_old_name_id is null and d.is_active=true group by a.diploma_status")
     List<CountApp> getCountForeignDiploma(Integer id);
 
-    @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
-            "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where d.institution_old_name_id=?1 and d.is_active=true group by a.diploma_status")
+    @Query(nativeQuery = true, value = " select count(a.id) ,a.diploma_status as status from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where d.institution_old_name_id=?1 and d.is_active=true group by a.diploma_status ")
     List<CountApp> getCountDiploma(Integer institutionId);
 
 
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and a.diplomaStatus=?2 and d.isActive=true and a.status=?3 ")
     Page<Application> getAllAppByDiplomaStatusAndAppstatus(Integer instId, Boolean diplomStatus, String appStatus, Pageable pageable);
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and a.diplomaStatus is null and d.isActive=true and a.status=?2 ")
-    Page<Application> getAllAppByDiplomaStatusIsNullAndAppstatus(Integer instId, String appStatus, Pageable pageable);
+    @Query(" select a from Application as a inner join Diploma d on a.enrolleeInfo.id = d.enrolleeInfo.id " +
+            "where  d.isActive=true and a.diplomaStatus is null and a.futureInstitution.id=?1 and a.status=?2 ")
+    Page<Application> getAllAppByDiplomaStatusIsNull(Integer instId, String appStatus, Pageable pageable);
 
 }

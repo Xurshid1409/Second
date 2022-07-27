@@ -15,6 +15,7 @@ import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
+import javax.swing.plaf.PanelUI;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -204,17 +205,20 @@ public class UniversityAdminService {
             });
             return new PageImpl<>(responses, pageable, allApp.getTotalElements());
         } else {
-            Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusIsNullAndAppstatus(adminEntity.getFutureInstitution().getId(), appStatus, pageable);
+            List<AppResponse> responsese = new ArrayList<>();
+            Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusIsNull(adminEntity.getFutureInstitution().getId(), appStatus, pageable);
             allApp.forEach(application -> {
                 AppResponse appResponse = new AppResponse(application);
                 appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
-                responses.add(appResponse);
+                responsese.add(appResponse);
             });
-            return new PageImpl<>(responses, pageable, allApp.getTotalElements());
+            return new PageImpl<>(responsese, pageable, allApp.getTotalElements());
         }
+
+
     }
 
     @Transactional(readOnly = true)
@@ -346,6 +350,42 @@ public class UniversityAdminService {
             responses.add(appResponse);
         });
         return new PageImpl<>(responses, pageable, allApp.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AppResponse> searchAllAppByStatus(Principal principal, String diplomaStatus, String appStatus, String search, int page, int size) {
+        String s = search.toUpperCase();
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        List<AppResponse> responses = new ArrayList<>();
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+
+            Page<Application> allApp = applicationRepository.
+                    searchAppByFirstnameAndLastnameByDiplomastatus(adminEntity.getFutureInstitution().getId(), appStatus, aBoolean, s, pageable);
+            allApp.forEach(application -> {
+                AppResponse appResponse = new AppResponse(application);
+                appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+                responses.add(appResponse);
+            });
+            return new PageImpl<>(responses, pageable, allApp.getTotalElements());
+        } else {
+            Page<Application> applications = applicationRepository.
+                    searchAppByFirstnameAndLastnameByDiplomastatusIsNull(adminEntity.getFutureInstitution().getId(), appStatus, s, pageable);
+            applications.forEach(application -> {
+                AppResponse appResponse = new AppResponse(application);
+                appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
+                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                FileResponse fileResponse = getFileResponse(diploma.getId());
+                appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+                responses.add(appResponse);
+            });
+            return new PageImpl<>(responses, pageable, applications.getTotalElements());
+        }
     }
 
     @Transactional(readOnly = true)
@@ -482,6 +522,15 @@ public class UniversityAdminService {
         }
         response.setCountDiploma(countDiploma);
         return response;
+    }
+
+    public List<GetCountAppallDate> getCountAppandTodayByUAdmin(Principal principal) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        return applicationRepository.getCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
+    }
+    public List<GetAppByGender> getCountAppaCoundandGenderByUAdmin(Principal principal) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        return applicationRepository.getCounAppAndGenderByUAdmin(adminEntity.getFutureInstitution().getId());
     }
 
 

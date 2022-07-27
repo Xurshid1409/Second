@@ -11,6 +11,7 @@ import second.education.model.response.*;
 import second.education.service.UniversityAdminService;
 
 import java.security.Principal;
+import java.util.List;
 
 
 @RestController
@@ -114,6 +115,19 @@ public class UAdminController {
         return ResponseEntity.ok(appResponses);
     }
 
+    @GetMapping("/searchAppByDiplomaStatus")
+    public ResponseEntity<?> searchAppByDiplomaStatus(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "appStatus") String appStatus,
+            @RequestParam(value = "diplomaStatus") String diplomaStatus,
+            @RequestParam(value = "text") String text,
+            Principal principal) {
+        Page<AppResponse> appResponses = universityAdminService.searchAllAppByStatus(principal, diplomaStatus, appStatus, text, page, size);
+        return ResponseEntity.ok(appResponses);
+    }
+
+
     @GetMapping("/searchDiploma")
     public ResponseEntity<?> searchDiplomaByUAdmin(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -143,4 +157,15 @@ public class UAdminController {
     }
 
 
+    @GetMapping("/countAppAndToday")
+    public ResponseEntity<?> countAppAndToday(Principal principal) {
+        List<GetCountAppallDate> countAppandTodayByUAdmin = universityAdminService.getCountAppandTodayByUAdmin(principal);
+        return ResponseEntity.ok(countAppandTodayByUAdmin);
+    }
+
+    @GetMapping("/countAppAndGender")
+    public ResponseEntity<?> countAppAndGender(Principal principal) {
+        List<GetAppByGender> countAppandTodayByUAdmin = universityAdminService.getCountAppaCoundandGenderByUAdmin(principal);
+        return ResponseEntity.ok(countAppandTodayByUAdmin);
+    }
 }

@@ -1,10 +1,7 @@
 package second.education.domain.classificator;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import second.education.domain.AbstractData;
 
 import javax.persistence.Entity;
@@ -16,6 +13,7 @@ import javax.persistence.ManyToOne;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class EduForm extends AbstractData<Integer> {
 
     private String name;
