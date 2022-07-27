@@ -296,6 +296,29 @@ public class UniversityAdminService {
                     return new Result("diplom rad etilgan o'zgarishini kuting", false);
                 }
             }
+            Optional<Application> foreignDiploma = applicationRepository.getAppAndForeignDiplomaById(adminEntity.getFutureInstitution().getId(), diplomaId);
+            if (foreignDiploma.isPresent()) {
+                String status = String.valueOf(application.get().getDiplomaStatus());
+                if (status.equals("null")) {
+                    foreignDiploma.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                    foreignDiploma.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                    Application save = applicationRepository.save(foreignDiploma.get());
+                    StoryMessage storyMessage = new StoryMessage();
+                    storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
+                    String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
+                    storyMessage.setStatus(status1);
+                    storyMessage.setFirstname(adminEntity.getFistName());
+                    storyMessage.setLastname(adminEntity.getLastname());
+                    storyMessage.setPinfl(principal.getName());
+                    storyMessage.setApplication(save);
+                    storyMessageRepository.save(storyMessage);
+                    return new Result("Muvaffaqiyatli tasdiqlandi", true);
+                } else if (status.equals("true")) {
+                    return new Result("diplom tasdiqlangan", false);
+                } else if (status.equals("false")) {
+                    return new Result("diplom rad etilgan o'zgarishini kuting", false);
+                }
+            }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
             return new Result("Tasdiqlashda xatolik", false);
