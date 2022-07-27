@@ -44,8 +44,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
 
-    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where a.future_institution_id=?1 and d.is_active=true group by CAST(a.created_date AS DATE)  order by sana ")
+    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a " +
+            "inner join enrollee_info ei on ei.id = a.enrollee_info_id  inner join  diploma d on ei.id = d.enrollee_info_id " +
+            " where a.future_institution_id=?1 and d.is_active=true group by CAST(a.created_date AS DATE) order by sana ")
     List<GetCountAppallDate> getAppCountTodayByUAdmin(Integer instId);
 
     @Query(nativeQuery = true, value = "select count(a.id) as count, CAST(d.created_date AS DATE) as sana " +
