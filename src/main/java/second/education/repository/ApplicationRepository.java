@@ -83,7 +83,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id=?1 and d.is_active=true " +
+            "where a.future_institution_id=?1 and d.institution_old_name_id is null and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGender(Integer institutionId);
 
