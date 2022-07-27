@@ -537,7 +537,7 @@ public class UniversityAdminService {
 
     public List<GetCountAppallDate> getCountAppandTodayByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        return applicationRepository.getCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
+        return applicationRepository.getAppCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
     }
 
     public List<GetAppByGender> getCountAppandGenderByUAdmin(Principal principal) {
@@ -545,6 +545,24 @@ public class UniversityAdminService {
         List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderByUAdmin(adminEntity.getFutureInstitution().getId());
 
         return counAppAndGenderByUAdmin;
+    }
+
+    public CountGenderAndDiplomaAndApp getCountForeignAndDiplomaandGenderAndTodayByUAdmin(Principal principal) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        List<GetAppByGender> diplomaAndGender = applicationRepository.getCountDiplomaAndGender(institutionId);
+        CountGenderAndDiplomaAndApp statistik = new CountGenderAndDiplomaAndApp();
+        List<GetCountAppallDate> diplomaCountTodayByUAdmin = applicationRepository.getDiplomaCountTodayByUAdmin(institutionId);
+        statistik.setDiplomaGenderCount(diplomaAndGender);
+        statistik.setDiplomaCountToday(diplomaCountTodayByUAdmin);
+        List<GetCountAppallDate> foreignDiplomaCountTodayByUAdmin = applicationRepository.getForeignDiplomaCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
+        List<GetAppByGender> countForeingDiplomaAndGender = applicationRepository.getCountForeingDiplomaAndGender(adminEntity.getFutureInstitution().getId());
+        statistik.setForeigndiplomaGenderCount(countForeingDiplomaAndGender);
+        statistik.setForeigndiplomaCountToday(foreignDiplomaCountTodayByUAdmin);
+
+        return statistik;
+
+
     }
 
 
