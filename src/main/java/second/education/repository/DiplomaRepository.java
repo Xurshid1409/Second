@@ -45,4 +45,6 @@ public interface DiplomaRepository extends JpaRepository<Diploma, Integer> {
 
     @Query("select d from  Diploma as d where d.enrolleeInfo.id=?1 and d.isActive=true ")
     Optional<Diploma> getDiplomaByEnrolleeInfoId(Integer id);
+
+
 }

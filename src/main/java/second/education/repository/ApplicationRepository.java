@@ -43,7 +43,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(nativeQuery = true, value = "select count(a.id) as count_today, " +
             "(select count(a.id) from application a) count from application a where Date(a.created_date)=current_date")
     Optional<GetStatAllCountAndToday> getCountTodayAndAllCount();
-    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a where a.future_institution_id=?1 group by CAST(a.created_date AS DATE)")
+
+    @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a where a.future_institution_id=?1 group by CAST(a.created_date AS DATE)  order by sana ")
     List<GetCountAppallDate> getCountTodayByUAdmin(Integer instId);
 
     @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id where a.future_institution_id=?1 group by ei.gender")
@@ -99,12 +100,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatusIsNull(Integer futureInstId, String appStatus, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
-            " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.enrolleeInfo.pinfl like %?3% or " +
-            " d.enrolleeInfo.phoneNumber like %?3%) ")
+            " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.specialityName like %?3% or " +
+            " d.diplomaSerialAndNumber like %?3%) ")
     Page<Application> searchDiplomaByUAdmin(Integer id, Boolean status, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus is null and " +
-            " (d.enrolleeInfo.firstname like %?2% or d.enrolleeInfo.lastname like %?2% or d.enrolleeInfo.middleName like %?2% or d.enrolleeInfo.pinfl like %?2% or d.enrolleeInfo.phoneNumber like %?2%) ")
+            " (d.enrolleeInfo.firstname like %?2% or d.enrolleeInfo.lastname like %?2% or d.enrolleeInfo.middleName like %?2% or d.diplomaSerialAndNumber like %?2% or d.specialityName like %?2%) ")
     Page<Application> searchDiplomStatusNull(Integer id, String search, Pageable pageable);
 
     ///

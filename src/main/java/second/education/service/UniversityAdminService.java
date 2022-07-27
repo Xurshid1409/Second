@@ -15,7 +15,6 @@ import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
-import javax.swing.plaf.PanelUI;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -528,9 +527,12 @@ public class UniversityAdminService {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         return applicationRepository.getCountTodayByUAdmin(adminEntity.getFutureInstitution().getId());
     }
-    public List<GetAppByGender> getCountAppaCoundandGenderByUAdmin(Principal principal) {
+
+    public List<GetAppByGender> getCountAppandGenderByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        return applicationRepository.getCounAppAndGenderByUAdmin(adminEntity.getFutureInstitution().getId());
+        List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderByUAdmin(adminEntity.getFutureInstitution().getId());
+
+        return counAppAndGenderByUAdmin;
     }
 
 

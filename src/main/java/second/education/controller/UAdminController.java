@@ -165,7 +165,7 @@ public class UAdminController {
 
     @GetMapping("/countAppAndGender")
     public ResponseEntity<?> countAppAndGender(Principal principal) {
-        List<GetAppByGender> countAppandTodayByUAdmin = universityAdminService.getCountAppaCoundandGenderByUAdmin(principal);
+        List<GetAppByGender> countAppandTodayByUAdmin = universityAdminService.getCountAppandGenderByUAdmin(principal);
         return ResponseEntity.ok(countAppandTodayByUAdmin);
     }
 }
