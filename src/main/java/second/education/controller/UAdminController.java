@@ -94,6 +94,14 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusDiploma(principal, updateDiplomaStatus, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+    @PutMapping("/updateForeignDiplomaStatus/{diplomaId}")
+    public ResponseEntity<?> updateForeignDiplomaStatus(@PathVariable Integer diplomaId,
+                                                 @RequestBody UpdateDiplomaStatus updateDiplomaStatus,
+                                                 Principal principal) {
+
+        Result result = universityAdminService.updateStatusForeignDiploma(principal, updateDiplomaStatus, diplomaId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
 
     @PutMapping("/updateAppStatus/{appId}")
     public ResponseEntity<?> updateAppStatus(@PathVariable Integer appId,

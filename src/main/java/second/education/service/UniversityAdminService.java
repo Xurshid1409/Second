@@ -296,13 +296,23 @@ public class UniversityAdminService {
                     return new Result("diplom rad etilgan o'zgarishini kuting", false);
                 }
             }
-            Optional<Application> foreignDiploma = applicationRepository.getAppAndForeignDiplomaById(adminEntity.getFutureInstitution().getId(), diplomaId);
-            if (foreignDiploma.isPresent()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result("Tasdiqlashda xatolik", false);
+        }
+    }
+    @Transactional
+    public Result updateStatusForeignDiploma(Principal principal, UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId) {
+        try {
+            AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+            Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+            Optional<Application> application = applicationRepository.getAppAndForeignDiplomaById(adminEntity.getFutureInstitution().getId(), diplomaId);
+            if (application.isPresent()) {
                 String status = String.valueOf(application.get().getDiplomaStatus());
                 if (status.equals("null")) {
-                    foreignDiploma.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
-                    foreignDiploma.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
-                    Application save = applicationRepository.save(foreignDiploma.get());
+                    application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                    application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                    Application save = applicationRepository.save(application.get());
                     StoryMessage storyMessage = new StoryMessage();
                     storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
                     String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
