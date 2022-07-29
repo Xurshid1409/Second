@@ -44,8 +44,8 @@ public class UniversityAdminService {
             allDiplomebyUAdmin.forEach(application -> {
                 EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-                FileResponse fileResponse = getFileResponse(diploma.getId());
-                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+             //   FileResponse fileResponse = getFileResponse(diploma.getId());
+                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
                 diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
 
@@ -378,16 +378,8 @@ public class UniversityAdminService {
         Page<Application> allApp = applicationRepository.searchAppByFirstnameAndLastname(adminEntity.getFutureInstitution().getId(), status, s, pageable);
         allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
-            IIBRequest iibRequest = new IIBRequest();
-            iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
-            iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
-            IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-            Data data = iibResponse.getData();
-            ImageResponse imageResponse = new ImageResponse();
-            if (!data.getPhoto().isEmpty()) {
-                imageResponse.setImage(data.getPhoto());
-            }
-            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse));
+
+            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
             Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
             FileResponse fileResponse = getFileResponse(diploma.getId());
             appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
@@ -445,16 +437,7 @@ public class UniversityAdminService {
             Boolean aBoolean = Boolean.valueOf(status);
             Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomaByUAdmin(institutionId, aBoolean, s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
-                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
-                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
-                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-                Data data = iibResponse.getData();
-                ImageResponse imageResponse = new ImageResponse();
-                if (!data.getPhoto().isEmpty()) {
-                    imageResponse.setImage(data.getPhoto());
-                }
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
@@ -469,16 +452,8 @@ public class UniversityAdminService {
         } else {
             Page<Application> allDiplomebyUAdmin = applicationRepository.searchDiplomStatusNull(institutionId, s, pageable);
             allDiplomebyUAdmin.forEach(application -> {
-                IIBRequest iibRequest = new IIBRequest();
-                iibRequest.setPinfl(application.getEnrolleeInfo().getPinfl());
-                iibRequest.setGiven_date(application.getEnrolleeInfo().getPassportGivenDate());
-                IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
-                Data data = iibResponse.getData();
-                ImageResponse imageResponse = new ImageResponse();
-                if (!data.getPhoto().isEmpty()) {
-                    imageResponse.setImage(data.getPhoto());
-                }
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo(), imageResponse);
+
+                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
                 FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
