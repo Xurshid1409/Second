@@ -14,6 +14,7 @@ import second.education.model.request.UpdateDiplomaStatus;
 import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class UniversityAdminService {
             allDiplomebyUAdmin.forEach(application -> {
                 EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
                 Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-             //   FileResponse fileResponse = getFileResponse(diploma.getId());
+                //   FileResponse fileResponse = getFileResponse(diploma.getId());
                 DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma);
                 diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
                 diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
@@ -68,6 +69,7 @@ public class UniversityAdminService {
         }
 
     }
+
 
     //horijiy diplomlarni obshiysi
     @Transactional(readOnly = true)
@@ -301,6 +303,7 @@ public class UniversityAdminService {
             return new Result("Tasdiqlashda xatolik", false);
         }
     }
+
     @Transactional
     public Result updateStatusForeignDiploma(Principal principal, UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId) {
         try {
@@ -542,6 +545,7 @@ public class UniversityAdminService {
         response.setCountDiploma(countDiploma);
         return response;
     }
+
     @Transactional(readOnly = true)
     public List<GetCountAppallDate> getCountAppandTodayByUAdmin(Principal principal) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
@@ -574,6 +578,15 @@ public class UniversityAdminService {
 
 
     }
+  /*  @Transactional(readOnly = true)
+    public Page<GetDiplomasToExcel> getDiplomasToExcel(Principal principal, String status, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
 
+        return null;
+    }
+*/
 
 }

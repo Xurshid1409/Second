@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.Application;
 import second.education.model.response.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -182,5 +181,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(" select a from Application as a inner join Diploma d on a.enrolleeInfo.id = d.enrolleeInfo.id " +
             "where  d.isActive=true and a.diplomaStatus is null and a.futureInstitution.id=?1 and a.status=?2 ")
     Page<Application> getAllAppByDiplomaStatusIsNull(Integer instId, String appStatus, Pageable pageable);
+
+    @Query(nativeQuery = true, value = " select * from a")
+    List<GetDiplomasToExcel> getDiplomasToExcel();
 
 }

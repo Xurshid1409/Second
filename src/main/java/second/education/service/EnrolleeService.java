@@ -72,6 +72,12 @@ public class EnrolleeService {
             documentSave(diplomaSave.getId(), diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diplomaSave.getId());
 //            FileResponse fileResponse = getFileResponse(diplomaSave.getId());
+            Optional<Application> application = applicationRepository.checkApp(principal.getName());
+            if (application.isPresent()) {
+                application.get().setDiplomaMessage(null);
+                application.get().setDiplomaStatus(null);
+                applicationRepository.save(application.get());
+            }
             return new Result(ResponseMessage.SUCCESSFULLY_SAVED.getMessage(), true);
         } catch (Exception ex) {
             return new Result(ResponseMessage.ERROR_SAVED.getMessage(), false);
@@ -163,6 +169,12 @@ public class EnrolleeService {
             documentSave(save.getId(), diplomaCopy, diplomaIlova);
 //            FileResponse fileResponse = documentService.getFileResponse(diploma.getId());
             FileResponse fileResponse = getFileResponse(save.getId());
+            Optional<Application> application = applicationRepository.checkApp(principal.getName());
+            if (application.isPresent()) {
+                application.get().setDiplomaMessage(null);
+                application.get().setDiplomaStatus(null);
+                applicationRepository.save(application.get());
+            }
             return new DiplomaResponse(diploma, fileResponse);
         } catch (Exception ex) {
             return new DiplomaResponse();

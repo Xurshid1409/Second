@@ -27,7 +27,7 @@ public class DiplomResponseAdmin {
     private String diplomaStatus;
     private String diplomaNumberAndDiplomaSerial;
 
-private EnrolleeResponse enrolleeResponse;
+    private EnrolleeResponse enrolleeResponse;
     private FileResponse fileResponse;
     public DiplomResponseAdmin(Diploma diploma, FileResponse fileResponse) {
         this.id = diploma.getId();
