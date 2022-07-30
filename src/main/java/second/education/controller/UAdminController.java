@@ -94,10 +94,11 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusDiploma(principal, updateDiplomaStatus, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+
     @PutMapping("/updateForeignDiplomaStatus/{diplomaId}")
     public ResponseEntity<?> updateForeignDiplomaStatus(@PathVariable Integer diplomaId,
-                                                 @RequestBody UpdateDiplomaStatus updateDiplomaStatus,
-                                                 Principal principal) {
+                                                        @RequestBody UpdateDiplomaStatus updateDiplomaStatus,
+                                                        Principal principal) {
 
         Result result = universityAdminService.updateStatusForeignDiploma(principal, updateDiplomaStatus, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
@@ -176,9 +177,30 @@ public class UAdminController {
         List<GetAppByGender> countAppandTodayByUAdmin = universityAdminService.getCountAppandGenderByUAdmin(principal);
         return ResponseEntity.ok(countAppandTodayByUAdmin);
     }
+
     @GetMapping("/countDilomaAndForegnToday")
     public ResponseEntity<?> countDilomaAndForegnToday(Principal principal) {
         CountGenderAndDiplomaAndApp all = universityAdminService.getCountForeignAndDiplomaandGenderAndTodayByUAdmin(principal);
         return ResponseEntity.ok(all);
+    }
+
+    @GetMapping("/exportDiploma")
+    public ResponseEntity<?> exportDiploma(Principal principal, @RequestParam(value = "status") String status) {
+        List<GetDiplomasToExcel> diplomasToExcel = universityAdminService.getDiplomasToExcel(principal, status);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/exportForeignDiploma")
+    public ResponseEntity<?> exportForeignDiploma(Principal principal, @RequestParam(value = "status") String status) {
+        List<GetDiplomasToExcel> diplomasToExcel = universityAdminService.getForeignDiplomasToExcel(principal, status);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+
+    @GetMapping("/exportApp")
+    public ResponseEntity<?> exportApp(Principal principal, @RequestParam(value = "diplomaStatus") String diplomaStatus,
+                                       @RequestParam(value = "appStatus") String appStatus) {
+        List<GetAppToExcel> diplomasToExcel = universityAdminService.getAppToExcel(principal, appStatus, diplomaStatus);
+        return ResponseEntity.ok(diplomasToExcel);
     }
 }

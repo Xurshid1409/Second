@@ -578,15 +578,40 @@ public class UniversityAdminService {
 
 
     }
-  /*  @Transactional(readOnly = true)
-    public Page<GetDiplomasToExcel> getDiplomasToExcel(Principal principal, String status, int page, int size) {
-        if (page > 0) page = page - 1;
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+
+    @Transactional(readOnly = true)
+    public List<GetDiplomasToExcel> getDiplomasToExcel(Principal principal, String status) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-
-        return null;
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.exportDiplomaToExcel(institutionId, aBoolean);
+        }
+        return applicationRepository.exportDiplomaNullToExcel(institutionId);
     }
-*/
+    @Transactional(readOnly = true)
+    public List<GetDiplomasToExcel> getForeignDiplomasToExcel(Principal principal, String status) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.exportForeignDiplomaToExcel(adminEntity.getFutureInstitution().getId(), aBoolean);
+        }
+        return applicationRepository.exportForeignDiplomaNullToExcel(adminEntity.getFutureInstitution().getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetAppToExcel> getAppToExcel(Principal principal, String appStatus, String diplomaStatus) {
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+            return applicationRepository.exportAppDiplomaTrueToExcel(adminEntity.getFutureInstitution().getId());
+        } else if (diplomaStatus.equals("null")) {
+            return applicationRepository.exportAppByDiplomaNullToExcel(adminEntity.getFutureInstitution().getId());
+        } else {
+            return applicationRepository.exportAppToExcel(adminEntity.getFutureInstitution().getId(), appStatus);
+        }
+    }
 
 }
