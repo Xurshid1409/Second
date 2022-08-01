@@ -277,30 +277,23 @@ public class UniversityAdminService {
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
             Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
             if (application.isPresent()) {
-                String status = String.valueOf(application.get().getDiplomaStatus());
-                if (status.equals("null")) {
-                    application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
-                    application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
-                    Application save = applicationRepository.save(application.get());
-                    StoryMessage storyMessage = new StoryMessage();
-                    storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
-                    String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
-                    storyMessage.setStatus(status1);
-                    storyMessage.setFirstname(adminEntity.getFistName());
-                    storyMessage.setLastname(adminEntity.getLastname());
-                    storyMessage.setPinfl(principal.getName());
-                    storyMessage.setApplication(save);
-                    storyMessageRepository.save(storyMessage);
-                    return new Result("Muvaffaqiyatli tasdiqlandi", true);
-                } else if (status.equals("true")) {
-                    return new Result("diplom tasdiqlangan", false);
-                } else if (status.equals("false")) {
-                    return new Result("diplom rad etilgan o'zgarishini kuting", false);
-                }
+                application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                Application save = applicationRepository.save(application.get());
+                StoryMessage storyMessage = new StoryMessage();
+                storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
+                String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
+                storyMessage.setStatus(status1);
+                storyMessage.setFirstname(adminEntity.getFistName());
+                storyMessage.setLastname(adminEntity.getLastname());
+                storyMessage.setPinfl(principal.getName());
+                storyMessage.setApplication(save);
+                storyMessageRepository.save(storyMessage);
+                return new Result("Muvaffaqiyatli o'zgartirildi", true);
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
-            return new Result("Tasdiqlashda xatolik", false);
+            return new Result("O'zgartirishda xatolik", false);
         }
     }
 
@@ -312,7 +305,6 @@ public class UniversityAdminService {
             Optional<Application> application = applicationRepository.getAppAndForeignDiplomaById(adminEntity.getFutureInstitution().getId(), diplomaId);
             if (application.isPresent()) {
                 String status = String.valueOf(application.get().getDiplomaStatus());
-                if (status.equals("null")) {
                     application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
                     application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
                     Application save = applicationRepository.save(application.get());
@@ -325,16 +317,11 @@ public class UniversityAdminService {
                     storyMessage.setPinfl(principal.getName());
                     storyMessage.setApplication(save);
                     storyMessageRepository.save(storyMessage);
-                    return new Result("Muvaffaqiyatli tasdiqlandi", true);
-                } else if (status.equals("true")) {
-                    return new Result("diplom tasdiqlangan", false);
-                } else if (status.equals("false")) {
-                    return new Result("diplom rad etilgan o'zgarishini kuting", false);
-                }
+                    return new Result("Muvaffaqiyatli o'zgartirildi", true);
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
-            return new Result("Tasdiqlashda xatolik", false);
+            return new Result("O'zgartirishda xatolik", false);
         }
     }
 
@@ -589,6 +576,7 @@ public class UniversityAdminService {
         }
         return applicationRepository.exportDiplomaNullToExcel(institutionId);
     }
+
     @Transactional(readOnly = true)
     public List<GetDiplomasToExcel> getForeignDiplomasToExcel(Principal principal, String status) {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
