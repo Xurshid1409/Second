@@ -101,7 +101,7 @@ public class ApplicationService {
         EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
         Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
 
-        List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(checkApp.get().getId());
+     /*   List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(checkApp.get().getId());
         if (messages.size() > 0) {
             messages.forEach(storyMessage -> {
                 StoryMessageResponse storyMessageResponse = new StoryMessageResponse();
@@ -114,7 +114,7 @@ public class ApplicationService {
                 }
                 applicationResponse.get().getStoryMessageResponse().add(storyMessageResponse);
             });
-        }
+        }*/
         return applicationResponse.get();
     }
 }

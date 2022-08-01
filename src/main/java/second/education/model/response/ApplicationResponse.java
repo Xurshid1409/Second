@@ -18,5 +18,7 @@ public interface ApplicationResponse {
     String getAppMessage();
     String getDiplomaMessage();
     String getCreatedDate();
+/*
      List<StoryMessageResponse> getStoryMessageResponse();
+*/
 }
