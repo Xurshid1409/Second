@@ -1,5 +1,7 @@
 package second.education.model.response;
 
+import java.util.List;
+
 public interface ApplicationResponse {
 
     Integer getId();
@@ -16,4 +18,5 @@ public interface ApplicationResponse {
     String getAppMessage();
     String getDiplomaMessage();
     String getCreatedDate();
+     List<StoryMessageResponse> getStoryMessageResponse();
 }

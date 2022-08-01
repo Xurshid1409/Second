@@ -8,6 +8,8 @@ import second.education.domain.Application;
 import second.education.domain.EnrolleeInfo;
 import second.education.domain.User;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class AppResponse {
 
     private EnrolleeResponse enrolleeResponse;
     private DiplomaResponse diplomaResponse;
+    private List<StoryMessageResponse> storyMessageResponse;
 
     Integer id;
 

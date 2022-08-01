@@ -14,10 +14,13 @@ import second.education.model.request.ApplicationStatus;
 import second.education.model.response.ApplicationResponse;
 import second.education.model.response.ResponseMessage;
 import second.education.model.response.Result;
+import second.education.model.response.StoryMessageResponse;
 import second.education.repository.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,6 +100,21 @@ public class ApplicationService {
         }
         EnrolleeInfo enrolleeInfo = enrolleInfoRepository.findByEnrolle(principal.getName()).get();
         Optional<ApplicationResponse> applicationResponse = applicationRepository.findByAppByPrincipal(enrolleeInfo.getId());
+
+        List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(checkApp.get().getId());
+        if (messages.size() > 0) {
+            messages.forEach(storyMessage -> {
+                StoryMessageResponse storyMessageResponse = new StoryMessageResponse();
+                if (storyMessage.getStatus().equals("null") || storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
+                    storyMessageResponse.setDiplomMessage(storyMessage.getMessage());
+                    storyMessageResponse.setDiplomaStatus(storyMessage.getStatus());
+                } else {
+                    storyMessageResponse.setAppMessage(storyMessage.getMessage());
+                    storyMessageResponse.setAppStatus(storyMessage.getStatus());
+                }
+                applicationResponse.get().getStoryMessageResponse().add(storyMessageResponse);
+            });
+        }
         return applicationResponse.get();
     }
 }

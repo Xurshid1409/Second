@@ -235,6 +235,23 @@ public class UniversityAdminService {
         if (!data.getPhoto().isEmpty()) {
             imageResponse.setImage(data.getPhoto());
         }
+
+        List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(application.get().getId());
+        if (messages.size() > 0) {
+            List<StoryMessageResponse> responses = new ArrayList<>();
+            messages.forEach(storyMessage -> {
+                StoryMessageResponse storyMessageResponse = new StoryMessageResponse();
+                if (storyMessage.getStatus().equals("null") || storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
+                    storyMessageResponse.setDiplomMessage(storyMessage.getMessage());
+                    storyMessageResponse.setDiplomaStatus(storyMessage.getStatus());
+                } else {
+                    storyMessageResponse.setAppMessage(storyMessage.getMessage());
+                    storyMessageResponse.setAppStatus(storyMessage.getStatus());
+                }
+                responses.add(storyMessageResponse);
+            });
+            appResponse.setStoryMessageResponse(responses);
+        }
         appResponse.setEnrolleeResponse(new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse));
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
         FileResponse fileResponse = getFileResponse(diploma.getId());
@@ -305,19 +322,19 @@ public class UniversityAdminService {
             Optional<Application> application = applicationRepository.getAppAndForeignDiplomaById(adminEntity.getFutureInstitution().getId(), diplomaId);
             if (application.isPresent()) {
                 String status = String.valueOf(application.get().getDiplomaStatus());
-                    application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
-                    application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
-                    Application save = applicationRepository.save(application.get());
-                    StoryMessage storyMessage = new StoryMessage();
-                    storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
-                    String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
-                    storyMessage.setStatus(status1);
-                    storyMessage.setFirstname(adminEntity.getFistName());
-                    storyMessage.setLastname(adminEntity.getLastname());
-                    storyMessage.setPinfl(principal.getName());
-                    storyMessage.setApplication(save);
-                    storyMessageRepository.save(storyMessage);
-                    return new Result("Muvaffaqiyatli o'zgartirildi", true);
+                application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                application.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                Application save = applicationRepository.save(application.get());
+                StoryMessage storyMessage = new StoryMessage();
+                storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
+                String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
+                storyMessage.setStatus(status1);
+                storyMessage.setFirstname(adminEntity.getFistName());
+                storyMessage.setLastname(adminEntity.getLastname());
+                storyMessage.setPinfl(principal.getName());
+                storyMessage.setApplication(save);
+                storyMessageRepository.save(storyMessage);
+                return new Result("Muvaffaqiyatli o'zgartirildi", true);
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
         } catch (Exception e) {
