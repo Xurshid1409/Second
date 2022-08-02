@@ -229,4 +229,23 @@ public class AdminController {
         Page<GetAppToExcel> diplomasToExcel = adminService.getAllAppToAdmin(appStatus, diplomaStatus, page, size);
         return ResponseEntity.ok(diplomasToExcel);
     }
+
+    @GetMapping("/exportDiplomaToAdmin")
+    public ResponseEntity<?> exportDiploma(@RequestParam(value = "status") String status) {
+        List<GetDiplomasToExcel> diplomasToExcel = adminService.exportDiplomasToAdmin(status);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/exportForeignDiplomaToAdmin")
+    public ResponseEntity<?> exportForeignDiploma(@RequestParam(value = "status") String status) {
+        List<GetDiplomasToExcel> diplomasToExcel = adminService.exportForeignDiplomasToAdmin(status);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/exportAppToAdmin")
+    public ResponseEntity<?> exportApp(@RequestParam(value = "diplomaStatus") String diplomaStatus,
+                                       @RequestParam(value = "appStatus") String appStatus) {
+        List<GetAppToExcel> diplomasToExcel = adminService.exportAllAppToAdmin(appStatus, diplomaStatus);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
 }

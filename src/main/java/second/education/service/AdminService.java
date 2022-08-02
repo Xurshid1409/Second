@@ -206,4 +206,32 @@ public class AdminService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<GetDiplomasToExcel> exportDiplomasToAdmin(String status) {
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.exportAllDiplomaToAdmin(aBoolean);
+        }
+        return applicationRepository.exportAllDiplomaNullToAdmin();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetDiplomasToExcel> exportForeignDiplomasToAdmin(String status) {
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.exportAllForeignDiplomaToAdmin(aBoolean);
+        }
+        return applicationRepository.exportAllForeignDiplomaNullToAdmin();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetAppToExcel> exportAllAppToAdmin(String appStatus, String diplomaStatus) {
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            return applicationRepository.exportAllAppDiplomaTrueToAdmin();
+        } else if (diplomaStatus.equals("null")) {
+            return applicationRepository.exportAllAppByDiplomaNullToAdmin();
+        } else {
+            return applicationRepository.exportAllAppToAdmin(appStatus);
+        }
+    }
 }
