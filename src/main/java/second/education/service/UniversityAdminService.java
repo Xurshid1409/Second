@@ -577,10 +577,7 @@ public class UniversityAdminService {
         List<GetAppByGender> countForeingDiplomaAndGender = applicationRepository.getCountForeingDiplomaAndGender(adminEntity.getFutureInstitution().getId());
         statistik.setForeigndiplomaGenderCount(countForeingDiplomaAndGender);
         statistik.setForeigndiplomaCountToday(foreignDiplomaCountTodayByUAdmin);
-
         return statistik;
-
-
     }
 
     @Transactional(readOnly = true)

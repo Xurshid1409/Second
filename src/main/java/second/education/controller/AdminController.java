@@ -15,6 +15,7 @@ import second.education.service.DirectionService;
 import second.education.service.EduFormService;
 import second.education.service.FutureInstitutionService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -204,4 +205,28 @@ public class AdminController {
         return ResponseEntity.ok(uAdminResponses);
     }
 
+    @GetMapping("/getDiplomasToAdmin")
+    public ResponseEntity<?> getDiplomasToAdmin(@RequestParam(value = "status") String status,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<GetDiplomasToExcel> diplomasToExcel = adminService.getDiplomasToAdmin(status, page, size);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/getForeignDiplomasToAdmin")
+    public ResponseEntity<?> getForeignDiplomasToAdmin(@RequestParam(value = "status") String status,
+                                                       @RequestParam(value = "page", defaultValue = "0") int page,
+                                                       @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<GetDiplomasToExcel> diplomasToExcel = adminService.getForeignDiplomasToAdmin(status, page, size);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/getAllAppToAdmin")
+    public ResponseEntity<?> getAllAppToAdmin(@RequestParam(value = "diplomaStatus") String diplomaStatus,
+                                              @RequestParam(value = "appStatus") String appStatus,
+                                              @RequestParam(value = "page", defaultValue = "0") int page,
+                                              @RequestParam(value = "size", defaultValue = "30") int size) {
+        Page<GetAppToExcel> diplomasToExcel = adminService.getAllAppToAdmin(appStatus, diplomaStatus, page, size);
+        return ResponseEntity.ok(diplomasToExcel);
+    }
 }

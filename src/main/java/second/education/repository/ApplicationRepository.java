@@ -87,7 +87,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGender(Integer institutionId);
 
-
     @Query("select a from Application as a where a.enrolleeInfo.user.phoneNumber=?1")
     Optional<Application> checkApp(String phoneNumber);
 
@@ -110,13 +109,11 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndDiplomaById(Integer id, Integer diplomaId);
 
-
     ////
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus=?2")
     Page<Application> getAppDipForeign(Integer id, Boolean status, Pageable pageable);
 
     ///
-
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null ")
     Page<Application> getAppForeignDipStatusNull(Integer id, Pageable pageable);
 
@@ -167,7 +164,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "group by a.diploma_status ")
     List<CountApp> getCountAppByDiplomaStatus(Integer futureInsId);
 
-
     @Query(nativeQuery = true, value = "select count(a.id) ,a.diploma_status as status  from application as a inner join future_institution fi on fi.id = a.future_institution_id " +
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id where fi.id=?1 and d.institution_old_name_id is null and d.is_active=true group by a.diploma_status")
     List<CountApp> getCountForeignDiploma(Integer id);
@@ -201,6 +197,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "  and d.institution_old_name_id = ?1 " +
             "  and a.diploma_status = ?2 order by d.id ")
     List<GetDiplomasToExcel> exportDiplomaToExcel(Integer id, Boolean status);
+
     @Query(nativeQuery = true, value = " select d.id as diplomaId," +
             " ei.firstname  as firstName, " +
             " ei.lastname  as lastName, " +
@@ -219,6 +216,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "  and a.future_institution_id = ?1 and d.institution_old_name_id is null " +
             "  and a.diploma_status = ?2 order by d.id ")
     List<GetDiplomasToExcel> exportForeignDiplomaToExcel(Integer id, Boolean status);
+
     @Query(nativeQuery = true, value = " select d.id as diplomaId," +
             " ei.firstname as firstName, " +
             " ei.lastname  as lastName, " +
@@ -331,6 +329,160 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "where d.is_active = true and a.future_institution_id=?1 and a.status =?2 " +
             "order by a.id ")
     List<GetAppToExcel> exportAppToExcel(Integer id, String status);
+
+//  Admin block
+    @Query(nativeQuery = true, value = " select a.id  as appId, " +
+            "  ei.firstname as firstName, " +
+            "  ei.lastname  as lastName, " +
+            "  ei.middle_name as middleName, " +
+            "  ei.phone_number as phoneNumber, " +
+            "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " fi.name as futureInstitutionName, " +
+            " d2.name as directionName, " +
+            " ef.name as talimShakli, " +
+            " l.language as language, " +
+            "  d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber," +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            "inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join edu_form ef on a.edu_form_id = ef.id " +
+            "inner join direction d2 on d2.id = ef.direction_id " +
+            "inner join language l on l.id = a.language_id " +
+            "where d.is_active = true and a.status =?1 " +
+            "order by a.id ")
+    Page<GetAppToExcel> getAllAppToAdmin(String status, Pageable pageable);
+
+    // All APP by diploma status true
+    @Query(nativeQuery = true, value = " select a.id  as appId, " +
+            "  ei.firstname as firstName, " +
+            "  ei.lastname  as lastName, " +
+            "  ei.middle_name as middleName, " +
+            "  ei.phone_number as phoneNumber, " +
+            "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " fi.name as futureInstitutionName, " +
+            " d2.name as directionName, " +
+            " ef.name as talimShakli, " +
+            " l.language as language, " +
+            "  d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber," +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            "inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join edu_form ef on a.edu_form_id = ef.id " +
+            "inner join direction d2 on d2.id = ef.direction_id " +
+            "inner join language l on l.id = a.language_id " +
+            "where d.is_active = true and a.status='Ariza yuborildi' and a.diploma_status = true " +
+            "order by a.id ")
+    Page<GetAppToExcel> getAllAppDiplomaTrueToAdmin(Pageable pageable);
+
+    // All APP by diploma status null
+    @Query(nativeQuery = true, value = " select a.id  as appId, " +
+            "  ei.firstname as firstName, " +
+            "  ei.lastname  as lastName, " +
+            "  ei.middle_name as middleName, " +
+            "  ei.phone_number as phoneNumber, " +
+            "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " fi.name as futureInstitutionName, " +
+            " d2.name as directionName, " +
+            " ef.name as talimShakli, " +
+            " l.language as language, " +
+            "  d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber," +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            "inner join future_institution fi on fi.id = a.future_institution_id " +
+            "inner join edu_form ef on a.edu_form_id = ef.id " +
+            "inner join direction d2 on d2.id = ef.direction_id " +
+            "inner join language l on l.id = a.language_id " +
+            "where d.is_active = true and a.status='Ariza yuborildi' and a.diploma_status is null " +
+            "order by a.id ")
+    Page<GetAppToExcel> getAllAppByDiplomaNullToAdmin(Pageable pageable);
+
+    // Diploma to admin
+    @Query(nativeQuery = true, value = " select d.id as diplomaId," +
+            " ei.firstname  as firstName, " +
+            " ei.lastname  as lastName, " +
+            " ei.middle_name as middleName, " +
+            " ei.phone_number as phoneNumber, " +
+            " ei.passport_serial_and_number as passportSerialNumber, " +
+            " d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber, " +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active = true " +
+            " and a.diploma_status = ?1 order by d.id ")
+    Page<GetDiplomasToExcel> getAllDiplomaToAdmin(Boolean status, Pageable pageable);
+
+    // Diploma null to admin
+    @Query(nativeQuery = true, value = " select d.id as diplomaId," +
+            " ei.firstname as firstName, " +
+            " ei.lastname  as lastName, " +
+            " ei.middle_name as middleName, " +
+            " ei.phone_number as phoneNumber, " +
+            " ei.passport_serial_and_number as passportSerialNumber, " +
+            " d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber, " +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active = true and " +
+            " a.diploma_status is null order by d.id ")
+    Page<GetDiplomasToExcel> getAllDiplomaNullToAdmin(Pageable pageable);
+
+    //  Foreign diploma to admin
+    @Query(nativeQuery = true, value = " select d.id as diplomaId," +
+            " ei.firstname  as firstName, " +
+            " ei.lastname  as lastName, " +
+            " ei.middle_name as middleName, " +
+            " ei.phone_number as phoneNumber, " +
+            " ei.passport_serial_and_number as passportSerialNumber, " +
+            " d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber, " +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active = true and d.institution_old_name_id is null " +
+            " and a.diploma_status = ?1 order by d.id ")
+    Page<GetDiplomasToExcel> getAllForeignDiplomaToAdmin(Boolean status, Pageable pageable);
+
+    //  Foreign null diploma to admin
+    @Query(nativeQuery = true, value = " select d.id as diplomaId," +
+            " ei.firstname as firstName, " +
+            " ei.lastname  as lastName, " +
+            " ei.middle_name as middleName, " +
+            " ei.phone_number as phoneNumber, " +
+            " ei.passport_serial_and_number as passportSerialNumber, " +
+            " d.institution_name as institutionName, " +
+            " d.institution_old_name as institutionOldName, " +
+            " d.speciality_name as specialityName, " +
+            " d.diploma_serial_and_number as diplomaSerialAndNumber, " +
+            " d.edu_finishing_date as finishingDate " +
+            " from application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active = true and d.institution_old_name_id is null " +
+            " and a.diploma_status is null order by d.id ")
+    Page<GetDiplomasToExcel> getAllForeignDiplomaNullToAdmin(Pageable pageable);
 
 
 }

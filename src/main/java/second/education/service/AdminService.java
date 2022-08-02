@@ -12,10 +12,7 @@ import second.education.domain.classificator.Role;
 import second.education.domain.classificator.University;
 import second.education.model.request.DefaultRole;
 import second.education.model.request.UserRequest;
-import second.education.model.response.ResponseMessage;
-import second.education.model.response.Result;
-import second.education.model.response.UniversityResponse;
-import second.education.model.response.UAdminResponse;
+import second.education.model.response.*;
 import second.education.repository.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +30,7 @@ public class AdminService {
     private final FutureInstitutionRepository futureInstitutionRepository;
     private final AdminEntityRepository adminEntityRepository;
     private final UniversityRepository universityRepository;
+    private final ApplicationRepository applicationRepository;
 
     @Transactional
     public Result createInstitutionAdmin(UserRequest request) {
@@ -171,4 +169,41 @@ public class AdminService {
         });
         return new PageImpl<>(uAdminResponses, pageable, allAdmins.getTotalElements());
     }
+
+    @Transactional(readOnly = true)
+    public Page<GetDiplomasToExcel> getDiplomasToAdmin(String status, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.getAllDiplomaToAdmin(aBoolean, pageable);
+        }
+        return applicationRepository.getAllDiplomaNullToAdmin(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetDiplomasToExcel> getForeignDiplomasToAdmin(String status, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.getAllForeignDiplomaToAdmin(aBoolean, pageable);
+        }
+        return applicationRepository.getAllForeignDiplomaNullToAdmin(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetAppToExcel> getAllAppToAdmin(String appStatus, String diplomaStatus, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+            return applicationRepository.getAllAppDiplomaTrueToAdmin(pageable);
+        } else if (diplomaStatus.equals("null")) {
+            return applicationRepository.getAllAppByDiplomaNullToAdmin(pageable);
+        } else {
+            return applicationRepository.getAllAppToAdmin(appStatus, pageable);
+        }
+    }
+
 }

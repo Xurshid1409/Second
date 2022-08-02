@@ -21,27 +21,16 @@ public class AppResponse {
     private List<StoryMessageResponse> storyMessageResponse;
 
     Integer id;
-
     private Integer tilId;
-
     private String tilName;
-
     Integer shaklId;
-
     String shaklName;
-
     Integer directionId;
-
     String directionName;
-
     Integer futureInstitutionId;
-
     String futureInstitutionName;
-
     String appStatus;
-
     String diplomaStatus;
-
     String createdDate;
 
     public AppResponse(Application application) {
