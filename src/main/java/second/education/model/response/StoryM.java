@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoryMessageResponse {
-    List<StoryM> app;
-    List<StoryM> diploma;
+public class StoryM {
+    private String message;
+    private String status;
+    private String createBy;
+    private LocalDateTime time;
 }

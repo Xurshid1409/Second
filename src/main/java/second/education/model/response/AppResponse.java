@@ -18,7 +18,7 @@ public class AppResponse {
 
     private EnrolleeResponse enrolleeResponse;
     private DiplomaResponse diplomaResponse;
-    private List<StoryMessageResponse> storyMessageResponse;
+    private StoryMessageResponse storyMessageResponse;
 
     Integer id;
     private Integer tilId;

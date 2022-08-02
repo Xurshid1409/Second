@@ -235,22 +235,31 @@ public class UniversityAdminService {
         if (!data.getPhoto().isEmpty()) {
             imageResponse.setImage(data.getPhoto());
         }
-
+        StoryMessageResponse response = new StoryMessageResponse();
+        List<StoryM> app = new ArrayList<>();
+        List<StoryM> diplomaResponse = new ArrayList<>();
         List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(application.get().getId());
         if (messages.size() > 0) {
-            List<StoryMessageResponse> responses = new ArrayList<>();
             messages.forEach(storyMessage -> {
-                StoryMessageResponse storyMessageResponse = new StoryMessageResponse();
-                if (storyMessage.getStatus().equals("null") || storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
-                    storyMessageResponse.setDiplomMessage(storyMessage.getMessage());
-                    storyMessageResponse.setDiplomaStatus(storyMessage.getStatus());
-                } else {
-                    storyMessageResponse.setAppMessage(storyMessage.getMessage());
-                    storyMessageResponse.setAppStatus(storyMessage.getStatus());
+                if (storyMessage.getStatus().equals("Ariza qabul qilindi") || storyMessage.getStatus().equals("Ariza rad etildi")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    app.add(storyMessageResponse);
+                } else if (storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    diplomaResponse.add(storyMessageResponse);
                 }
-                responses.add(storyMessageResponse);
             });
-            appResponse.setStoryMessageResponse(responses);
+            response.setApp(app);
+            response.setDiploma(diplomaResponse);
+            appResponse.setStoryMessageResponse(response);
         }
         appResponse.setEnrolleeResponse(new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse));
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
@@ -293,8 +302,8 @@ public class UniversityAdminService {
             AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
 
-            Optional<Application> app = applicationRepository.getAppByUadmin(diplomaId,adminEntity.getFutureInstitution().getId());
-            if (app.isPresent()){
+            Optional<Application> app = applicationRepository.getAppByUadmin(diplomaId, adminEntity.getFutureInstitution().getId());
+            if (app.isPresent()) {
                 app.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
                 app.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
                 Application save = applicationRepository.save(app.get());
