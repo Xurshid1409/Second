@@ -113,6 +113,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus=?2")
     Page<Application> getAppDipForeign(Integer id, Boolean status, Pageable pageable);
 
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.id=?2 ")
+    Optional<Application> getAppByUadmin(Integer institutionId, Integer diplomaId);
+
     ///
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus is null ")
     Page<Application> getAppForeignDipStatusNull(Integer id, Pageable pageable);
@@ -330,7 +333,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "order by a.id ")
     List<GetAppToExcel> exportAppToExcel(Integer id, String status);
 
-//  Admin block
+    //  Admin block
     @Query(nativeQuery = true, value = " select a.id  as appId, " +
             "  ei.firstname as firstName, " +
             "  ei.lastname  as lastName, " +
