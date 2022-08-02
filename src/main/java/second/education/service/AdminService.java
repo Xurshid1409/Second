@@ -5,16 +5,20 @@ import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import second.education.domain.AdminEntity;
-import second.education.domain.User;
+import second.education.api_model.iib_api.Data;
+import second.education.api_model.iib_api.IIBResponse;
+import second.education.domain.*;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.Role;
 import second.education.domain.classificator.University;
 import second.education.model.request.DefaultRole;
+import second.education.model.request.IIBRequest;
 import second.education.model.request.UserRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
+import second.education.service.api.IIBServiceApi;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,10 @@ public class AdminService {
     private final AdminEntityRepository adminEntityRepository;
     private final UniversityRepository universityRepository;
     private final ApplicationRepository applicationRepository;
+    private final DiplomaRepository diplomaRepository;
+    private final IIBServiceApi iibServiceApi;
+    private final StoryMessageRepository storyMessageRepository;
+    private final DocumentRepository documentRepository;
 
     @Transactional
     public Result createInstitutionAdmin(UserRequest request) {
@@ -182,6 +190,33 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    public Result getDiplomaById(Integer diplomaId) {
+        Optional<Application> application = applicationRepository.getAppAndDiplomaByAdmin(diplomaId);
+        if (application.isEmpty()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }
+        IIBRequest iibRequest = new IIBRequest();
+        iibRequest.setPinfl(application.get().getEnrolleeInfo().getPinfl());
+        iibRequest.setGiven_date(application.get().getEnrolleeInfo().getPassportGivenDate());
+        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+        Data data = iibResponse.getData();
+        ImageResponse imageResponse = new ImageResponse();
+        if (!data.getPhoto().isEmpty()) {
+            imageResponse.setImage(data.getPhoto());
+        }
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
+        Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
+
+        FileResponse fileResponse = getFileResponse(diploma.getId());
+        DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+        diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+        diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
+
+
+        return new Result("diploma", true, diplomResponseAdmin);
+    }
+
+    @Transactional(readOnly = true)
     public Page<GetDiplomasToExcel> getForeignDiplomasToAdmin(String status, int page, int size) {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
@@ -191,6 +226,33 @@ public class AdminService {
         }
         return applicationRepository.getAllForeignDiplomaNullToAdmin(pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Result getForeignDiplomaById(Integer diplomaId) {
+        Optional<Application> application = applicationRepository.getAppAndForeignDiplomaByIdByAdmin(diplomaId);
+        if (application.isEmpty()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }
+        IIBRequest iibRequest = new IIBRequest();
+        iibRequest.setPinfl(application.get().getEnrolleeInfo().getPinfl());
+        iibRequest.setGiven_date(application.get().getEnrolleeInfo().getPassportGivenDate());
+        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+        Data data = iibResponse.getData();
+        ImageResponse imageResponse = new ImageResponse();
+        if (!data.getPhoto().isEmpty()) {
+            imageResponse.setImage(data.getPhoto());
+        }
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
+        Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
+
+        FileResponse fileResponse = getFileResponse(diploma.getId());
+        DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+        diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+        diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
+
+        return new Result("diploma", true, diplomResponseAdmin);
+    }
+
 
     @Transactional(readOnly = true)
     public Page<GetAppToExcel> getAllAppToAdmin(String appStatus, String diplomaStatus, int page, int size) {
@@ -205,6 +267,76 @@ public class AdminService {
             return applicationRepository.getAllAppToAdmin(appStatus, pageable);
         }
     }
+
+    @Transactional(readOnly = true)
+    public Result getAppById(Integer AppId) {
+        Optional<Application> application = applicationRepository.getAppOneByAdmin(AppId);
+        if (application.isEmpty()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }
+        AppResponse appResponse = new AppResponse(application.get());
+        IIBRequest iibRequest = new IIBRequest();
+        iibRequest.setPinfl(application.get().getEnrolleeInfo().getPinfl());
+        iibRequest.setGiven_date(application.get().getEnrolleeInfo().getPassportGivenDate());
+        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+        Data data = iibResponse.getData();
+        ImageResponse imageResponse = new ImageResponse();
+        if (!data.getPhoto().isEmpty()) {
+            imageResponse.setImage(data.getPhoto());
+        }
+        StoryMessageResponse response = new StoryMessageResponse();
+        List<StoryM> app = new ArrayList<>();
+        List<StoryM> diplomaResponse = new ArrayList<>();
+        List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(application.get().getId());
+        if (messages.size() > 0) {
+            messages.forEach(storyMessage -> {
+                if (storyMessage.getStatus().equals("Ariza qabul qilindi") || storyMessage.getStatus().equals("Ariza rad etildi")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    app.add(storyMessageResponse);
+                } else if (storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    diplomaResponse.add(storyMessageResponse);
+                }
+            });
+            response.setApp(app);
+            response.setDiploma(diplomaResponse);
+            appResponse.setStoryMessageResponse(response);
+        }
+        appResponse.setEnrolleeResponse(new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse));
+        Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
+        FileResponse fileResponse = getFileResponse(diploma.getId());
+        appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+        return new Result("one app", true, appResponse);
+    }
+
+    public FileResponse getFileResponse(Integer diplomaId) {
+        List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
+        FileResponse fileResponse = new FileResponse();
+        documents.forEach(document -> {
+            if (document.getFileName() != null && document.getFileName().startsWith("Diplom")) {
+                DiplomaCopyResponse diplomaCopyResponse = new DiplomaCopyResponse();
+                diplomaCopyResponse.setId(document.getId());
+                diplomaCopyResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaCopyResponse(diplomaCopyResponse);
+            }
+            if (document.getFileName() != null && document.getFileName().startsWith("Ilova")) {
+                DiplomaIlovaResponse diplomaIlovaResponse = new DiplomaIlovaResponse();
+                diplomaIlovaResponse.setId(document.getId());
+                diplomaIlovaResponse.setUrl(document.getUrl());
+                fileResponse.setDiplomaIlovaResponse(diplomaIlovaResponse);
+            }
+        });
+        return fileResponse;
+    }
+
 
     @Transactional(readOnly = true)
     public List<GetDiplomasToExcel> exportDiplomasToAdmin(String status) {

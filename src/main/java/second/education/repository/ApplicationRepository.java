@@ -100,6 +100,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true and a.id=?2")
     Optional<Application> getAppOne(Integer instId, Integer appId);
 
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.isActive=true and a.id=?1")
+    Optional<Application> getAppOneByAdmin(Integer appId);
+
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2")
     Page<Application> getAppDiplomaByEnrollId(Integer id, Boolean status, Pageable pageable);
 
@@ -108,6 +111,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndDiplomaById(Integer id, Integer diplomaId);
+
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.isActive=true and d.id=?2")
+    Optional<Application> getAppAndDiplomaByAdmin(Integer diplomaId);
 
     ////
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and a.diplomaStatus=?2")
@@ -123,6 +129,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndForeignDiplomaById(Integer id, Integer diplomaId);
+
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.institutionOldNameId is null and d.isActive=true and d.id=?2")
+    Optional<Application> getAppAndForeignDiplomaByIdByAdmin(Integer diplomaId);
 
     @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1 and d.isActive=true ")
     Optional<Application> getAppByDiplomId(Integer diplomaId);

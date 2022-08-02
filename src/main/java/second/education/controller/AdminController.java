@@ -230,6 +230,26 @@ public class AdminController {
         return ResponseEntity.ok(diplomasToExcel);
     }
 
+    @GetMapping("/getAppOne/{appId}")
+    public ResponseEntity<?> getAppById(@PathVariable Integer appId) {
+        Result appById = adminService.getAppById(appId);
+        return ResponseEntity.status(appById.isSuccess() ? 200 : 400).body(appById);
+    }
+
+    @GetMapping("/getForeignDiplom/{id}")
+    public ResponseEntity<?> getForeignDiplomById(@PathVariable Integer id) {
+        Result diplomaById = adminService.getForeignDiplomaById(id);
+        return ResponseEntity.ok(diplomaById);
+    }
+
+    @GetMapping("/getDiplom/{id}")
+    public ResponseEntity<?> getDiplomById(@PathVariable Integer id) {
+
+        Result diplomaById = adminService.getDiplomaById(id);
+        return ResponseEntity.ok(diplomaById);
+    }
+
+
     @GetMapping("/exportDiplomaToAdmin")
     public ResponseEntity<?> exportDiploma(@RequestParam(value = "status") String status) {
         List<GetDiplomasToExcel> diplomasToExcel = adminService.exportDiplomasToAdmin(status);
