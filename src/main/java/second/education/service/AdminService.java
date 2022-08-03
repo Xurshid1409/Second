@@ -337,7 +337,6 @@ public class AdminService {
         return fileResponse;
     }
 
-
     @Transactional(readOnly = true)
     public List<GetDiplomasToExcel> exportDiplomasToAdmin(String status) {
         if (status.equals("true") || status.equals("false")) {

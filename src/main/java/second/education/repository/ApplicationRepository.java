@@ -112,7 +112,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndDiplomaById(Integer id, Integer diplomaId);
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.isActive=true and d.id=?2")
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.isActive=true and d.id=?1")
     Optional<Application> getAppAndDiplomaByAdmin(Integer diplomaId);
 
     ////
@@ -130,7 +130,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where a.futureInstitution.id=?1 and d.institutionOldNameId is null and d.isActive=true and d.id=?2")
     Optional<Application> getAppAndForeignDiplomaById(Integer id, Integer diplomaId);
 
-    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.institutionOldNameId is null and d.isActive=true and d.id=?2")
+    @Query("select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where  d.institutionOldNameId is null and d.isActive=true and d.id=?1")
     Optional<Application> getAppAndForeignDiplomaByIdByAdmin(Integer diplomaId);
 
     @Query("select a  from Application  as a  join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.id=?1 and d.isActive=true ")

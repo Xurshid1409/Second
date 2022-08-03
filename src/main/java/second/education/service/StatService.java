@@ -74,6 +74,10 @@ public class StatService {
         return statisDirectionResponses;
     }
 
+    public void getStatisticToAdmin() {
+
+    }
+
 
 
     @Transactional
