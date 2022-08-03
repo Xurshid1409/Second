@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import second.education.domain.classificator.Direction;
 import second.education.model.response.StatisDirectionResponse;
+import second.education.model.response.StatisDirectionResponseByFutureInst;
 
 import java.util.List;
 
@@ -21,5 +22,9 @@ public interface DirectionRepository extends JpaRepository<Direction, Integer> {
 
     @Query(nativeQuery = true, value = "select d.id as directionId, d.name directionName from direction d where d.future_institution_id=?1 ")
     List<StatisDirectionResponse> getAllDirectionByFutureInst(Integer futureInstId);
+
+    @Query(nativeQuery = true, value = "select d.id as directionId, d.name as directionName, fi.name as futureInstName from direction d " +
+            " join future_institution fi on fi.id = d.future_institution_id where fi.id=?1 ")
+    List<StatisDirectionResponseByFutureInst> getAllDirectionByFutureInstitutions(Integer futureInstId);
 
 }

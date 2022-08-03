@@ -10,10 +10,7 @@ import second.education.model.request.EduFormRequest;
 import second.education.model.request.FutureInstitutionRequest;
 import second.education.model.request.UserRequest;
 import second.education.model.response.*;
-import second.education.service.AdminService;
-import second.education.service.DirectionService;
-import second.education.service.EduFormService;
-import second.education.service.FutureInstitutionService;
+import second.education.service.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -28,6 +25,7 @@ public class AdminController {
     private final DirectionService directionService;
     private final EduFormService eduFormService;
     private final AdminService adminService;
+    private final StatService statService;
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
@@ -266,5 +264,11 @@ public class AdminController {
                                        @RequestParam(value = "appStatus") String appStatus) {
         List<GetAppToExcel> diplomasToExcel = adminService.exportAllAppToAdmin(appStatus, diplomaStatus);
         return ResponseEntity.ok(diplomasToExcel);
+    }
+
+    @GetMapping("/getStatisToAdmin")
+    public ResponseEntity<?> getStatToAdmin() {
+        List<StatisDirectionResponseByFutureInst> statisticToAdmin = statService.getStatisticToAdmin();
+        return ResponseEntity.ok(statisticToAdmin);
     }
 }
