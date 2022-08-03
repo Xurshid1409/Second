@@ -390,9 +390,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "inner join edu_form ef on a.edu_form_id = ef.id " +
             "inner join direction d2 on d2.id = ef.direction_id " +
             "inner join language l on l.id = a.language_id " +
-            "where d.is_active = true and a.status='Ariza yuborildi' and a.diploma_status = true " +
+            "where d.is_active = true and a.status='Ariza yuborildi' and a.diploma_status =?1 " +
             "order by a.id ")
-    Page<GetAppToExcel> getAllAppDiplomaTrueToAdmin(Pageable pageable);
+    Page<GetAppToExcel> getAllAppDiplomaTrueToAdmin(Boolean status, Pageable pageable);
 
     // All APP by diploma status null
     @Query(nativeQuery = true, value = " select a.id  as appId, " +

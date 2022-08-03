@@ -145,7 +145,6 @@ public class AdminController {
                                                   @RequestParam(value = "size", defaultValue = "30") int size) {
         Page<EduFormResponse> allEduFormPage = eduFormService.getAllEduFormPage(page, size);
         return ResponseEntity.ok(allEduFormPage);
-
     }
 
     @GetMapping("/searchDirection/{text}")

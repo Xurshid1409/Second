@@ -211,8 +211,6 @@ public class AdminService {
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
         diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
-
-
         return new Result("diploma", true, diplomResponseAdmin);
     }
 
@@ -253,14 +251,13 @@ public class AdminService {
         return new Result("diploma", true, diplomResponseAdmin);
     }
 
-
     @Transactional(readOnly = true)
     public Page<GetAppToExcel> getAllAppToAdmin(String appStatus, String diplomaStatus, int page, int size) {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(diplomaStatus);
-            return applicationRepository.getAllAppDiplomaTrueToAdmin(pageable);
+            return applicationRepository.getAllAppDiplomaTrueToAdmin(aBoolean, pageable);
         } else if (diplomaStatus.equals("null")) {
             return applicationRepository.getAllAppByDiplomaNullToAdmin(pageable);
         } else {
