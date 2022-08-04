@@ -13,6 +13,7 @@ import second.education.service.api.IIBServiceApi;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -147,25 +148,21 @@ public class StatService {
     @Transactional(readOnly = true)
     public List<AcceptAndRejectAndCheckDiploma> statisticAllUniversity() {
         List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectApp();
-        List<AcceptAndRejectApp> getcheckDiploma = applicationRepository.getcheckDiploma();
         List<AcceptAndRejectAndCheckDiploma> list = new ArrayList<>();
+        AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
         acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
-            getcheckDiploma.forEach(acceptAndRejectApp2 -> {
-                if (acceptAndRejectApp1.getFutureId().equals(acceptAndRejectApp2.getFutureId())) {
-                    AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-                    if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
-                        statistic.setAcceptCount(acceptAndRejectApp1.getCount());
-                    } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
-                        statistic.setRejectCount(acceptAndRejectApp1.getCount());
-                    }
-                    statistic.setCheckCount(acceptAndRejectApp2.getCount());
-                    statistic.setFutureInstName(acceptAndRejectApp2.getFutureInstName());
-                    list.add(statistic);
+                if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
+                    statistic.setAcceptCount(acceptAndRejectApp1.getCount());
+                } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
+                    statistic.setRejectCount(acceptAndRejectApp1.getCount());
                 }
-
-            });
-
+            Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(acceptAndRejectApp1.getFutureId());
+            if (acceptAndRejectApp2.isPresent()) {
+                statistic.setCheckCount(acceptAndRejectApp2.get().getCount());
+                statistic.setFutureInstName(acceptAndRejectApp2.get().getFutureInstName());
+            }
         });
+        list.add(statistic);
         return list;
-    }
+}
 }
