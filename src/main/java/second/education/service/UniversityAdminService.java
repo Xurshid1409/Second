@@ -78,7 +78,7 @@ public class UniversityAdminService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        if (adminEntity.getFutureInstitution().getId()!=null) {
+        if (adminEntity.getFutureInstitution().getId() != null) {
             if (status.equals("true") || status.equals("false")) {
                 Boolean aBoolean = Boolean.valueOf(status);
                 Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDipForeign(adminEntity.getFutureInstitution().getId(), aBoolean, pageable);
@@ -108,7 +108,7 @@ public class UniversityAdminService {
                 return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
             }
         }
-        return new PageImpl<>(new ArrayList<>(),pageable,0);
+        return new PageImpl<>(new ArrayList<>(), pageable, 0);
     }
 
     //horijiy diplomning bir donasi id orqali
@@ -176,7 +176,7 @@ public class UniversityAdminService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
-        if (adminEntity.getFutureInstitution().getId()!=null) {
+        if (adminEntity.getFutureInstitution().getId() != null) {
             Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), status, pageable);
             allApp.forEach(application -> {
                 AppResponse appResponse = new AppResponse(application);
@@ -188,7 +188,7 @@ public class UniversityAdminService {
             });
             return new PageImpl<>(responses, pageable, allApp.getTotalElements());
         }
-        return new PageImpl<>(new ArrayList<>(),pageable,0);
+        return new PageImpl<>(new ArrayList<>(), pageable, 0);
     }
 
     @Transactional(readOnly = true)
@@ -198,8 +198,8 @@ public class UniversityAdminService {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
         if (adminEntity.getFutureInstitution().getId() != null) {
-        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
-            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+            if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+                Boolean aBoolean = Boolean.valueOf(diplomaStatus);
                 Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusAndAppstatus(adminEntity.getFutureInstitution().getId(), aBoolean, appStatus, pageable);
                 allApp.forEach(application -> {
                     AppResponse appResponse = new AppResponse(application);
@@ -224,7 +224,7 @@ public class UniversityAdminService {
                 return new PageImpl<>(responsese, pageable, allApp.getTotalElements());
             }
         }
-        return new PageImpl<>(new ArrayList<>(),pageable,0);
+        return new PageImpl<>(new ArrayList<>(), pageable, 0);
     }
 
     @Transactional(readOnly = true)
@@ -331,8 +331,9 @@ public class UniversityAdminService {
     }
 
     @Transactional
-    public  Result updateDiplomStatusbyApp(Principal principal,UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId){
-        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+    public Result updateDiplomStatusbyApp(Principal principal, UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId) {
+        try {
+            AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
             Optional<Application> app = applicationRepository.getAppByUadmin(adminEntity.getFutureInstitution().getId(), diplomaId);
             if (app.isPresent()) {
                 app.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
@@ -349,8 +350,10 @@ public class UniversityAdminService {
                 storyMessageRepository.save(storyMessage);
                 return new Result("Muvaffaqiyatli o'zgartirildi", true);
             }
-        return new Result("O'zgartirishda xatolik", false);
-
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result("O'zgartirishda xatolik", false);
+        }
     }
 
     @Transactional
