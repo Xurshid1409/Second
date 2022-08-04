@@ -268,7 +268,6 @@ public class UniversityAdminService {
         return new Result("one app", true, appResponse);
     }
 
-
     public FileResponse getFileResponse(Integer diplomaId) {
         List<Document> documents = documentRepository.findAllByDiplomaId(diplomaId);
         FileResponse fileResponse = new FileResponse();
@@ -294,7 +293,6 @@ public class UniversityAdminService {
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         return new UAdminInfoResponse(adminEntity);
     }
-
 
     @Transactional
     public Result updateStatusDiploma(Principal principal, UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId) {
