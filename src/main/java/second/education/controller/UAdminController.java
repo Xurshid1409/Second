@@ -94,7 +94,7 @@ public class UAdminController {
         Result result = universityAdminService.updateStatusDiploma(principal, updateDiplomaStatus, diplomaId);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
-    @PutMapping("/cancelDiplomabyAcceptD")
+    @PutMapping("/cancelDiplomabyAcceptD/{diplomaId}")
     public ResponseEntity<?> updateDiplomStatusbyApp(@PathVariable Integer diplomaId,
                                                  @RequestBody UpdateDiplomaStatus updateDiplomaStatus,
                                                  Principal principal) {

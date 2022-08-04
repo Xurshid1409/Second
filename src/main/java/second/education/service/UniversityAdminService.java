@@ -37,7 +37,8 @@ public class UniversityAdminService {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+        List<University> universities = adminEntity.getUniversities();
+        Integer institutionId = universities.stream().map(University::getInstitutionId).findFirst().get();
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
         if (status.equals("true") || status.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(status);
