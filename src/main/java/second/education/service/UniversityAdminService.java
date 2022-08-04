@@ -78,34 +78,37 @@ public class UniversityAdminService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         List<DiplomResponseAdmin> diplomResponseAdmins = new ArrayList<>();
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        if (status.equals("true") || status.equals("false")) {
-            Boolean aBoolean = Boolean.valueOf(status);
-            Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDipForeign(adminEntity.getFutureInstitution().getId(), aBoolean, pageable);
-            allDiplomebyUAdmin.forEach(application -> {
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
-                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-                FileResponse fileResponse = getFileResponse(diploma.getId());
-                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
-                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
-                diplomResponseAdmins.add(diplomResponseAdmin);
-            });
-            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
-        } else {
-            Page<Application> allDiplomebyUAdmin = applicationRepository.getAppForeignDipStatusNull(adminEntity.getFutureInstitution().getId(), pageable);
-            allDiplomebyUAdmin.forEach(application -> {
+        if (adminEntity.getFutureInstitution().getId()!=null) {
+            if (status.equals("true") || status.equals("false")) {
+                Boolean aBoolean = Boolean.valueOf(status);
+                Page<Application> allDiplomebyUAdmin = applicationRepository.getAppDipForeign(adminEntity.getFutureInstitution().getId(), aBoolean, pageable);
+                allDiplomebyUAdmin.forEach(application -> {
+                    EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
+                    Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                    FileResponse fileResponse = getFileResponse(diploma.getId());
+                    DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                    diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                    diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
+                    diplomResponseAdmins.add(diplomResponseAdmin);
+                });
+                return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+            } else {
+                Page<Application> allDiplomebyUAdmin = applicationRepository.getAppForeignDipStatusNull(adminEntity.getFutureInstitution().getId(), pageable);
+                allDiplomebyUAdmin.forEach(application -> {
 
-                EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
-                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-                FileResponse fileResponse = getFileResponse(diploma.getId());
-                DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
-                diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
-                diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
+                    EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.getEnrolleeInfo());
+                    Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                    FileResponse fileResponse = getFileResponse(diploma.getId());
+                    DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+                    diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+                    diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.getDiplomaStatus()));
 
-                diplomResponseAdmins.add(diplomResponseAdmin);
-            });
-            return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+                    diplomResponseAdmins.add(diplomResponseAdmin);
+                });
+                return new PageImpl<>(diplomResponseAdmins, pageable, allDiplomebyUAdmin.getTotalElements());
+            }
         }
+        return new PageImpl<>(new ArrayList<>(),pageable,0);
     }
 
     //horijiy diplomning bir donasi id orqali
@@ -173,27 +176,8 @@ public class UniversityAdminService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
         List<AppResponse> responses = new ArrayList<>();
-        Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), status, pageable);
-        allApp.forEach(application -> {
-            AppResponse appResponse = new AppResponse(application);
-            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
-            Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-            FileResponse fileResponse = getFileResponse(diploma.getId());
-            appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
-            responses.add(appResponse);
-        });
-        return new PageImpl<>(responses, pageable, allApp.getTotalElements());
-    }
-
-    @Transactional(readOnly = true)
-    public Page<AppResponse> getAllAppDplomaStatusByUAdmin(Principal principal, String diplomaStatus, String appStatus, int page, int size) {
-        if (page > 0) page = page - 1;
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
-        List<AppResponse> responses = new ArrayList<>();
-        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
-            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
-            Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusAndAppstatus(adminEntity.getFutureInstitution().getId(), aBoolean, appStatus, pageable);
+        if (adminEntity.getFutureInstitution().getId()!=null) {
+            Page<Application> allApp = applicationRepository.getAllApp(adminEntity.getFutureInstitution().getId(), status, pageable);
             allApp.forEach(application -> {
                 AppResponse appResponse = new AppResponse(application);
                 appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
@@ -203,19 +187,44 @@ public class UniversityAdminService {
                 responses.add(appResponse);
             });
             return new PageImpl<>(responses, pageable, allApp.getTotalElements());
-        } else {
-            List<AppResponse> responsese = new ArrayList<>();
-            Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusIsNull(adminEntity.getFutureInstitution().getId(), appStatus, pageable);
-            allApp.forEach(application -> {
-                AppResponse appResponse = new AppResponse(application);
-                appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
-                Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
-                FileResponse fileResponse = getFileResponse(diploma.getId());
-                appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
-                responsese.add(appResponse);
-            });
-            return new PageImpl<>(responsese, pageable, allApp.getTotalElements());
         }
+        return new PageImpl<>(new ArrayList<>(),pageable,0);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AppResponse> getAllAppDplomaStatusByUAdmin(Principal principal, String diplomaStatus, String appStatus, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+        List<AppResponse> responses = new ArrayList<>();
+        if (adminEntity.getFutureInstitution().getId() != null) {
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+                Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusAndAppstatus(adminEntity.getFutureInstitution().getId(), aBoolean, appStatus, pageable);
+                allApp.forEach(application -> {
+                    AppResponse appResponse = new AppResponse(application);
+                    appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
+                    Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                    FileResponse fileResponse = getFileResponse(diploma.getId());
+                    appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+                    responses.add(appResponse);
+                });
+                return new PageImpl<>(responses, pageable, allApp.getTotalElements());
+            } else {
+                List<AppResponse> responsese = new ArrayList<>();
+                Page<Application> allApp = applicationRepository.getAllAppByDiplomaStatusIsNull(adminEntity.getFutureInstitution().getId(), appStatus, pageable);
+                allApp.forEach(application -> {
+                    AppResponse appResponse = new AppResponse(application);
+                    appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
+                    Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+                    FileResponse fileResponse = getFileResponse(diploma.getId());
+                    appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+                    responsese.add(appResponse);
+                });
+                return new PageImpl<>(responsese, pageable, allApp.getTotalElements());
+            }
+        }
+        return new PageImpl<>(new ArrayList<>(),pageable,0);
     }
 
     @Transactional(readOnly = true)
