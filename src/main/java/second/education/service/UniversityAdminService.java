@@ -308,24 +308,6 @@ public class UniversityAdminService {
         try {
             AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
-            if (adminEntity.getFutureInstitution().getId()!=null) {
-                Optional<Application> app = applicationRepository.getAppByUadmin(adminEntity.getFutureInstitution().getId(), diplomaId);
-                if (app.isPresent()) {
-                    app.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
-                    app.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
-                    Application save = applicationRepository.save(app.get());
-                    StoryMessage storyMessage = new StoryMessage();
-                    storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
-                    String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
-                    storyMessage.setStatus(status1);
-                    storyMessage.setFirstname(adminEntity.getFistName());
-                    storyMessage.setLastname(adminEntity.getLastname());
-                    storyMessage.setPinfl(principal.getName());
-                    storyMessage.setApplication(save);
-                    storyMessageRepository.save(storyMessage);
-                    return new Result("Muvaffaqiyatli o'zgartirildi", true);
-                }
-            }
             Optional<Application> application = applicationRepository.getAppAndDiplomaById(institutionId, diplomaId);
             if (application.isPresent()) {
                 application.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
@@ -346,6 +328,29 @@ public class UniversityAdminService {
         } catch (Exception e) {
             return new Result("O'zgartirishda xatolik", false);
         }
+    }
+
+    @Transactional
+    public  Result updateDiplomStatusbyApp(Principal principal,UpdateDiplomaStatus updateDiplomaStatus, Integer diplomaId){
+        AdminEntity adminEntity = adminEntityRepository.getAdminUniversity(principal.getName()).get();
+            Optional<Application> app = applicationRepository.getAppByUadmin(adminEntity.getFutureInstitution().getId(), diplomaId);
+            if (app.isPresent()) {
+                app.get().setDiplomaStatus(updateDiplomaStatus.getDiplomStatus());
+                app.get().setDiplomaMessage(updateDiplomaStatus.getDiplomMessage());
+                Application save = applicationRepository.save(app.get());
+                StoryMessage storyMessage = new StoryMessage();
+                storyMessage.setMessage(updateDiplomaStatus.getDiplomMessage());
+                String status1 = String.valueOf(updateDiplomaStatus.getDiplomStatus());
+                storyMessage.setStatus(status1);
+                storyMessage.setFirstname(adminEntity.getFistName());
+                storyMessage.setLastname(adminEntity.getLastname());
+                storyMessage.setPinfl(principal.getName());
+                storyMessage.setApplication(save);
+                storyMessageRepository.save(storyMessage);
+                return new Result("Muvaffaqiyatli o'zgartirildi", true);
+            }
+        return new Result("O'zgartirishda xatolik", false);
+
     }
 
     @Transactional
