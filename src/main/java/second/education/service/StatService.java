@@ -1,14 +1,12 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.model.request.IIBRequest;
-import second.education.model.response.StatisDirectionResponse;
-import second.education.model.response.StatisDirectionResponseByFutureInst;
-import second.education.model.response.StatisEduFormResponse;
-import second.education.model.response.StatisLanguageResponse;
+import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
@@ -27,13 +25,13 @@ public class StatService {
     private final IIBServiceApi iibServiceApi;
     private final FutureInstitutionRepository futureInstitutionRepository;
 
-//    @Transactional(readOnly = true)
-    public List<StatisDirectionResponse> getAllStatis(Integer futureInstId){
+    //    @Transactional(readOnly = true)
+    public List<StatisDirectionResponse> getAllStatis(Integer futureInstId) {
 
         List<StatisDirectionResponse> directions = directionRepository.getAllDirectionByFutureInst(futureInstId);
         List<StatisDirectionResponse> statisDirectionResponses = new ArrayList<>();
 
-            directions.forEach(d -> {
+        directions.forEach(d -> {
             List<StatisEduFormResponse> formResponses = eduFormRepository.findAllByDirectionId(d.getDirectionId());
             StatisDirectionResponse statisDirectionResponse = new StatisDirectionResponse() {
                 @Override
@@ -45,6 +43,7 @@ public class StatService {
                 public String getDirectionName() {
                     return d.getDirectionName();
                 }
+
                 @Override
                 public List<StatisEduFormResponse> getStatisEduFormResponses() {
                     List<StatisEduFormResponse> eduFormResponses = new ArrayList<>();
@@ -55,10 +54,12 @@ public class StatService {
                             public Integer getEduFormId() {
                                 return f.getEduFormId();
                             }
+
                             @Override
                             public String getEduFormName() {
                                 return f.getEduFormName();
                             }
+
                             @Override
                             public List<StatisLanguageResponse> getStatisLanguageResponses() {
                                 return statisByEduForm;
@@ -70,7 +71,7 @@ public class StatService {
                 }
             };
             statisDirectionResponses.add(statisDirectionResponse);
-    });
+        });
         return statisDirectionResponses;
     }
 
@@ -97,6 +98,7 @@ public class StatService {
                     public String getDirectionName() {
                         return d.getDirectionName();
                     }
+
                     @Override
                     public List<StatisEduFormResponse> getStatisEduFormResponses() {
                         List<StatisEduFormResponse> eduFormResponses = new ArrayList<>();
@@ -107,10 +109,12 @@ public class StatService {
                                 public Integer getEduFormId() {
                                     return f.getEduFormId();
                                 }
+
                                 @Override
                                 public String getEduFormName() {
                                     return f.getEduFormName();
                                 }
+
                                 @Override
                                 public List<StatisLanguageResponse> getStatisLanguageResponses() {
                                     return statisByEduForm;
@@ -128,13 +132,40 @@ public class StatService {
     }
 
 
-
     @Transactional
     public String checkIIB(IIBRequest request) {
         try {
-             return iibServiceApi.checkIIB(request);
+            return iibServiceApi.checkIIB(request);
         } catch (Exception ex) {
             return "Pinfl noto'gri kiritilgan, yoki qaytadan urinib ko'ring";
         }
+    }
+
+
+    //statistik All universiteti
+
+    @Transactional(readOnly = true)
+    public List<AcceptAndRejectAndCheckDiploma> statisticAllUniversity() {
+        List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectApp();
+        List<AcceptAndRejectApp> getcheckDiploma = applicationRepository.getcheckDiploma();
+        List<AcceptAndRejectAndCheckDiploma> list = new ArrayList<>();
+        acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
+            getcheckDiploma.forEach(acceptAndRejectApp2 -> {
+                if (acceptAndRejectApp1.getFutureId().equals(acceptAndRejectApp2.getFutureId())) {
+                    AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
+                    if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
+                        statistic.setAcceptCount(acceptAndRejectApp1.getCount());
+                    } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
+                        statistic.setRejectCount(acceptAndRejectApp1.getCount());
+                    }
+                    statistic.setCheckCount(acceptAndRejectApp2.getCount());
+                    statistic.setFutureInstName(acceptAndRejectApp2.getFutureInstName());
+                    list.add(statistic);
+                }
+
+            });
+
+        });
+        return list;
     }
 }

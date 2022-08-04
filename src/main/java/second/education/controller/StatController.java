@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import second.education.model.request.IIBRequest;
+import second.education.model.response.AcceptAndRejectAndCheckDiploma;
 import second.education.model.response.GetStatAllCountAndToday;
 import second.education.model.response.StatisDirectionResponse;
 import second.education.model.response.StatisDirectionResponseByFutureInst;
@@ -38,6 +39,14 @@ public class StatController {
 
     @PostMapping("IIBCheck")
     public String checkIIB(@RequestBody IIBRequest request) {
-       return statService.checkIIB(request);
+        return statService.checkIIB(request);
+    }
+
+
+    ////STATISTIC ALL UNIVERSITY
+
+    @GetMapping("/AcceptAndRejectAndDiploma")
+    public List<AcceptAndRejectAndCheckDiploma> getAllStatisticByUniver() {
+        return statService.statisticAllUniversity();
     }
 }

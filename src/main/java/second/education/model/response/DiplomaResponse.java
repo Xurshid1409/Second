@@ -28,6 +28,7 @@ public class DiplomaResponse {
     private String specialityName;
     private String eduFinishingDate;
     private String diplomaNumberAndDiplomaSerial;
+    private Boolean isActive;
     private FileResponse fileResponse;
 
     public DiplomaResponse(Diploma diploma, FileResponse fileResponse) {
@@ -45,6 +46,7 @@ public class DiplomaResponse {
         this.eduFinishingDate = diploma.getEduFinishingDate();
         this.diplomaNumberAndDiplomaSerial = diploma.getDiplomaSerialAndNumber();
         this.fileResponse = fileResponse;
+        this.isActive = diploma.getIsActive();
     }
 
     public DiplomaResponse(Diploma diploma) {
@@ -61,5 +63,7 @@ public class DiplomaResponse {
         this.specialityName = diploma.getSpecialityName();
         this.eduFinishingDate = diploma.getEduFinishingDate();
         this.diplomaNumberAndDiplomaSerial = diploma.getDiplomaSerialAndNumber();
+        this.isActive = diploma.getIsActive();
+
     }
 }
