@@ -142,7 +142,6 @@ public class StatService {
         }
     }
 
-
     //statistik All universiteti
 
     @Transactional(readOnly = true)
@@ -155,12 +154,13 @@ public class StatService {
                     statistic.setAcceptCount(acceptAndRejectApp1.getCount());
                 } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
                     statistic.setRejectCount(acceptAndRejectApp1.getCount());
+                } else {
+                    Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(acceptAndRejectApp1.getFutureId());
+                    if (acceptAndRejectApp2.isPresent()) {
+                        statistic.setCheckCount(acceptAndRejectApp2.get().getCount());
+                        statistic.setFutureInstName(acceptAndRejectApp2.get().getFutureInstName());
+                    }
                 }
-            Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(acceptAndRejectApp1.getFutureId());
-            if (acceptAndRejectApp2.isPresent()) {
-                statistic.setCheckCount(acceptAndRejectApp2.get().getCount());
-                statistic.setFutureInstName(acceptAndRejectApp2.get().getFutureInstName());
-            }
         });
         list.add(statistic);
         return list;
