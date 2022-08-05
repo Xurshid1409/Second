@@ -78,10 +78,8 @@ public class StatService {
 
     public List<StatisDirectionResponseByFutureInst> getStatisticToAdmin() {
 
-        List<FutureInstitution> futureInstitutions = futureInstitutionRepository.findAll();
         List<StatisDirectionResponseByFutureInst> statisDirectionResponses = new ArrayList<>();
-        futureInstitutions.forEach(futureInstitution -> {
-            List<StatisDirectionResponseByFutureInst> directions = directionRepository.getAllDirectionByFutureInstitutions(futureInstitution.getId());
+            List<StatisDirectionResponseByFutureInst> directions = directionRepository.getAllDirectionByFutureInstitutions();
             directions.forEach(d -> {
                 List<StatisEduFormResponse> formResponses = eduFormRepository.findAllByDirectionId(d.getDirectionId());
                 StatisDirectionResponseByFutureInst statisDirectionResponse = new StatisDirectionResponseByFutureInst() {
@@ -128,7 +126,6 @@ public class StatService {
                 };
                 statisDirectionResponses.add(statisDirectionResponse);
             });
-        });
         return statisDirectionResponses;
     }
 
@@ -146,23 +143,25 @@ public class StatService {
 
     @Transactional(readOnly = true)
     public List<AcceptAndRejectAndCheckDiploma> statisticAllUniversity() {
-        List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectApp();
+
+        List<FutureInstitution> futureInstitutions = futureInstitutionRepository.findAll();
         List<AcceptAndRejectAndCheckDiploma> list = new ArrayList<>();
-        AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-        acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
+        futureInstitutions.forEach(futureInstitution -> {
+            List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectApp(futureInstitution.getId());
+            AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
+            acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
                 if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
                     statistic.setAcceptCount(acceptAndRejectApp1.getCount());
                 } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
                     statistic.setRejectCount(acceptAndRejectApp1.getCount());
-                } else {
-                    Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(acceptAndRejectApp1.getFutureId());
-                    if (acceptAndRejectApp2.isPresent()) {
-                        statistic.setCheckCount(acceptAndRejectApp2.get().getCount());
-                        statistic.setFutureInstName(acceptAndRejectApp2.get().getFutureInstName());
-                    }
                 }
+            });
+            Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(futureInstitution.getId());
+            acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckCount(andRejectApp.getCount()));
+            statistic.setFutureInstName(futureInstitution.getName());
+            list.add(statistic);
         });
-        list.add(statistic);
+
         return list;
-}
+    }
 }

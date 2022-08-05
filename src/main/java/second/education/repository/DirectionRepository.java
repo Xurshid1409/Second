@@ -24,7 +24,7 @@ public interface DirectionRepository extends JpaRepository<Direction, Integer> {
     List<StatisDirectionResponse> getAllDirectionByFutureInst(Integer futureInstId);
 
     @Query(nativeQuery = true, value = "select d.id as directionId, d.name as directionName, fi.name as futureInstName from direction d " +
-            " join future_institution fi on fi.id = d.future_institution_id where fi.id=?1 ")
-    List<StatisDirectionResponseByFutureInst> getAllDirectionByFutureInstitutions(Integer futureInstId);
+            " join future_institution fi on fi.id = d.future_institution_id where fi.id=d.future_institution_id ")
+    List<StatisDirectionResponseByFutureInst> getAllDirectionByFutureInstitutions();
 
 }
