@@ -63,7 +63,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.is_active=true d.institution_old_name_id is not null" +
+            "where d.is_active=true and d.institution_old_name_id is not null " +
             "group by CAST(d.created_date AS DATE)  " +
             "order by sana")
     List<GetCountAppallDate> getDiplomaCountTodayByAdminAll();
@@ -81,7 +81,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where d.is_active=true and d.institution_old_name_id is null   " +
+            " where d.is_active=true and d.institution_old_name_id is null " +
             " group by CAST(d.created_date AS DATE) " +
             " order by sana ")
     List<GetCountAppallDate> getForeignDiplomaCountTodayByAdminAll();
@@ -102,7 +102,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.is_active=true and d.institution_old_name_id is null  " +
+            "where d.is_active=true and d.institution_old_name_id is not null  " +
             "group by ei.gender ")
     List<GetAppByGender> getCountDiplomaAndGenderAll();
 
@@ -118,7 +118,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where  d.institution_old_name_id is null and d.is_active=true " +
+            "where d.institution_old_name_id is null and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGenderAll();
 
