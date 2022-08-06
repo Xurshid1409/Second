@@ -50,7 +50,12 @@ public class StatController {
 
     @GetMapping("/countAppAndToday")
     public ResponseEntity<?> countAppAndToday() {
-        List<GetCountAppallDate> countAppandTodayByUAdmin = statService.getCountAppandTodayByAdmin();
+        List<GetCountAppallDate> countAppandTodayByUAdmin = statService.getCountAppandTodayAdmin();
+        return ResponseEntity.ok(countAppandTodayByUAdmin);
+    }
+    @GetMapping("/countAppAndGender")
+    public ResponseEntity<?> countAppAndGender() {
+        List<GetAppByGender> countAppandTodayByUAdmin = statService.getCountAppandGenderUAdmin();
         return ResponseEntity.ok(countAppandTodayByUAdmin);
     }
 }

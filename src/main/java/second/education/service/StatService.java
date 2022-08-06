@@ -163,14 +163,22 @@ public class StatService {
             statistic.setFutureInstName(futureInstitution.getName());
             Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiploma(futureInstitution.getId());
             acceptDiploma.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
+            Optional<GetAppByGender> getAppByGender = applicationRepository.allAppbyAdmin(futureInstitution.getId());
+            getAppByGender.ifPresent(appByGender -> statistic.setAllAppCount(appByGender.getCount()));
             list.add(statistic);
         });
 
         return list;
     }
     @Transactional(readOnly = true)
-    public List<GetCountAppallDate> getCountAppandTodayByAdmin() {
+    public List<GetCountAppallDate> getCountAppandTodayAdmin() {
         return applicationRepository.getAppCountTodayBAdmin();
+    }
+    @Transactional(readOnly = true)
+    public List<GetAppByGender> getCountAppandGenderUAdmin() {
+        List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderAdmin();
+
+        return counAppAndGenderByUAdmin;
     }
 
 }

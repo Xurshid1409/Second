@@ -14,5 +14,6 @@ public class AcceptAndRejectAndCheckDiploma {
     private Integer checkDiplomaCount;
     private Integer AcceptDiplomaCount;
     private String futureInstName;
+    private Integer allAppCount;
 
 }

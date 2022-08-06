@@ -685,7 +685,18 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a " +
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id  inner join  diploma d on ei.id = d.enrollee_info_id " +
-            " d.is_active=true group by CAST(a.created_date AS DATE) order by sana ")
+            " where d.is_active=true group by CAST(a.created_date AS DATE) order by sana ")
     List<GetCountAppallDate> getAppCountTodayBAdmin();
+
+    @Query(nativeQuery = true, value = "select count(a.id) as count , ei.gender as gender from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active=true group by ei.gender")
+    List<GetAppByGender> getCounAppAndGenderAdmin();
+
+
+    @Query(nativeQuery = true,value = "select count(a. id) as count from  application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where future_institution_id=?1 and d.is_active=true")
+    Optional<GetAppByGender> allAppbyAdmin(Integer id);
 
 }
