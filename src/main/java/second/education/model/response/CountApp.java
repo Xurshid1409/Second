@@ -1,7 +1,7 @@
 package second.education.model.response;
 
 public interface CountApp {
-    Integer getCount();
 
+    Integer getCount();
     String getStatus();
 }
