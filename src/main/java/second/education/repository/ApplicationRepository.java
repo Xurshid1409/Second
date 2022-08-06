@@ -663,6 +663,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " group by a.status, fi.name, a.future_institution_id ")
     List<AcceptAndRejectApp> getAcceptAndRejectApp(Integer id);
 
+    @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status " +
+            " from application as a " +
+            "inner join future_institution fi on fi.id = a.future_institution_id " +
+            "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where  d.is_active=true " +
+            " group by a.status")
+    List<AcceptAndRejectApp> getAcceptAndRejectAppAll();
+
     //diplom tekshirilmoqda
 
     @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status,fi.name as futureInstName,a.future_institution_id as futureId " +
@@ -674,6 +683,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " group by a.status, fi.name, a.future_institution_id ")
     Optional<AcceptAndRejectApp> getcheckDiploma(Integer id);
 
+    @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status " +
+            " from application as a " +
+            " inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join  enrollee_info ei on a.enrollee_info_id = ei.id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where  d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status is null  " +
+            " group by a.status ")
+    Optional<AcceptAndRejectApp> getcheckDiplomaAll();
+
     @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status,fi.name as futureInstName,a.future_institution_id as futureId " +
             " from application as a " +
             " inner join future_institution fi on fi.id = a.future_institution_id " +
@@ -682,6 +700,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " where a.future_institution_id=?1 and d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status=true " +
             " group by a.status ,fi.name , a.future_institution_id ")
     Optional<AcceptAndRejectApp> getAcceptDiploma(Integer id);
+
+    @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status" +
+            " from application as a " +
+            " inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join  enrollee_info ei on a.enrollee_info_id = ei.id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status=true " +
+            " group by a.status ")
+    Optional<AcceptAndRejectApp> getAcceptDiplomaAll();
 
     @Query(nativeQuery = true, value = "select  count(a.id) as count , CAST(a.created_date AS DATE) as sana from   application as a " +
             "inner join enrollee_info ei on ei.id = a.enrollee_info_id  inner join  diploma d on ei.id = d.enrollee_info_id " +
@@ -693,10 +720,16 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<GetAppByGender> getCounAppAndGenderAdmin();
 
 
-    @Query(nativeQuery = true,value = "select count(a. id) as count from  application as a " +
+    @Query(nativeQuery = true, value = "select count(a. id) as count from  application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
             " where future_institution_id=?1 and d.is_active=true")
-    Optional<GetAppByGender> allAppbyAdmin(Integer id);
+    Optional<GetAppByGender> allInsAppbyAdmin(Integer id);
+
+    @Query(nativeQuery = true, value = "select count(a. id) as count from  application as a " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            " inner join diploma d on ei.id = d.enrollee_info_id " +
+            " where d.is_active=true")
+    Optional<GetAppByGender> allAppbyAdmin();
 
 }

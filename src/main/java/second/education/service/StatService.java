@@ -1,7 +1,6 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.AdminEntity;
@@ -12,9 +11,7 @@ import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,12 +163,32 @@ public class StatService {
             statistic.setFutureInstName(futureInstitution.getName());
             Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiploma(futureInstitution.getId());
             acceptDiploma.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
-            Optional<GetAppByGender> getAppByGender = applicationRepository.allAppbyAdmin(futureInstitution.getId());
+            Optional<GetAppByGender> getAppByGender = applicationRepository.allInsAppbyAdmin(futureInstitution.getId());
             getAppByGender.ifPresent(appByGender -> statistic.setAllAppCount(appByGender.getCount()));
             list.add(statistic);
         });
 
         return list;
+    }
+
+    @Transactional(readOnly = true)
+  public   AcceptAndRejectAndCheckDiploma allCountAdmin() {
+        List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectAppAll();
+        AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
+        acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
+            if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
+                statistic.setAcceptAppCount(acceptAndRejectApp1.getCount());
+            } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
+                statistic.setRejectAppCount(acceptAndRejectApp1.getCount());
+            }
+        });
+        Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiplomaAll();
+        acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
+        Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiplomaAll();
+        acceptDiploma.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
+        Optional<GetAppByGender> getAppByGender = applicationRepository.allAppbyAdmin();
+        getAppByGender.ifPresent(appByGender -> statistic.setAllAppCount(appByGender.getCount()));
+        return statistic;
     }
 
     @Transactional(readOnly = true)
@@ -190,7 +207,7 @@ public class StatService {
     public List<DiplomaAdminResponse> getDiplomaCountByAdmin() {
         List<DiplomaAdminResponse> list = new ArrayList<>();
         List<AdminEntity> all = adminEntityRepository.findAll();
-        all.forEach(adminEntity  -> {
+        all.forEach(adminEntity -> {
             Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
             String institutionName = adminEntity.getUniversities().stream().map(University::getInstitutionName).findFirst().get();
             DiplomaAdminResponse adminResponse = new DiplomaAdminResponse();
@@ -198,6 +215,24 @@ public class StatService {
             adminResponse.setDiploma(countDiploma);
             adminResponse.setUniversityName(institutionName);
             list.add(adminResponse);
+        });
+
+        return list;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DiplomaAdminResponse> getForeignDConunt() {
+        List<DiplomaAdminResponse> list = new ArrayList<>();
+        List<AdminEntity> all = adminEntityRepository.findAll();
+        all.forEach(adminEntity -> {
+            DiplomaAdminResponse adminResponse = new DiplomaAdminResponse();
+            if (adminEntity.getFutureInstitution() != null) {
+                List<CountApp> countDiploma = applicationRepository.getCountForeignDiploma(adminEntity.getFutureInstitution().getId());
+                adminResponse.setDiploma(countDiploma);
+                adminResponse.setUniversityName(adminEntity.getFutureInstitution().getName());
+                list.add(adminResponse);
+            }
+
         });
 
         return list;

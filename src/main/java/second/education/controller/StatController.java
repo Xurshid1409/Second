@@ -47,7 +47,10 @@ public class StatController {
     public List<AcceptAndRejectAndCheckDiploma> getAllStatisticByUniver() {
         return statService.statisticAllUniversity();
     }
-
+    @GetMapping("/getAllStatistic")
+    public AcceptAndRejectAndCheckDiploma getAllStatistic() {
+        return statService.allCountAdmin();
+    }
     @GetMapping("/countAppAndToday")
     public ResponseEntity<?> countAppAndToday() {
         List<GetCountAppallDate> countAppandTodayByUAdmin = statService.getCountAppandTodayAdmin();
@@ -57,9 +60,15 @@ public class StatController {
     public ResponseEntity<?> countAppAndGender() {
         List<GetAppByGender> countAppandTodayByUAdmin = statService.getCountAppandGenderUAdmin();
         return ResponseEntity.ok(countAppandTodayByUAdmin);
-    } @GetMapping("/countDiploma")
+    }
+    @GetMapping("/countDiploma")
     public ResponseEntity<?> countDiploma() {
         List<DiplomaAdminResponse> diplomaCountByAdmin = statService.getDiplomaCountByAdmin();
+        return ResponseEntity.ok(diplomaCountByAdmin);
+    }
+    @GetMapping("/countForeignDiploma")
+    public ResponseEntity<?> countForeignDiploma() {
+        List<DiplomaAdminResponse> diplomaCountByAdmin = statService.getForeignDConunt();
         return ResponseEntity.ok(diplomaCountByAdmin);
     }
 }
