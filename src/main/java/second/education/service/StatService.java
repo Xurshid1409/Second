@@ -11,6 +11,7 @@ import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -172,7 +173,7 @@ public class StatService {
     }
 
     @Transactional(readOnly = true)
-  public   AcceptAndRejectAndCheckDiploma allCountAdmin() {
+    public AcceptAndRejectAndCheckDiploma allCountAppAdmin() {
         List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectAppAll();
         AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
         acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
@@ -192,15 +193,43 @@ public class StatService {
     }
 
     @Transactional(readOnly = true)
+    public ForeignAndDiplomaAllCount allCountDiplomaAndForeignAdmin() {
+        ForeignAndDiplomaAllCount allCount = new ForeignAndDiplomaAllCount();
+        List<CountApp> countDiploma = applicationRepository.allDiplomaCountByAdmin();
+        allCount.setDiploma(countDiploma);
+        List<CountApp> countForeign = applicationRepository.allForeignDiplomaCountByAdmin();
+        allCount.setForeign(countForeign);
+        CountApp countAllDiplom = applicationRepository.getAllCountForeignDAdmin().get();
+        allCount.setCountForeign(countAllDiplom.getCount());
+        CountApp countAllForeign = applicationRepository.getAllCountDiplomaAdmin().get();
+        allCount.setCountDiploma(countAllForeign.getCount());
+        return allCount;
+    }
+
+
+    @Transactional(readOnly = true)
+    public CountGenderAndDiplomaAndApp getCountForeignAndDiplomaandGenderAndTodayByAdmin() {
+        List<GetAppByGender> diplomaAndGender = applicationRepository.getCountDiplomaAndGenderAll();
+        CountGenderAndDiplomaAndApp statistik = new CountGenderAndDiplomaAndApp();
+        List<GetCountAppallDate> diplomaCountTodayByUAdmin = applicationRepository.getDiplomaCountTodayByAdminAll();
+        statistik.setDiplomaGenderCount(diplomaAndGender);
+        statistik.setDiplomaCountToday(diplomaCountTodayByUAdmin);
+        List<GetCountAppallDate> foreignDiplomaCountTodayByUAdmin = applicationRepository.getForeignDiplomaCountTodayByAdminAll();
+        List<GetAppByGender> countForeingDiplomaAndGender = applicationRepository.getCountForeingDiplomaAndGenderAll();
+        statistik.setForeigndiplomaGenderCount(countForeingDiplomaAndGender);
+        statistik.setForeigndiplomaCountToday(foreignDiplomaCountTodayByUAdmin);
+        return statistik;
+    }
+
+    @Transactional(readOnly = true)
     public List<GetCountAppallDate> getCountAppandTodayAdmin() {
         return applicationRepository.getAppCountTodayBAdmin();
     }
 
     @Transactional(readOnly = true)
     public List<GetAppByGender> getCountAppandGenderUAdmin() {
-        List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderAdmin();
 
-        return counAppAndGenderByUAdmin;
+        return applicationRepository.getCounAppAndGenderAdmin();
     }
 
     @Transactional(readOnly = true)

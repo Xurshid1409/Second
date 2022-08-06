@@ -10,7 +10,6 @@ import second.education.repository.DirectionRepository;
 import second.education.service.StatService;
 import second.education.service.api.IIBServiceApi;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -49,7 +48,7 @@ public class StatController {
     }
     @GetMapping("/getAllStatistic")
     public AcceptAndRejectAndCheckDiploma getAllStatistic() {
-        return statService.allCountAdmin();
+        return statService.allCountAppAdmin();
     }
     @GetMapping("/countAppAndToday")
     public ResponseEntity<?> countAppAndToday() {
@@ -70,5 +69,15 @@ public class StatController {
     public ResponseEntity<?> countForeignDiploma() {
         List<DiplomaAdminResponse> diplomaCountByAdmin = statService.getForeignDConunt();
         return ResponseEntity.ok(diplomaCountByAdmin);
+    }
+    @GetMapping("/countForeignDiplomaAndDiplomaGAndToday")
+    public ResponseEntity<?> countForeignDiplomaAndDiplomaGAndToday() {
+        CountGenderAndDiplomaAndApp countForeignAndDiplomaandGenderAndTodayByAdmin = statService.getCountForeignAndDiplomaandGenderAndTodayByAdmin();
+        return ResponseEntity.ok(countForeignAndDiplomaandGenderAndTodayByAdmin);
+    }
+    @GetMapping("/countAllDiplomaAndForeign")
+    public ResponseEntity<?> countAllDiplomaAndForeign() {
+        ForeignAndDiplomaAllCount allCount = statService.allCountDiplomaAndForeignAdmin();
+        return ResponseEntity.ok(allCount);
     }
 }
