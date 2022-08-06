@@ -772,7 +772,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "where d.is_active=true and d.institution_old_name_id is not null group by a.diploma_status ")
     List<CountApp> allDiplomaCountByAdmin();
 
-    @Query(nativeQuery = true, value = " select count(a.id),a.diploma_status from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+    @Query(nativeQuery = true, value = " select count(a.id),a.diploma_status as status from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
             "where d.is_active=true and d.institution_old_name_id is null group by a.diploma_status ")
     List<CountApp> allForeignDiplomaCountByAdmin();
