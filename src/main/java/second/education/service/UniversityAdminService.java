@@ -29,7 +29,6 @@ public class UniversityAdminService {
     private final StoryMessageRepository storyMessageRepository;
     private final ApplicationRepository applicationRepository;
     private final DocumentRepository documentRepository;
-
     private final AdminEntityRepository adminEntityRepository;
 
     @Transactional(readOnly = true)

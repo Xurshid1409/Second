@@ -1,11 +1,14 @@
 package second.education.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.AdminEntity;
+import second.education.domain.Application;
+import second.education.domain.Diploma;
 import second.education.domain.classificator.FutureInstitution;
+import second.education.domain.classificator.University;
 import second.education.model.request.IIBRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
@@ -177,8 +180,18 @@ public class StatService {
     @Transactional(readOnly = true)
     public List<GetAppByGender> getCountAppandGenderUAdmin() {
         List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderAdmin();
-
         return counAppAndGenderByUAdmin;
+    }
+
+    @Transactional(readOnly = true)
+    public CountByUAdmin getAllCountForeignDiplomaToAdmin() {
+
+        List<FutureInstitution> futureInstitutions = futureInstitutionRepository.findAll();
+        futureInstitutions.forEach(futureInstitution -> {
+            CountByUAdmin response = new CountByUAdmin();
+            List<CountApp> countForeignDiploma = applicationRepository.getCountForeignDiploma(futureInstitution.getId());
+            response.setCountForeignDiploma(countForeignDiploma);
+        });
     }
 
 }
