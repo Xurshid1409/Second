@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Setter
 public class AcceptAndRejectAndCheckDiploma {
 
-    private Integer acceptCount;
-    private Integer rejectCount;
-    private Integer checkCount;
+    private Integer acceptAppCount;
+    private Integer rejectAppCount;
+    private Integer checkDiplomaCount;
+    private Integer AcceptDiplomaCount;
     private String futureInstName;
 
 }

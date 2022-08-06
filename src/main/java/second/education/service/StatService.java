@@ -79,53 +79,53 @@ public class StatService {
     public List<StatisDirectionResponseByFutureInst> getStatisticToAdmin() {
 
         List<StatisDirectionResponseByFutureInst> statisDirectionResponses = new ArrayList<>();
-            List<StatisDirectionResponseByFutureInst> directions = directionRepository.getAllDirectionByFutureInstitutions();
-            directions.forEach(d -> {
-                List<StatisEduFormResponse> formResponses = eduFormRepository.findAllByDirectionId(d.getDirectionId());
-                StatisDirectionResponseByFutureInst statisDirectionResponse = new StatisDirectionResponseByFutureInst() {
-                    @Override
-                    public String getFutureInstName() {
-                        return d.getFutureInstName();
-                    }
+        List<StatisDirectionResponseByFutureInst> directions = directionRepository.getAllDirectionByFutureInstitutions();
+        directions.forEach(d -> {
+            List<StatisEduFormResponse> formResponses = eduFormRepository.findAllByDirectionId(d.getDirectionId());
+            StatisDirectionResponseByFutureInst statisDirectionResponse = new StatisDirectionResponseByFutureInst() {
+                @Override
+                public String getFutureInstName() {
+                    return d.getFutureInstName();
+                }
 
-                    @Override
-                    public Integer getDirectionId() {
-                        return d.getDirectionId();
-                    }
+                @Override
+                public Integer getDirectionId() {
+                    return d.getDirectionId();
+                }
 
-                    @Override
-                    public String getDirectionName() {
-                        return d.getDirectionName();
-                    }
+                @Override
+                public String getDirectionName() {
+                    return d.getDirectionName();
+                }
 
-                    @Override
-                    public List<StatisEduFormResponse> getStatisEduFormResponses() {
-                        List<StatisEduFormResponse> eduFormResponses = new ArrayList<>();
-                        formResponses.forEach(f -> {
-                            List<StatisLanguageResponse> statisByEduForm = applicationRepository.getStatisByEduForm(f.getEduFormId());
-                            StatisEduFormResponse statisEduFormResponse = new StatisEduFormResponse() {
-                                @Override
-                                public Integer getEduFormId() {
-                                    return f.getEduFormId();
-                                }
+                @Override
+                public List<StatisEduFormResponse> getStatisEduFormResponses() {
+                    List<StatisEduFormResponse> eduFormResponses = new ArrayList<>();
+                    formResponses.forEach(f -> {
+                        List<StatisLanguageResponse> statisByEduForm = applicationRepository.getStatisByEduForm(f.getEduFormId());
+                        StatisEduFormResponse statisEduFormResponse = new StatisEduFormResponse() {
+                            @Override
+                            public Integer getEduFormId() {
+                                return f.getEduFormId();
+                            }
 
-                                @Override
-                                public String getEduFormName() {
-                                    return f.getEduFormName();
-                                }
+                            @Override
+                            public String getEduFormName() {
+                                return f.getEduFormName();
+                            }
 
-                                @Override
-                                public List<StatisLanguageResponse> getStatisLanguageResponses() {
-                                    return statisByEduForm;
-                                }
-                            };
-                            eduFormResponses.add(statisEduFormResponse);
-                        });
-                        return eduFormResponses;
-                    }
-                };
-                statisDirectionResponses.add(statisDirectionResponse);
-            });
+                            @Override
+                            public List<StatisLanguageResponse> getStatisLanguageResponses() {
+                                return statisByEduForm;
+                            }
+                        };
+                        eduFormResponses.add(statisEduFormResponse);
+                    });
+                    return eduFormResponses;
+                }
+            };
+            statisDirectionResponses.add(statisDirectionResponse);
+        });
         return statisDirectionResponses;
     }
 
@@ -151,14 +151,16 @@ public class StatService {
             AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
             acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
                 if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
-                    statistic.setAcceptCount(acceptAndRejectApp1.getCount());
+                    statistic.setAcceptAppCount(acceptAndRejectApp1.getCount());
                 } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
-                    statistic.setRejectCount(acceptAndRejectApp1.getCount());
+                    statistic.setRejectAppCount(acceptAndRejectApp1.getCount());
                 }
             });
             Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(futureInstitution.getId());
-            acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckCount(andRejectApp.getCount()));
+            acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
             statistic.setFutureInstName(futureInstitution.getName());
+            Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiploma(futureInstitution.getId());
+            acceptDiploma.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
             list.add(statistic);
         });
 
