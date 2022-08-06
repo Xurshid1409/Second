@@ -4,15 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import second.education.model.request.IIBRequest;
-import second.education.model.response.AcceptAndRejectAndCheckDiploma;
-import second.education.model.response.GetStatAllCountAndToday;
-import second.education.model.response.StatisDirectionResponse;
-import second.education.model.response.StatisDirectionResponseByFutureInst;
+import second.education.model.response.*;
 import second.education.repository.ApplicationRepository;
 import second.education.repository.DirectionRepository;
 import second.education.service.StatService;
 import second.education.service.api.IIBServiceApi;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -48,5 +46,11 @@ public class StatController {
     @GetMapping("/AcceptAndRejectAndDiploma")
     public List<AcceptAndRejectAndCheckDiploma> getAllStatisticByUniver() {
         return statService.statisticAllUniversity();
+    }
+
+    @GetMapping("/countAppAndToday")
+    public ResponseEntity<?> countAppAndToday() {
+        List<GetCountAppallDate> countAppandTodayByUAdmin = statService.getCountAppandTodayByAdmin();
+        return ResponseEntity.ok(countAppandTodayByUAdmin);
     }
 }
