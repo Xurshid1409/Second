@@ -57,5 +57,9 @@ public class StatController {
     public ResponseEntity<?> countAppAndGender() {
         List<GetAppByGender> countAppandTodayByUAdmin = statService.getCountAppandGenderUAdmin();
         return ResponseEntity.ok(countAppandTodayByUAdmin);
+    } @GetMapping("/countDiploma")
+    public ResponseEntity<?> countDiploma() {
+        List<DiplomaAdminResponse> diplomaCountByAdmin = statService.getDiplomaCountByAdmin();
+        return ResponseEntity.ok(diplomaCountByAdmin);
     }
 }

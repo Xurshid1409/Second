@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.AdminEntity;
 import second.education.domain.classificator.FutureInstitution;
+import second.education.domain.classificator.University;
 import second.education.model.request.IIBRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
@@ -27,6 +28,8 @@ public class StatService {
     private final LanguageRepository languageRepository;
     private final IIBServiceApi iibServiceApi;
     private final FutureInstitutionRepository futureInstitutionRepository;
+    private final AdminEntityRepository adminEntityRepository;
+    private final UniversityRepository universityRepository;
 
     //    @Transactional(readOnly = true)
     public List<StatisDirectionResponse> getAllStatis(Integer futureInstId) {
@@ -170,10 +173,12 @@ public class StatService {
 
         return list;
     }
+
     @Transactional(readOnly = true)
     public List<GetCountAppallDate> getCountAppandTodayAdmin() {
         return applicationRepository.getAppCountTodayBAdmin();
     }
+
     @Transactional(readOnly = true)
     public List<GetAppByGender> getCountAppandGenderUAdmin() {
         List<GetAppByGender> counAppAndGenderByUAdmin = applicationRepository.getCounAppAndGenderAdmin();
@@ -181,4 +186,22 @@ public class StatService {
         return counAppAndGenderByUAdmin;
     }
 
+    @Transactional(readOnly = true)
+    public List<DiplomaAdminResponse> getDiplomaCountByAdmin() {
+        List<DiplomaAdminResponse> list = new ArrayList<>();
+        List<AdminEntity> all = adminEntityRepository.findAll();
+        all.forEach(adminEntity  -> {
+            Integer institutionId = adminEntity.getUniversities().stream().map(University::getInstitutionId).findFirst().get();
+            String institutionName = adminEntity.getUniversities().stream().map(University::getInstitutionName).findFirst().get();
+            DiplomaAdminResponse adminResponse = new DiplomaAdminResponse();
+            List<CountApp> countDiploma = applicationRepository.getCountDiploma(institutionId);
+            adminResponse.setDiploma(countDiploma);
+            adminResponse.setUniversityName(institutionName);
+            list.add(adminResponse);
+        });
+
+        return list;
+    }
 }
+
+
