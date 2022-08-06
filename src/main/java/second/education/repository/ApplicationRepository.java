@@ -58,12 +58,13 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "group by CAST(d.created_date AS DATE) " +
             "order by sana")
     List<GetCountAppallDate> getDiplomaCountTodayByUAdmin(Integer instId);
+
     @Query(nativeQuery = true, value = "select count(a.id) as count, CAST(d.created_date AS DATE) as sana " +
             "from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.is_active=true " +
-            "group by CAST(d.created_date AS DATE) " +
+            "where d.is_active=true d.institution_old_name_id is not null" +
+            "group by CAST(d.created_date AS DATE)  " +
             "order by sana")
     List<GetCountAppallDate> getDiplomaCountTodayByAdminAll();
 
@@ -75,11 +76,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " group by CAST(d.created_date AS DATE) " +
             " order by sana ")
     List<GetCountAppallDate> getForeignDiplomaCountTodayByUAdmin(Integer instId);
+
     @Query(nativeQuery = true, value = "select count(a.id) as count, CAST(d.created_date AS DATE) as sana " +
             " from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where d.is_active=true " +
+            " where d.is_active=true and d.institution_old_name_id is null   " +
             " group by CAST(d.created_date AS DATE) " +
             " order by sana ")
     List<GetCountAppallDate> getForeignDiplomaCountTodayByAdminAll();
@@ -95,11 +97,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "where d.institution_old_name_id=?1 and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountDiplomaAndGender(Integer institutionId);
+
     @Query(nativeQuery = true, value = " select count(a.id) as count, ei.gender as gender " +
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where d.is_active=true " +
+            "where d.is_active=true and d.institution_old_name_id is null  " +
             "group by ei.gender ")
     List<GetAppByGender> getCountDiplomaAndGenderAll();
 
@@ -110,6 +113,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "where a.future_institution_id=?1 and d.institution_old_name_id is null and d.is_active=true " +
             "group by ei.gender ")
     List<GetAppByGender> getCountForeingDiplomaAndGender(Integer institutionId);
+
     @Query(nativeQuery = true, value = " select count(a.id) as count, ei.gender as gender " +
             "from application as a " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
@@ -762,26 +766,25 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join diploma d on ei.id = d.enrollee_info_id " +
             " where d.is_active=true")
     Optional<GetAppByGender> allAppbyAdmin();
+
     @Query(nativeQuery = true, value = " select count(a.id),a.diploma_status as status from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
             "where d.is_active=true and d.institution_old_name_id is not null group by a.diploma_status ")
     List<CountApp> allDiplomaCountByAdmin();
+
     @Query(nativeQuery = true, value = " select count(a.id),a.diploma_status from  application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
             "where d.is_active=true and d.institution_old_name_id is null group by a.diploma_status ")
     List<CountApp> allForeignDiplomaCountByAdmin();
 
 
-
-
-
-
-    @Query(nativeQuery = true,value = "select count(a. id) as count from  application as a " +
+    @Query(nativeQuery = true, value = "select count(a. id) as count from  application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id  where d.is_active=true and d.institution_old_name_id is null")
-    Optional<CountApp>getAllCountForeignDAdmin();
-    @Query(nativeQuery = true,value = "select count(a. id) as count from  application as a " +
+    Optional<CountApp> getAllCountForeignDAdmin();
+
+    @Query(nativeQuery = true, value = "select count(a. id) as count from  application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id  where d.is_active=true and d.institution_old_name_id is not null")
-    Optional<CountApp>getAllCountDiplomaAdmin();
+    Optional<CountApp> getAllCountDiplomaAdmin();
 }
