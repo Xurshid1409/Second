@@ -679,7 +679,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join  enrollee_info ei on a.enrollee_info_id = ei.id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where  d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status=true " +
+            " where a.future_institution_id=?1 and d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status=true " +
             " group by a.status ,fi.name , a.future_institution_id ")
     Optional<AcceptAndRejectApp> getAcceptDiploma(Integer id);
 

@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import second.education.domain.AdminEntity;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.model.request.IIBRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
 import second.education.service.api.IIBServiceApi;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -160,10 +162,15 @@ public class StatService {
             acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
             statistic.setFutureInstName(futureInstitution.getName());
             Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiploma(futureInstitution.getId());
-            acceptDiploma.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
+            acceptDiploma.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
             list.add(statistic);
         });
 
         return list;
     }
+    @Transactional(readOnly = true)
+    public List<GetCountAppallDate> getCountAppandTodayByAdmin() {
+        return applicationRepository.getAppCountTodayBAdmin();
+    }
+
 }
