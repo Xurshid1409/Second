@@ -693,29 +693,25 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id = ?1 " +
+            "where a.future_institution_id =?1 " +
             " and d.is_active = true " +
-            " and a.diploma_status=true and a.status='Ariza qabul qilindi' " +
-            "group by a.status ")
+            " and a.diploma_status=true and a.status='Ariza qabul qilindi' ")
     AcceptAndRejectApp getAcceptApp(Integer id);
     @Query(nativeQuery = true, value = "select count(a.id) as count " +
             "from application as a " +
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id = ?1 " +
-            " and d.is_active = true " +
-            " and a.diploma_status=true and a.status='Ariza rad etildi' " +
-            "group by a.status ")
+            "where a.future_institution_id =?1 " +
+            " and d.is_active = true and a.status='Ariza rad etildi' ")
     AcceptAndRejectApp getRejectedApp(Integer id);
 
-    @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status " +
+    @Query(nativeQuery = true, value = "select count(a.status) as count" +
             " from application as a " +
             "inner join future_institution fi on fi.id = a.future_institution_id " +
             "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where  d.is_active=true " +
-            " group by a.status")
+            " where  d.is_active=true ")
     List<AcceptAndRejectApp> getAcceptAndRejectAppAll();
 
     //diplom tekshirilmoqda
