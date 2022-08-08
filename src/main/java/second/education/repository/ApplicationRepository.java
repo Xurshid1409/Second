@@ -706,13 +706,20 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " and d.is_active = true and a.status='Ariza rad etildi' ")
     AcceptAndRejectApp getRejectedApp(Integer id);
 
-    @Query(nativeQuery = true, value = "select count(a.status) as count" +
-            " from application as a " +
-            "inner join future_institution fi on fi.id = a.future_institution_id " +
-            "  inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
-            " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where  d.is_active=true ")
-    List<AcceptAndRejectApp> getAcceptAndRejectAppAll();
+    @Query(nativeQuery = true, value = "select count(a.id) as count " +
+            "from application as a " +
+            " inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            "inner join diploma d on ei.id = d.enrollee_info_id " +
+            "where  d.is_active = true and a.diploma_status=true and a.status='Ariza qabul qilindi' ")
+    AcceptAndRejectApp getAcceptAll();
+    @Query(nativeQuery = true, value = "select count(a.id) as count " +
+            "from application as a " +
+            " inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            "inner join diploma d on ei.id = d.enrollee_info_id " +
+            "where  d.is_active = true and a.status='Ariza rad etildi' ")
+    AcceptAndRejectApp getRejectedAll();
 
     //diplom tekshirilmoqda
 
@@ -730,7 +737,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join  enrollee_info ei on a.enrollee_info_id = ei.id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where  d.is_active=true and a.status='Ariza yuborildi' and  a.diploma_status is null  " +
+            " where  d.is_active=true and a.status='Ariza yuborildi' and a.diploma_status is null  " +
             " group by a.status ")
     Optional<AcceptAndRejectApp> getcheckDiplomaAll();
 

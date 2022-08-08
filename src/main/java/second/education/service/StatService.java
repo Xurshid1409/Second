@@ -170,19 +170,16 @@ public class StatService {
 
     @Transactional(readOnly = true)
     public AcceptAndRejectAndCheckDiploma allCountAppAdmin() {
-        List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectAppAll();
+        AcceptAndRejectApp acceptAll = applicationRepository.getAcceptAll();
+        AcceptAndRejectApp rejectedAll = applicationRepository.getRejectedAll();
         AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-        acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
-            if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
-                statistic.setAcceptAppCount(acceptAndRejectApp1.getCount());
-            } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
-                statistic.setRejectAppCount(acceptAndRejectApp1.getCount());
-            }
-        });
-        Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiplomaAll();
-        acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
-        Optional<AcceptAndRejectApp> acceptDiploma = applicationRepository.getAcceptDiplomaAll();
-        acceptDiploma.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
+                statistic.setAcceptAppCount(acceptAll.getCount());
+                statistic.setRejectAppCount(rejectedAll.getCount());
+
+        Optional<AcceptAndRejectApp> getcheckDiplomaAll = applicationRepository.getcheckDiplomaAll();
+        getcheckDiplomaAll.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
+        Optional<AcceptAndRejectApp> acceptDiplomaAll = applicationRepository.getAcceptDiplomaAll();
+        acceptDiplomaAll.ifPresent(acceptDiploma1 -> statistic.setAcceptDiplomaCount(acceptDiploma1.getCount()));
         Optional<GetAppByGender> getAppByGender = applicationRepository.allAppbyAdmin();
         getAppByGender.ifPresent(appByGender -> statistic.setAllAppCount(appByGender.getCount()));
         return statistic;
