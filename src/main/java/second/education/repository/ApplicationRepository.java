@@ -565,7 +565,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "             from application as a\n" +
             "             inner join enrollee_info ei on ei.id = a.enrollee_info_id\n" +
             "             inner join diploma d on ei.id = d.enrollee_info_id\n" +
-            "             where d.is_active = true and d.institution_old_name_id=92 and a.diploma_status is null order by d.id ")
+            "             where d.is_active = true and a.diploma_status is null order by d.id ")
     List<GetDiplomasToExcel> exportAllDiplomaNullToAdmin();
 
     // Export all Foreign diploma to admin
