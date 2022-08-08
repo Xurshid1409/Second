@@ -354,7 +354,7 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<GetAppToExcel> exportAllAppToAdmin(String appStatus, String diplomaStatus) {
-        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+        if (diplomaStatus.equals("true")) {
             return applicationRepository.exportAllAppDiplomaTrueToAdmin();
         } else if (diplomaStatus.equals("null")) {
             return applicationRepository.exportAllAppByDiplomaNullToAdmin();
