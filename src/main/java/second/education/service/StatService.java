@@ -150,15 +150,11 @@ public class StatService {
         List<FutureInstitution> futureInstitutions = futureInstitutionRepository.findAll();
         List<AcceptAndRejectAndCheckDiploma> list = new ArrayList<>();
         futureInstitutions.forEach(futureInstitution -> {
-            List<AcceptAndRejectApp> acceptAndRejectApp = applicationRepository.getAcceptAndRejectApp(futureInstitution.getId());
-            AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-            acceptAndRejectApp.forEach(acceptAndRejectApp1 -> {
-                if (acceptAndRejectApp1.getStatus().equals("Ariza qabul qilindi")) {
-                    statistic.setAcceptAppCount(acceptAndRejectApp1.getCount());
-                } else if (acceptAndRejectApp1.getStatus().equals("Ariza rad etildi")) {
-                    statistic.setRejectAppCount(acceptAndRejectApp1.getCount());
-                }
-            });
+                    AcceptAndRejectApp acceptApp = applicationRepository.getAcceptApp(futureInstitution.getId());
+                    AcceptAndRejectApp rejectedApp = applicationRepository.getRejectedApp(futureInstitution.getId());
+                    AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
+                    statistic.setAcceptAppCount(acceptApp.getCount());
+                    statistic.setRejectAppCount(rejectedApp.getCount());
             Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(futureInstitution.getId());
             acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
             statistic.setFutureInstName(futureInstitution.getName());

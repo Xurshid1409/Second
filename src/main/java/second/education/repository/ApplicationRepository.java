@@ -551,22 +551,21 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<GetDiplomasToExcel> exportAllDiplomaToAdmin(Boolean status);
 
     // Export all null diploma to admin
-    @Query(nativeQuery = true, value = " select d.id as diplomaId," +
-            " ei.firstname as firstName, " +
-            " ei.lastname  as lastName, " +
-            " ei.middle_name as middleName, " +
-            " ei.phone_number as phoneNumber, " +
-            " ei.passport_serial_and_number as passportSerialNumber, " +
-            " d.institution_name as institutionName, " +
-            " d.institution_old_name as institutionOldName, " +
-            " d.speciality_name as specialityName, " +
-            " d.diploma_serial_and_number as diplomaSerialAndNumber, " +
-            " d.edu_finishing_date as finishingDate " +
-            " from application as a " +
-            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
-            " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where d.is_active = true and " +
-            " a.diploma_status is null order by d.id ")
+    @Query(nativeQuery = true, value = " select d.id as diplomaId,\n" +
+            "             ei.firstname as firstName,\n" +
+            "             ei.lastname  as lastName,\n" +
+            "             ei.middle_name as middleName,\n" +
+            "            ei.phone_number as phoneNumber,\n" +
+            "             ei.passport_serial_and_number as passportSerialNumber,\n" +
+            "             d.institution_name as institutionName,\n" +
+            "             d.institution_old_name as institutionOldName,\n" +
+            "             d.speciality_name as specialityName,\n" +
+            "             d.diploma_serial_and_number as diplomaSerialAndNumber,\n" +
+            "             d.edu_finishing_date as finishingDate\n" +
+            "             from application as a\n" +
+            "             inner join enrollee_info ei on ei.id = a.enrollee_info_id\n" +
+            "             inner join diploma d on ei.id = d.enrollee_info_id\n" +
+            "             where d.is_active = true and d.institution_old_name_id=92 and a.diploma_status is null order by d.id ")
     List<GetDiplomasToExcel> exportAllDiplomaNullToAdmin();
 
     // Export all Foreign diploma to admin
@@ -689,14 +688,26 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
 
     //ariza rad etildi yoki qabul qilindi
-    @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status, fi.name as futureInstName, a.future_institution_id  as futureId " +
-            " from application as a " +
+    @Query(nativeQuery = true, value = "select count(a.id) as count " +
+            "from application as a " +
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
-            " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where a.future_institution_id=?1 and d.is_active=true " +
-            " group by a.status, fi.name, a.future_institution_id ")
-    List<AcceptAndRejectApp> getAcceptAndRejectApp(Integer id);
+            "inner join diploma d on ei.id = d.enrollee_info_id " +
+            "where a.future_institution_id = 74 " +
+            " and d.is_active = true " +
+            " and a.diploma_status=true and a.status='Ariza qabul qilindi' " +
+            "group by a.status ")
+    AcceptAndRejectApp getAcceptApp(Integer id);
+    @Query(nativeQuery = true, value = "select count(a.id) as count " +
+            "from application as a " +
+            " inner join future_institution fi on fi.id = a.future_institution_id " +
+            " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
+            "inner join diploma d on ei.id = d.enrollee_info_id " +
+            "where a.future_institution_id = 74 " +
+            " and d.is_active = true " +
+            " and a.diploma_status=true and a.status='Ariza rad etildi' " +
+            "group by a.status ")
+    AcceptAndRejectApp getRejectedApp(Integer id);
 
     @Query(nativeQuery = true, value = "select count(a.status) as count, a.status as status " +
             " from application as a " +
