@@ -693,7 +693,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id = 74 " +
+            "where a.future_institution_id = ?1 " +
             " and d.is_active = true " +
             " and a.diploma_status=true and a.status='Ariza qabul qilindi' " +
             "group by a.status ")
@@ -703,7 +703,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join future_institution fi on fi.id = a.future_institution_id " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             "inner join diploma d on ei.id = d.enrollee_info_id " +
-            "where a.future_institution_id = 74 " +
+            "where a.future_institution_id = ?1 " +
             " and d.is_active = true " +
             " and a.diploma_status=true and a.status='Ariza rad etildi' " +
             "group by a.status ")
