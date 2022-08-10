@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import second.education.model.request.DirectionRequest;
-import second.education.model.request.EduFormRequest;
-import second.education.model.request.FutureInstitutionRequest;
-import second.education.model.request.UserRequest;
+import second.education.model.request.*;
 import second.education.model.response.*;
 import second.education.service.*;
 
@@ -271,4 +268,34 @@ public class AdminController {
         List<StatisDirectionResponseByFutureInst> statisticToAdmin = statService.getStatisticToAdmin();
         return ResponseEntity.ok(statisticToAdmin);
     }
+    @PutMapping("/updateAppStatus/{appId}")
+    public ResponseEntity<?> updateAppStatus(@PathVariable Integer appId,
+                                             @RequestBody UpdateAppStatus updateAppStatus,
+                                             Principal principal) {
+
+        Result result = adminService.updateStatusAppToAdmin(principal, updateAppStatus, appId);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
+    }
+    @GetMapping("/searchAppByDiplomaStatus")
+    public ResponseEntity<?> searchAppByDiplomaStatus(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "appStatus") String appStatus,
+            @RequestParam(value = "diplomaStatus") String diplomaStatus,
+            @RequestParam(value = "text") String text,
+            Principal principal) {
+        Page<GetAppToExcel> appResponses = adminService.searchAllAppByStatus(principal, diplomaStatus, appStatus, text, page, size);
+        return ResponseEntity.ok(appResponses);
+    }
+    @GetMapping("/searchApp")
+    public ResponseEntity<?> searchAppByAdmin(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "status") String status,
+            @RequestParam(value = "text") String text,
+            Principal principal) {
+        Page<GetAppToExcel> appResponses = adminService.searchAllAppByAdmin(principal, status, text, page, size);
+        return ResponseEntity.ok(appResponses);
+    }
+
 }

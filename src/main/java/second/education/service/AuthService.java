@@ -68,9 +68,9 @@ public class AuthService {
                 return new Result(iibRequest.getPhoneNumber() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
             }
 
-            List<EnrolleeInfo> byPinfl = enrolleInfoRepository.getEnroll(iibRequest.getPinfl());
-            if (byPinfl.size()>=1) {
-                return new Result(iibRequest.getPinfl() + " " + ResponseMessage.ALREADY_EXISTS.getMessage(), false);
+            Optional<EnrolleeInfo> byPinfl = enrolleInfoRepository.findByPinfl(iibRequest.getPinfl());
+            if (byPinfl.isPresent()) {
+                return new Result("bu pinfl:"+iibRequest.getPinfl() + "  " +byPinfl.get().getPhoneNumber()+" ga biriktirilgan  " , false);
             }
 
             IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);

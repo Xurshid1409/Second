@@ -13,6 +13,7 @@ import second.education.domain.classificator.Role;
 import second.education.domain.classificator.University;
 import second.education.model.request.DefaultRole;
 import second.education.model.request.IIBRequest;
+import second.education.model.request.UpdateAppStatus;
 import second.education.model.request.UserRequest;
 import second.education.model.response.*;
 import second.education.repository.*;
@@ -361,5 +362,69 @@ public class AdminService {
         } else {
             return applicationRepository.exportAllAppToAdmin(appStatus);
         }
+    }
+
+    @Transactional
+    public Result updateStatusAppToAdmin(Principal principal, UpdateAppStatus updateAppStatus, Integer appId) {
+        try {
+            Optional<Application> application = applicationRepository.findById(appId);
+            if (application.isPresent()) {
+                String status = String.valueOf(application.get().getDiplomaStatus());
+                switch (status) {
+                    case "true":
+                        application.get().setStatus(updateAppStatus.getAppStatus());
+                        application.get().setMessage(updateAppStatus.getAppMessage());
+                        applicationRepository.save(application.get());
+                        StoryMessage storyMessage = new StoryMessage();
+                        storyMessage.setMessage(updateAppStatus.getAppMessage());
+                        storyMessage.setStatus(updateAppStatus.getAppStatus());
+                        storyMessage.setFirstname("Super admin tomonidan");
+                        storyMessage.setPinfl(principal.getName());
+                        storyMessage.setApplication(application.get());
+                        storyMessageRepository.save(storyMessage);
+                        return new Result("Muvaffaqiyatli tasdiqlandi", true);
+                    case "false":
+                        return new Result("bu arizaning diplomi rad etilgan", false);
+                    case "null":
+                        return new Result("ariza diplomi hali tasdiqlanmagan ", false);
+                }
+            }
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        } catch (Exception e) {
+            return new Result("Tasdiqlashda xatolik", false);
+        }
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<GetAppToExcel> searchAllAppByStatus(Principal principal , String diplomaStatus, String appStatus, String search, int page, int size) {
+        String s = search.toUpperCase();
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(diplomaStatus);
+           return applicationRepository.
+                    searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(appStatus, aBoolean, s, pageable);
+        } else {
+        return applicationRepository.
+                    searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(appStatus, s, pageable);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetAppToExcel> searchAllAppByAdmin(Principal principal, String status, String search, int page, int size) {
+        String s = search.toUpperCase();
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+    return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
+       /* allApp.forEach(application -> {
+            AppResponse appResponse = new AppResponse(application);
+
+            appResponse.setEnrolleeResponse(new EnrolleeResponse(application.getEnrolleeInfo()));
+            Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.getEnrolleeInfo().getId()).get();
+            FileResponse fileResponse = getFileResponse(diploma.getId());
+            appResponse.setDiplomaResponse(new DiplomaResponse(diploma, fileResponse));
+            responses.add(appResponse);
+        });*/
     }
 }
