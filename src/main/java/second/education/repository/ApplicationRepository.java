@@ -546,7 +546,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where d.is_active = true " +
+            " where d.is_active = true and d.institution_old_name_id is not null " +
             " and a.diploma_status = ?1 order by d.id ")
     Page<GetDiplomasToExcel> getAllDiplomaToAdmin(Boolean status, Pageable pageable);
 
@@ -607,7 +607,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " from application as a " +
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id " +
-            " where d.is_active = true and " +
+            " where d.is_active = true and d.institution_old_name_id is not null and " +
             " a.diploma_status is null order by d.id ")
     Page<GetDiplomasToExcel> getAllDiplomaNullToAdmin(Pageable pageable);
 
