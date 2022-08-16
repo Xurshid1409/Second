@@ -23,7 +23,9 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -215,6 +217,76 @@ public class AdminService {
         return new Result("diploma", true, diplomResponseAdmin);
     }
 
+    // rejected diploma by super admin
+    @Transactional(readOnly = true)
+    public Result getDiplomaByIdRejected(Integer diplomaId) {
+        Optional<Application> application = applicationRepository.getAppAndDiplomaByAdmin(diplomaId);
+        if (application.isEmpty()) {
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }
+        IIBRequest iibRequest = new IIBRequest();
+        iibRequest.setPinfl(application.get().getEnrolleeInfo().getPinfl());
+        iibRequest.setGiven_date(application.get().getEnrolleeInfo().getPassportGivenDate());
+        IIBResponse iibResponse = iibServiceApi.iibResponse(iibRequest);
+        Data data = iibResponse.getData();
+        ImageResponse imageResponse = new ImageResponse();
+        if (!data.getPhoto().isEmpty()) {
+            imageResponse.setImage(data.getPhoto());
+        }
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
+        Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
+        List<University> universities = universityRepository.findAllByInstitutionId(diploma.getInstitutionOldNameId());
+        AtomicInteger i = new AtomicInteger();
+        universities.forEach(university -> {
+            i.getAndIncrement();
+            if (Objects.equals(university.getId(), diploma.getInstitutionId())) {
+                diploma.setInstitutionOldName(university.getNameOz());
+                diploma.setInstitutionName(university.getInstitutionName());
+            } else if (i.get() == universities.size() && !Objects.equals(university.getId(), diploma.getInstitutionId())) {
+                diploma.setInstitutionOldName(null);
+                diploma.setInstitutionName(null);
+            }
+        });
+
+
+
+        FileResponse fileResponse = getFileResponse(diploma.getId());
+        DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
+        diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
+        diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
+
+
+        StoryMessageResponse response = new StoryMessageResponse();
+        List<StoryM> app = new ArrayList<>();
+        List<StoryM> diplomaResponse = new ArrayList<>();
+        List<StoryMessage> messages = storyMessageRepository.getAllStoryByAppId(application.get().getId());
+        if (messages.size() > 0) {
+            messages.forEach(storyMessage -> {
+                if (storyMessage.getStatus().equals("Ariza qabul qilindi") || storyMessage.getStatus().equals("Ariza rad etildi")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    app.add(storyMessageResponse);
+                } else if (storyMessage.getStatus().equals("true") || storyMessage.getStatus().equals("false")) {
+                    StoryM storyMessageResponse = new StoryM();
+                    storyMessageResponse.setMessage(storyMessage.getMessage());
+                    storyMessageResponse.setStatus(storyMessage.getStatus());
+                    storyMessageResponse.setTime(storyMessage.getCreatedDate());
+                    storyMessageResponse.setCreateBy(storyMessage.getFirstname() + " " + storyMessage.getLastname());
+                    diplomaResponse.add(storyMessageResponse);
+                }
+            });
+            response.setApp(app);
+            response.setDiploma(diplomaResponse);
+            diplomResponseAdmin.setStoryMessageResponse(response);
+        }
+
+        return new Result("diploma", true, diplomResponseAdmin);
+    }
+
+
     @Transactional(readOnly = true)
     public Page<GetDiplomasToExcel> getForeignDiplomasToAdmin(String status, int page, int size) {
         if (page > 0) page = page - 1;
@@ -248,6 +320,10 @@ public class AdminService {
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
         diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
+
+
+
+
 
         return new Result("diploma", true, diplomResponseAdmin);
     }
@@ -397,16 +473,16 @@ public class AdminService {
 
 
     @Transactional(readOnly = true)
-    public Page<GetAppToExcel> searchAllAppByStatus(Principal principal , String diplomaStatus, String appStatus, String search, int page, int size) {
+    public Page<GetAppToExcel> searchAllAppByStatus(Principal principal, String diplomaStatus, String appStatus, String search, int page, int size) {
         String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(diplomaStatus);
-           return applicationRepository.
+            return applicationRepository.
                     searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(appStatus, aBoolean, s, pageable);
         } else {
-        return applicationRepository.
+            return applicationRepository.
                     searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(appStatus, s, pageable);
         }
     }
@@ -416,7 +492,7 @@ public class AdminService {
         String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-    return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
+        return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
        /* allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
 

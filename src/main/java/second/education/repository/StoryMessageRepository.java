@@ -12,4 +12,5 @@ public interface StoryMessageRepository extends JpaRepository<StoryMessage, Inte
 
     @Query(value = "select sm from StoryMessage  as sm where sm.application.id=?1")
     List<StoryMessage> getAllStoryByAppId(Integer id);
+
 }

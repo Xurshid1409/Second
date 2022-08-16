@@ -142,6 +142,53 @@ public class EnrolleeService {
         }
     }
 
+
+//by admin
+    @Transactional
+    public Result updateDiplomaByAdmin(
+            int diplomaId,
+            String countryName,
+            Integer institutionId,
+            Integer id,
+            String eduFormName,
+            String eduFinishingDate,
+            String speciality,
+            String diplomaNumberAndSerial,
+            Integer diplomaCopyId,
+            MultipartFile diplomaCopy,
+            Integer diplomaIlovaId,
+            MultipartFile diplomaIlova) {
+        try {
+            Optional<Diploma> diploma = diplomaRepository.findById(diplomaId);
+            if (diploma.isPresent()) {
+                diploma.get().setCountryName(countryName);
+                diploma.get().setInstitutionId(institutionId);
+                University university = institutionRepository.findById(institutionId).get();
+                diploma.get().setInstitutionName(university.getInstitutionName());
+                diploma.get().setInstitutionOldNameId(id);
+                diploma.get().setInstitutionOldName(university.getNameOz());
+                diploma.get().setEduFormName(eduFormName);
+                diploma.get().setEduFinishingDate(eduFinishingDate);
+                diploma.get().setSpecialityName(speciality);
+                diploma.get().setDiplomaSerialAndNumber(diplomaNumberAndSerial);
+                Optional<Application> appByDiplomId = applicationRepository.getAppByDiplomId(diplomaId);
+                if (appByDiplomId.isPresent()) {
+                    appByDiplomId.get().setDiplomaStatus(null);
+                    appByDiplomId.get().setDiplomaMessage(null);
+                    Application save = applicationRepository.save(appByDiplomId.get());
+                }
+                diploma.get().setModifiedDate(LocalDateTime.now());
+                Diploma diplomaSave = diplomaRepository.save(diploma.get());
+         //       documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
+                return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
+            }
+            return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
+        }catch(Exception ex){
+            return new Result(ResponseMessage.ERROR_UPDATE.getMessage(), false);
+        }
+    }
+
+
     @Transactional
     public DiplomaResponse createForeignDiploma(Principal principal,
                                                 String countryName,

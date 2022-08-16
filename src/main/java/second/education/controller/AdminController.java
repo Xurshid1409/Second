@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import second.education.model.request.*;
 import second.education.model.response.*;
 import second.education.service.*;
@@ -23,6 +24,7 @@ public class AdminController {
     private final EduFormService eduFormService;
     private final AdminService adminService;
     private final StatService statService;
+    private final EnrolleeService enrolleeService;
 
     @PostMapping("futureInstitution")
     public ResponseEntity<?> createFutureInstitution(@RequestBody FutureInstitutionRequest request) {
@@ -244,6 +246,14 @@ public class AdminController {
     }
 
 
+
+    @GetMapping("/getRejectedDiplom/{id}")
+    public ResponseEntity<?> getRejectedDiplomById(@PathVariable Integer id) {
+
+        Result diplomaById = adminService.getDiplomaByIdRejected(id);
+        return ResponseEntity.ok(diplomaById);
+    }
+
     @GetMapping("/exportDiplomaToAdmin")
     public ResponseEntity<?> exportDiploma(@RequestParam(value = "status") String status) {
         List<GetDiplomasToExcel> diplomasToExcel = adminService.exportDiplomasToAdmin(status);
@@ -296,6 +306,23 @@ public class AdminController {
             Principal principal) {
         Page<GetAppToExcel> appResponses = adminService.searchAllAppByAdmin(principal, status, text, page, size);
         return ResponseEntity.ok(appResponses);
+    }
+    @PutMapping("/updateDiploma/{diplomaId}")
+    public ResponseEntity<?> updateDiplomaByAdmin(@PathVariable int diplomaId,
+                                           @RequestParam(value = "countryName", required = false) String countryName,
+                                           @RequestParam(value = "institutionId", required = false) Integer institutionId,
+                                           @RequestParam(value = "id", required = false) Integer id,
+                                           @RequestParam(value = "eduFormName", required = false) String eduFormName,
+                                           @RequestParam(value = "eduFinishingDate", required = false) String eduFinishingDate,
+                                           @RequestParam(value = "speciality", required = false) String speciality,
+                                           @RequestParam(value = "diplomaNumberAndSerial", required = false) String diplomaNumberAndSerial,
+                                           @RequestParam(value = "diplomaCopyId", required = false) Integer diplomaCopyId,
+                                           @RequestParam(value = "diploma", required = false) MultipartFile diploma,
+                                           @RequestParam(value = "diplomaIlovaId", required = false) Integer diplomaIlovaId,
+                                           @RequestParam(value = "diplomaIlova", required = false) MultipartFile diplomaIlova) {
+        Result result = enrolleeService.updateDiplomaByAdmin(diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
+                speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
+        return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
 
 }

@@ -26,6 +26,7 @@ public class DiplomResponseAdmin {
     private String eduFinishingDate;
     private String diplomaStatus;
     private String diplomaNumberAndDiplomaSerial;
+    private StoryMessageResponse storyMessageResponse;
 
     private EnrolleeResponse enrolleeResponse;
     private FileResponse fileResponse;
