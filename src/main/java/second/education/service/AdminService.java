@@ -244,7 +244,7 @@ public class AdminService {
         if (!data.getPhoto().isEmpty()) {
             imageResponse.setImage(data.getPhoto());
         }
-        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), null);
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
         Optional<University> university = universityRepository.findByInstitutionId(diploma.getInstitutionOldNameId(), diploma.getInstitutionId());
         if (university.isEmpty()) {
