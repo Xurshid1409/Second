@@ -324,5 +324,14 @@ public class AdminController {
                 speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
     }
+    @GetMapping("/searchDiploma")
+    public ResponseEntity<?> searchDiplomaByUAdmin(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "30") int size,
+            @RequestParam(value = "status") String status,
+            @RequestParam(value = "text") String text) {
+        Page<GetDiplomasToExcel> diplomResponseAdmins = adminService.searchDiplomasToAdmin( status, text, page, size);
+        return ResponseEntity.ok(diplomResponseAdmins);
+    }
 
 }

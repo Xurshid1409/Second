@@ -174,7 +174,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(" select a from Application a join Diploma as d on d.enrolleeInfo.id=a.enrolleeInfo.id  where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or   a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%)")
     Page<Application> searchAppByFirstnameAndLastname(Integer futureInstId, String status, String search, Pageable pageable);
 
-    @Query(nativeQuery = true,value = "select a.id  as appId,\n" +
+    @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
             "              ei.lastname  as lastName,\n" +
             "              ei.middle_name as middleName,\n" +
@@ -199,13 +199,14 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "                ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% or ei.middle_name ilike %?2%" +
             " or ei.passport_serial_and_number ilike %?2%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByAdmin(String status, String search, Pageable pageable);
+
     @Query(" select a from Application a join Diploma as d on  d.enrolleeInfo.id=a.enrolleeInfo.id    where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatus(Integer futureInstId, String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
 
     @Query(" select a from Application a join Diploma as d on d.enrolleeInfo.id=a.enrolleeInfo.id where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus is null and (a.enrolleeInfo.pinfl like %?3% or a.enrolleeInfo.phoneNumber like %?3% or a.enrolleeInfo.firstname like %?3% or a.enrolleeInfo.lastname like %?3% or a.enrolleeInfo.middleName like %?3%) ")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatusIsNull(Integer futureInstId, String appStatus, String search, Pageable pageable);
 
-    @Query(nativeQuery = true,value = "select a.id  as appId,\n" +
+    @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
             "              ei.lastname  as lastName,\n" +
             "              ei.middle_name as middleName,\n" +
@@ -229,7 +230,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            where d.is_active = true and a.status=?1 and a.diploma_status=?2 and (ei.phone_number ilike %?3% or\n" +
             "       ei.pinfl ilike  %?3% or ei.firstname ilike %?3% or ei.lastname ilike  %?3% or ei.middle_name  ilike %?3% or ei.passport_serial_and_number ilike %?3%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
-    @Query(nativeQuery = true,value = "select a.id  as appId,\n" +
+
+    @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
             "              ei.lastname  as lastName,\n" +
             "              ei.middle_name as middleName,\n" +
@@ -253,7 +255,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            where d.is_active = true and a.status=?1 and a.diploma_status is null and (ei.phone_number ilike %?2% or\n" +
             "                ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% or ei.middle_name ilike %?2%" +
             "or ei.passport_serial_and_number ilike %?2%) order by a.id")
-    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin( String appStatus, String search, Pageable pageable);
+    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(String appStatus, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
             " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.specialityName like %?3% or " +
@@ -548,6 +550,48 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " and a.diploma_status = ?1 order by d.id ")
     Page<GetDiplomasToExcel> getAllDiplomaToAdmin(Boolean status, Pageable pageable);
 
+
+    @Query(nativeQuery = true, value = " select d.id  as diplomaId,\n" +
+            "       ei.firstname                  as firstName,\n" +
+            "       ei.lastname                   as lastName,\n" +
+            "       ei.middle_name                as middleName,\n" +
+            "       ei.phone_number               as phoneNumber,\n" +
+            "       ei.passport_serial_and_number as passportSerialNumber,\n" +
+            "       d.institution_name            as institutionName,\n" +
+            "       d.institution_old_name        as institutionOldName,\n" +
+            "       d.speciality_name             as specialityName,\n" +
+            "       d.diploma_serial_and_number   as diplomaSerialAndNumber,\n" +
+            "       d.edu_finishing_date          as finishingDate\n" +
+            "from application as a\n" +
+            "         inner join enrollee_info ei on ei.id = a.enrollee_info_id\n" +
+            "         inner join diploma d on ei.id = d.enrollee_info_id\n" +
+            "where d.is_active = true\n" +
+            "  and a.diploma_status = ?1 and (ei.phone_number ilike %?2% or   ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% \n" +
+            "or ei.middle_name ilike %?2% or ei.passport_serial_and_number ilike %?2%)\n" +
+            " order by d.id")
+    Page<GetDiplomasToExcel> searchAllDiplomaToAdmin(Boolean status, String search, Pageable pageable);
+    @Query(nativeQuery = true, value = " select d.id  as diplomaId,\n" +
+            "       ei.firstname                  as firstName,\n" +
+            "       ei.lastname                   as lastName,\n" +
+            "       ei.middle_name                as middleName,\n" +
+            "       ei.phone_number               as phoneNumber,\n" +
+            "       ei.passport_serial_and_number as passportSerialNumber,\n" +
+            "       d.institution_name            as institutionName,\n" +
+            "       d.institution_old_name        as institutionOldName,\n" +
+            "       d.speciality_name             as specialityName,\n" +
+            "       d.diploma_serial_and_number   as diplomaSerialAndNumber,\n" +
+            "       d.edu_finishing_date          as finishingDate\n" +
+            "from application as a\n" +
+            "         inner join enrollee_info ei on ei.id = a.enrollee_info_id\n" +
+            "         inner join diploma d on ei.id = d.enrollee_info_id\n" +
+            "where d.is_active = true and a.diploma_status is null" +
+            " and (ei.phone_number ilike %?1% or  ei.pinfl ilike  %?1% or ei.firstname ilike %?1% or ei.lastname ilike  %?1% \n" +
+            "or ei.middle_name ilike %?1% or ei.passport_serial_and_number ilike %?1%)" +
+            " order by d.id")
+    Page<GetDiplomasToExcel> searchAllDiplomaNullToAdmin( String search, Pageable pageable);
+
+
+
     // Diploma null to admin
     @Query(nativeQuery = true, value = " select d.id as diplomaId," +
             " ei.firstname as firstName, " +
@@ -771,6 +815,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " and d.is_active = true " +
             " and a.diploma_status=true and a.status='Ariza qabul qilindi' ")
     AcceptAndRejectApp getAcceptApp(Integer id);
+
     @Query(nativeQuery = true, value = "select count(a.id) as count " +
             "from application as a " +
             " inner join future_institution fi on fi.id = a.future_institution_id " +
@@ -787,6 +832,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "inner join diploma d on ei.id = d.enrollee_info_id " +
             "where  d.is_active = true and a.diploma_status=true and a.status='Ariza qabul qilindi' ")
     AcceptAndRejectApp getAcceptAll();
+
     @Query(nativeQuery = true, value = "select count(a.id) as count " +
             "from application as a " +
             " inner join future_institution fi on fi.id = a.future_institution_id " +

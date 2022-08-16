@@ -193,6 +193,17 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    public Page<GetDiplomasToExcel> searchDiplomasToAdmin(String status, String search, int page, int size) {
+        if (page > 0) page = page - 1;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+        if (status.equals("true") || status.equals("false")) {
+            Boolean aBoolean = Boolean.valueOf(status);
+            return applicationRepository.searchAllDiplomaToAdmin(aBoolean, search, pageable);
+        }
+        return applicationRepository.searchAllDiplomaNullToAdmin(search,pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Result getDiplomaById(Integer diplomaId) {
         Optional<Application> application = applicationRepository.getAppAndDiplomaByAdmin(diplomaId);
         if (application.isEmpty()) {
@@ -247,7 +258,6 @@ public class AdminService {
                 diploma.setInstitutionName(null);
             }
         });
-
 
 
         FileResponse fileResponse = getFileResponse(diploma.getId());
@@ -320,9 +330,6 @@ public class AdminService {
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
         diplomResponseAdmin.setDiplomaStatus(String.valueOf(application.get().getDiplomaStatus()));
-
-
-
 
 
         return new Result("diploma", true, diplomResponseAdmin);
