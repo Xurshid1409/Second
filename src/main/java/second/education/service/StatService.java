@@ -238,7 +238,6 @@ public class StatService {
             adminResponse.setUniversityName(institutionName);
             list.add(adminResponse);
         });
-
         return list;
     }
 
@@ -254,7 +253,6 @@ public class StatService {
                 adminResponse.setUniversityName(adminEntity.getFutureInstitution().getName());
                 list.add(adminResponse);
             }
-
         });
 
         return list;
