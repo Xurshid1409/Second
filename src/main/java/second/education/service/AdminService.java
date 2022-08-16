@@ -244,22 +244,15 @@ public class AdminService {
         if (!data.getPhoto().isEmpty()) {
             imageResponse.setImage(data.getPhoto());
         }
-        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), imageResponse);
+        EnrolleeResponse enrolleeResponse = new EnrolleeResponse(application.get().getEnrolleeInfo(), null);
         Diploma diploma = diplomaRepository.getDiplomaByEnrolleeInfoId(application.get().getEnrolleeInfo().getId()).get();
-        List<University> universities = universityRepository.findAllByInstitutionId(diploma.getInstitutionOldNameId());
-        AtomicInteger i = new AtomicInteger();
-        universities.forEach(university -> {
-            i.getAndIncrement();
-            if (Objects.equals(university.getId(), diploma.getInstitutionId())) {
-                diploma.setInstitutionOldName(university.getNameOz());
-                diploma.setInstitutionName(university.getInstitutionName());
-            } else if (i.get() == universities.size() && !Objects.equals(university.getId(), diploma.getInstitutionId())) {
-                diploma.setInstitutionOldName(null);
-                diploma.setInstitutionName(null);
-            }
-        });
-
-
+        Optional<University> university = universityRepository.findByInstitutionId(diploma.getInstitutionOldNameId(), diploma.getInstitutionId());
+        if (university.isEmpty()) {
+            diploma.setInstitutionOldName(null);
+            diploma.setInstitutionName(null);
+            diploma.setInstitutionOldNameId(null);
+            diploma.setInstitutionId(null);
+        }
         FileResponse fileResponse = getFileResponse(diploma.getId());
         DiplomResponseAdmin diplomResponseAdmin = new DiplomResponseAdmin(diploma, fileResponse);
         diplomResponseAdmin.setEnrolleeResponse(enrolleeResponse);
