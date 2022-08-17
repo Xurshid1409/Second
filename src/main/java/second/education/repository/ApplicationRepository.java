@@ -301,7 +301,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join direction d2 on d2.id = ef.direction_id\n" +
             "            inner join language l on l.id = a.language_id\n" +
             "            where d.is_active = true and a.status=?1 and a.diploma_status is null and (ei.phone_number ilike %?2% or\n" +
-            "                ei.pinfl ilike  %?2%   CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3% or " +
+            "                ei.pinfl ilike  %?2%  or  CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?2% or " +
             "ei.passport_serial_and_number ilike %?2%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(String appStatus, String search, Pageable pageable);
     @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
@@ -326,7 +326,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join direction d2 on d2.id = ef.direction_id\n" +
             "            inner join language l on l.id = a.language_id\n" +
             "            where d.is_active = true and a.status=?1 and a.diploma_status is null and a.future_institution_id=?2 and (ei.phone_number ilike %?3% or\n" +
-            "                ei.pinfl ilike  %?3%   CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3% or " +
+            "                ei.pinfl ilike  %?3%  or CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3% or " +
             "ei.passport_serial_and_number ilike %?3%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullAndFutureIdByAdmin(String appStatus,Integer futureId, String search, Pageable pageable);
 
