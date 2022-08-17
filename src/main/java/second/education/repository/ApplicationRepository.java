@@ -195,10 +195,34 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join edu_form ef on a.edu_form_id = ef.id\n" +
             "            inner join direction d2 on d2.id = ef.direction_id\n" +
             "            inner join language l on l.id = a.language_id\n" +
-            "            where d.is_active = true and a.status=?1 and (ei.phone_number ilike %?2%  or\n" +
-            "                ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% or ei.middle_name ilike %?2%" +
-            " or ei.passport_serial_and_number ilike %?2%) order by a.id")
+            "            where d.is_active = true and a.status=?1 and ( CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?2% or " +
+            " ei.pinfl ilike  %?2% or ei.passport_serial_and_number ilike %?2% or ei.phone_number ilike %?2% ) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByAdmin(String status, String search, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
+            "             ei.firstname as firstName,\n" +
+            "              ei.lastname  as lastName,\n" +
+            "              ei.middle_name as middleName,\n" +
+            "             ei.phone_number as phoneNumber,\n" +
+            "              ei.passport_serial_and_number as passportSerialNumber,\n" +
+            "             fi.name as futureInstitutionName,\n" +
+            "             d2.name as directionName,\n" +
+            "             ef.name as talimShakli,\n" +
+            "             l.language as language,\n" +
+            "              d.institution_name as institutionName,\n" +
+            "             d.institution_old_name as institutionOldName,\n" +
+            "             d.speciality_name as specialityName,\n" +
+            "             d.diploma_serial_and_number as diplomaSerialAndNumber,\n" +
+            "             d.edu_finishing_date as finishingDate\n" +
+            "             from application as a inner join enrollee_info ei on ei.id = a.enrollee_info_id\n" +
+            "             inner join diploma d on ei.id = d.enrollee_info_id\n" +
+            "            inner join future_institution fi on fi.id = a.future_institution_id\n" +
+            "            inner join edu_form ef on a.edu_form_id = ef.id\n" +
+            "            inner join direction d2 on d2.id = ef.direction_id\n" +
+            "            inner join language l on l.id = a.language_id\n" +
+            "            where d.is_active = true and a.status=?1 and a.future_institution_id=?2 and ( CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3%  " +
+            "or ei.pinfl ilike  %?3% or ei.passport_serial_and_number ilike %?3% or ei.phone_number ilike %?3% ) order by a.id")
+    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByAdminAndFutureId(String status, Integer id,String search,Pageable pageable);
 
     @Query(" select a from Application a join Diploma as d on  d.enrolleeInfo.id=a.enrolleeInfo.id    where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatus(Integer futureInstId, String appStatus, Boolean diplomaStatus, String search, Pageable pageable);

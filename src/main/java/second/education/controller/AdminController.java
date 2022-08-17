@@ -303,8 +303,8 @@ public class AdminController {
             @RequestParam(value = "size", defaultValue = "30") int size,
             @RequestParam(value = "status") String status,
             @RequestParam(value = "text") String text,
-            Principal principal) {
-        Page<GetAppToExcel> appResponses = adminService.searchAllAppByAdmin(principal, status, text, page, size);
+            @RequestParam(value = "futureId",required = false) Integer futureId) {
+        Page<GetAppToExcel> appResponses = adminService.searchAllAppByAdmin(futureId, status, text, page, size);
         return ResponseEntity.ok(appResponses);
     }
     @PutMapping("/updateDiploma/{diplomaId}")

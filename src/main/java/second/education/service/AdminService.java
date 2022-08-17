@@ -488,11 +488,16 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GetAppToExcel> searchAllAppByAdmin(Principal principal, String status, String search, int page, int size) {
+    public Page<GetAppToExcel> searchAllAppByAdmin(Integer futureId, String status, String search, int page, int size) {
         String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
+
+        if (futureId==null) {
+            return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
+        }else {
+            return applicationRepository.searchAppByFirstnameAndLastnameByAdminAndFutureId(status,futureId,s,pageable);
+        }
        /* allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
 
