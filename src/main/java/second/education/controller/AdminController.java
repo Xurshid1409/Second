@@ -293,8 +293,9 @@ public class AdminController {
             @RequestParam(value = "appStatus") String appStatus,
             @RequestParam(value = "diplomaStatus") String diplomaStatus,
             @RequestParam(value = "text") String text,
+            @RequestParam(value = "text",required = false) Integer futureId,
             Principal principal) {
-        Page<GetAppToExcel> appResponses = adminService.searchAllAppByStatus(principal, diplomaStatus, appStatus, text, page, size);
+        Page<GetAppToExcel> appResponses = adminService.searchAllAppByStatus(futureId, diplomaStatus, appStatus, text, page, size);
         return ResponseEntity.ok(appResponses);
     }
     @GetMapping("/searchApp")

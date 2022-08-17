@@ -200,7 +200,7 @@ public class AdminService {
             Boolean aBoolean = Boolean.valueOf(status);
             return applicationRepository.searchAllDiplomaToAdmin(aBoolean, search, pageable);
         }
-        return applicationRepository.searchAllDiplomaNullToAdmin(search,pageable);
+        return applicationRepository.searchAllDiplomaNullToAdmin(search, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -473,17 +473,26 @@ public class AdminService {
 
 
     @Transactional(readOnly = true)
-    public Page<GetAppToExcel> searchAllAppByStatus(Principal principal, String diplomaStatus, String appStatus, String search, int page, int size) {
+    public Page<GetAppToExcel> searchAllAppByStatus(Integer futureId, String diplomaStatus, String appStatus, String search, int page, int size) {
         String s = search.toUpperCase();
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         if (diplomaStatus.equals("true") || diplomaStatus.equals("false")) {
             Boolean aBoolean = Boolean.valueOf(diplomaStatus);
-            return applicationRepository.
-                    searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(appStatus, aBoolean, s, pageable);
+            if (futureId == null) {
+                return applicationRepository.
+                        searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(appStatus, aBoolean, s, pageable);
+            } else {
+                return applicationRepository.
+                        searchAppByFirstnameAndLastnameByDiplomastatusAndFutureIdByAdmin(appStatus, aBoolean, futureId, s, pageable);
+            }
         } else {
-            return applicationRepository.
-                    searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(appStatus, s, pageable);
+            if (futureId == null) {
+                return applicationRepository.
+                        searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(appStatus, s, pageable);
+            } else {
+                return applicationRepository.searchAppByFirstnameAndLastnameByDiplomastatusIsNullAndFutureIdByAdmin(appStatus, futureId, s, pageable);
+            }
         }
     }
 
@@ -493,10 +502,10 @@ public class AdminService {
         if (page > 0) page = page - 1;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
 
-        if (futureId==null) {
+        if (futureId == null) {
             return applicationRepository.searchAppByFirstnameAndLastnameByAdmin(status, s, pageable);
-        }else {
-            return applicationRepository.searchAppByFirstnameAndLastnameByAdminAndFutureId(status,futureId,s,pageable);
+        } else {
+            return applicationRepository.searchAppByFirstnameAndLastnameByAdminAndFutureId(status, futureId, s, pageable);
         }
        /* allApp.forEach(application -> {
             AppResponse appResponse = new AppResponse(application);
