@@ -253,8 +253,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join direction d2 on d2.id = ef.direction_id\n" +
             "            inner join language l on l.id = a.language_id\n" +
             "            where d.is_active = true and a.status=?1 and a.diploma_status is null and (ei.phone_number ilike %?2% or\n" +
-            "                ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% or ei.middle_name ilike %?2%" +
-            "or ei.passport_serial_and_number ilike %?2%) order by a.id")
+            "                ei.pinfl ilike  %?2% or ei.firstname ilike %?2% or ei.lastname ilike  %?2% or ei.middle_name ilike %?2% or " +
+            "ei.passport_serial_and_number ilike %?2%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(String appStatus, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
