@@ -179,7 +179,7 @@ public class EnrolleeService {
                 }
                 diploma.get().setModifiedDate(LocalDateTime.now());
                 Diploma diplomaSave = diplomaRepository.save(diploma.get());
-         //       documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
+               documentUpdate(diplomaSave, diplomaCopyId, diplomaIlovaId, diplomaCopy, diplomaIlova);
                 return new Result(ResponseMessage.SUCCESSFULLY_UPDATE.getMessage(), true);
             }
             return new Result(ResponseMessage.NOT_FOUND.getMessage(), false);
