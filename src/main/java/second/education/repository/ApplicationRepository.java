@@ -994,4 +994,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " inner join enrollee_info ei on ei.id = a.enrollee_info_id " +
             " inner join diploma d on ei.id = d.enrollee_info_id  where d.is_active=true and d.institution_old_name_id is not null")
     Optional<CountApp> getAllCountDiplomaAdmin();
+
+
+    @Query(value = "select a from Application  as a where a.futureInstitution.id<>a.eduForm.direction.futureInstitution.id")
+    List<Application> test();
 }
