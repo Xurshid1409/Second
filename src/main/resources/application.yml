@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: seconddbadmin
-    password: seconddbadmin
-    url: jdbc:postgresql://localhost:5432/second_education
+    username: postgres
+    password: 963
+    url: jdbc:postgresql://localhost:5432/second
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -27,7 +27,7 @@ jwt:
 
 file:
   storage:
-    location: /home/software/fileStorage
+    location: fileStorage
 server:
   port: 8081
   servlet:

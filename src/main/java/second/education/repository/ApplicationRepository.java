@@ -34,7 +34,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "a.diploma_message as diplomaMessage, a.created_date as createdDate from application a " +
             "join edu_form ef on a.edu_form_id = ef.id " +
             "join direction d on ef.direction_id = d.id " +
-            "join future_institution fi on d.future_institution_id = fi.id " +
+            "join future_institution fi on a.future_institution_id = fi.id " +
             "join language l on a.language_id = l.id " +
             "join enrollee_info ei on a.enrollee_info_id = ei.id  where ei.id=?1")
     Optional<ApplicationResponse> findByAppByPrincipal(Integer enrolleInfoId);
