@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.AdminEntity;
+import second.education.domain.Application;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.University;
 import second.education.model.request.IIBRequest;
@@ -150,11 +151,11 @@ public class StatService {
         List<FutureInstitution> futureInstitutions = futureInstitutionRepository.findAll();
         List<AcceptAndRejectAndCheckDiploma> list = new ArrayList<>();
         futureInstitutions.forEach(futureInstitution -> {
-                    AcceptAndRejectApp acceptApp = applicationRepository.getAcceptApp(futureInstitution.getId());
-                    AcceptAndRejectApp rejectedApp = applicationRepository.getRejectedApp(futureInstitution.getId());
-                    AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-                    statistic.setAcceptAppCount(acceptApp.getCount());
-                    statistic.setRejectAppCount(rejectedApp.getCount());
+            AcceptAndRejectApp acceptApp = applicationRepository.getAcceptApp(futureInstitution.getId());
+            AcceptAndRejectApp rejectedApp = applicationRepository.getRejectedApp(futureInstitution.getId());
+            AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
+            statistic.setAcceptAppCount(acceptApp.getCount());
+            statistic.setRejectAppCount(rejectedApp.getCount());
             Optional<AcceptAndRejectApp> acceptAndRejectApp2 = applicationRepository.getcheckDiploma(futureInstitution.getId());
             acceptAndRejectApp2.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
             statistic.setFutureInstName(futureInstitution.getName());
@@ -173,8 +174,8 @@ public class StatService {
         AcceptAndRejectApp acceptAll = applicationRepository.getAcceptAll();
         AcceptAndRejectApp rejectedAll = applicationRepository.getRejectedAll();
         AcceptAndRejectAndCheckDiploma statistic = new AcceptAndRejectAndCheckDiploma();
-                statistic.setAcceptAppCount(acceptAll.getCount());
-                statistic.setRejectAppCount(rejectedAll.getCount());
+        statistic.setAcceptAppCount(acceptAll.getCount());
+        statistic.setRejectAppCount(rejectedAll.getCount());
 
         Optional<AcceptAndRejectApp> getcheckDiplomaAll = applicationRepository.getcheckDiplomaAll();
         getcheckDiplomaAll.ifPresent(andRejectApp -> statistic.setCheckDiplomaCount(andRejectApp.getCount()));
@@ -256,6 +257,16 @@ public class StatService {
         });
 
         return list;
+    }
+
+    @Transactional()
+    public void test() {
+        List<Application> test = applicationRepository.test();
+        test.forEach(application -> {
+            application.setFutureInstitution(application.getEduForm().getDirection().getFutureInstitution());
+            applicationRepository.save(application);
+        });
+
     }
 }
 
