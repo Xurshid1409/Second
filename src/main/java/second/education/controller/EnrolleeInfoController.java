@@ -27,7 +27,7 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(enrolleeResponse);
     }
 
-    @PostMapping
+  /*  @PostMapping
     public ResponseEntity<?> createDiploma(Principal principal,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,
@@ -58,7 +58,7 @@ public class EnrolleeInfoController {
                 institutionName, eduFormName, eduFinishingDate, speciality,
                 diplomaNumberAndSerial, diploma, diplomaIlova);
         return ResponseEntity.ok(response);
-    }
+    }*/
 
 //    @PutMapping("update/foreignDiploma/{diplomaId}")
 //    public ResponseEntity<?> updateForeignDiploma(@PathVariable Integer diplomaId,
