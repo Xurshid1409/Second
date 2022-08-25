@@ -14,6 +14,7 @@ import second.education.model.response.UniversityResponse;
 import second.education.repository.TillarRepository;
 import second.education.service.DiplomaService;
 import second.education.service.api.DiplomaApi;
+
 import java.util.List;
 
 @RestController
@@ -68,14 +69,14 @@ public class DiplomaController {
 //        return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
 //    }
 
-      @GetMapping("language")
-      public List<Tillar> getTillar() {
-          return tillarRepository.findAll();
-      }
+    @GetMapping("language")
+    public List<Tillar> getTillar() {
+        return tillarRepository.findAll();
+    }
 
 
-      @GetMapping("countries")
-      public ResponseEntity<?> getAllCountry() {
-          return ResponseEntity.ok(diplomaService.getAllCountry());
-      }
+    @GetMapping("countries")
+    public ResponseEntity<?> getAllCountry() {
+        return ResponseEntity.ok(diplomaService.getAllCountry());
+    }
 }
