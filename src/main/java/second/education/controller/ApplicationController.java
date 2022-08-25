@@ -22,7 +22,7 @@ public class ApplicationController {
     private final DirectionService directionService;
     private final EduFormService eduFormService;
 
-    @PostMapping
+/*    @PostMapping
     public ResponseEntity<?> createApplication(Principal principal, @RequestBody ApplicationRequest request) {
         Result result = applicationService.createApplication(principal, request);
         return ResponseEntity.status(result.isSuccess() ? 201 : 400).body(result);
@@ -32,7 +32,7 @@ public class ApplicationController {
     public ResponseEntity<?> updateApplication(Principal principal, @RequestBody ApplicationRequest request) {
         Result result = applicationService.updateApplication(principal, request);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }
+    }*/
 
     @GetMapping
     public ResponseEntity<?> getApplicationPrincipal(Principal principal) {
