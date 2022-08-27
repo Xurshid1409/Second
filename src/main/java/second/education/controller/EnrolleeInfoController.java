@@ -27,7 +27,7 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(enrolleeResponse);
     }
 
-  /*  @PostMapping
+    @PostMapping
     public ResponseEntity<?> createDiploma(Principal principal,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,
@@ -95,7 +95,7 @@ public class EnrolleeInfoController {
         Result result = enrolleeService.updateDiploma(principal, diplomaId, countryName, institutionId, id, eduFormName, eduFinishingDate,
                 speciality, diplomaNumberAndSerial, diplomaCopyId, diploma, diplomaIlovaId, diplomaIlova);
         return ResponseEntity.status(result.isSuccess() ? 200 : 400).body(result);
-    }*/
+    }
     @PatchMapping("check/diplomas/{diplomaId}")
     public ResponseEntity<?> checkDiploma(Principal principal, @PathVariable int diplomaId) {
         Result result = enrolleeService.checkDiploma(principal, diplomaId);
