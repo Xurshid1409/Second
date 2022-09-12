@@ -25,4 +25,7 @@ public interface AdminEntityRepository extends JpaRepository<AdminEntity, Intege
     @Query("select ae from AdminEntity ae where ae.user.role.id = 3 and (ae.user.phoneNumber like %?1% or ae.futureInstitution.name like %?1%)")
     Page<AdminEntity> searchUAdmin(String text, Pageable pageable);
 
+    @Query("select ae from AdminEntity as ae where  ae.user.phoneNumber=?1 and ae.futureInstitution.id=?2")
+    Optional<AdminEntity> checkAdmin(String pinfl,Integer id);
+
 }

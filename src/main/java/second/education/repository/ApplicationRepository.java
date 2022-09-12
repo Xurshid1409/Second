@@ -998,4 +998,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     @Query(value = "select a from Application  as a where a.futureInstitution.id<>a.eduForm.direction.futureInstitution.id")
     List<Application> test();
+
+    @Query(nativeQuery = true,value = "select * from application as a inner join story_message sm on a.id = sm.application_id\n" +
+            "inner join admin_entity ae on a.future_institution_id = ae.future_institution_id\n" +
+            "where a.future_institution_id=ae.future_institution_id and  a.status='Ariza yuborildi' and a.diploma_status=true\n" +
+            "and sm.status='Ariza qabul qilindi' ")
+    List<Application> test2();
 }

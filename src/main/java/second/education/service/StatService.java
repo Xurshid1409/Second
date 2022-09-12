@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import second.education.domain.AdminEntity;
 import second.education.domain.Application;
+import second.education.domain.StoryMessage;
 import second.education.domain.classificator.FutureInstitution;
 import second.education.domain.classificator.University;
 import second.education.model.request.IIBRequest;
@@ -29,6 +30,7 @@ public class StatService {
     private final FutureInstitutionRepository futureInstitutionRepository;
     private final AdminEntityRepository adminEntityRepository;
     private final UniversityRepository universityRepository;
+    private final StoryMessageRepository storyMessageRepository;
 
     //    @Transactional(readOnly = true)
     public List<StatisDirectionResponse> getAllStatis(Integer futureInstId) {
@@ -267,6 +269,15 @@ public class StatService {
             applicationRepository.save(application);
         });
 
+    }
+
+    public void test2() {
+        List<Application> applications = applicationRepository.test2();
+        applications.forEach(application -> {
+            application.setStatus("Ariza qabul qilindi");
+            applicationRepository.save(application);
+
+        });
     }
 }
 
