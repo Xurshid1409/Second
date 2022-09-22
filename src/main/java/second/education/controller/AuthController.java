@@ -56,7 +56,7 @@ public class AuthController {
                 return ResponseEntity.ok(new JwtResponse(
                         userDetails.getId(),
                         userDetails.getUsername(),
-                        jwtToken,
+                        jwtToken    ,
                         roles
                 ));
             } catch (Exception ex) {

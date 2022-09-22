@@ -14,10 +14,10 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class OneIdServiceApi {
 
-    private final String client_id = "vakansiya.edu.uz";
+    private final String client_id = "ikkilamchitalim_edu_uz";
     private final String scope = "second.edu.uz";
     private final String redirect_uri = "https://admin.ikkinchitalim.edu.uz/qabul.jsp";
-    private final String client_secret = "EN8CdZBJtqWpMfhK7ASj6rUb";
+    private final String client_secret = "58T0vHQnAfB0XN2eLIyPzy9U";
     private final WebClient webClient;
 
     public URI redirectOneIdUrl() {

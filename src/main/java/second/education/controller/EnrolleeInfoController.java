@@ -27,7 +27,7 @@ public class EnrolleeInfoController {
         return ResponseEntity.ok(enrolleeResponse);
     }
 
-  /*  @PostMapping
+ /*@PostMapping
     public ResponseEntity<?> createDiploma(Principal principal,
                                            @RequestParam(value = "countryName", required = false) String countryName,
                                            @RequestParam(value = "institutionId", required = false) Integer institutionId,

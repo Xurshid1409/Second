@@ -7,7 +7,9 @@ public interface GetAppToExcel {
     String getLastName();
     String getMiddleName();
     String getPhoneNumber();
+    String getPinfl();
     String getPassportSerialNumber();
+    String getGivenDate();
     String getFutureInstitutionName();
     String getDirectionName();
     String getTalimShakli();

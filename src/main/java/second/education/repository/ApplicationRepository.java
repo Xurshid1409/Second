@@ -222,7 +222,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join language l on l.id = a.language_id\n" +
             "            where d.is_active = true and a.status=?1 and a.future_institution_id=?2 and ( CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3%  " +
             "or ei.pinfl ilike  %?3% or ei.passport_serial_and_number ilike %?3% or ei.phone_number ilike %?3% ) order by a.id")
-    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByAdminAndFutureId(String status, Integer id,String search,Pageable pageable);
+    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByAdminAndFutureId(String status, Integer id, String search, Pageable pageable);
 
     @Query(" select a from Application a join Diploma as d on  d.enrolleeInfo.id=a.enrolleeInfo.id    where a.futureInstitution.id=?1 and d.isActive=true and a.status=?2 and a.diplomaStatus=?3 and (a.enrolleeInfo.pinfl like %?4% or a.enrolleeInfo.phoneNumber like %?4% or   a.enrolleeInfo.firstname like %?4% or a.enrolleeInfo.lastname like %?4% or a.enrolleeInfo.middleName like %?4%)")
     Page<Application> searchAppByFirstnameAndLastnameByDiplomastatus(Integer futureInstId, String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
@@ -254,6 +254,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            where d.is_active = true and a.status=?1 and a.diploma_status=?2 and (ei.phone_number ilike %?3% or " +
             "    CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3% or ei.passport_serial_and_number ilike %?3% ) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusByAdmin(String appStatus, Boolean diplomaStatus, String search, Pageable pageable);
+
     @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
             "              ei.lastname  as lastName,\n" +
@@ -277,7 +278,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            inner join language l on l.id = a.language_id\n" +
             "            where d.is_active = true and a.status=?1 and a.diploma_status=?2 and a.future_institution_id=?3 and (ei.phone_number ilike %?4% or " +
             "    CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?4% or ei.passport_serial_and_number ilike %?4% ) order by a.id")
-    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusAndFutureIdByAdmin(String appStatus, Boolean diplomaStatus,Integer futureId, String search ,Pageable pageable);
+    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusAndFutureIdByAdmin(String appStatus, Boolean diplomaStatus, Integer futureId, String search, Pageable pageable);
 
     @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
@@ -304,6 +305,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "                ei.pinfl ilike  %?2%  or  CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?2% or " +
             "ei.passport_serial_and_number ilike %?2%) order by a.id")
     Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullByAdmin(String appStatus, String search, Pageable pageable);
+
     @Query(nativeQuery = true, value = "select a.id  as appId,\n" +
             "             ei.firstname as firstName,\n" +
             "              ei.lastname  as lastName,\n" +
@@ -328,7 +330,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "            where d.is_active = true and a.status=?1 and a.diploma_status is null and a.future_institution_id=?2 and (ei.phone_number ilike %?3% or\n" +
             "                ei.pinfl ilike  %?3%  or CONCAT(lastname,' ',firstname,' ',middle_name) ilike %?3% or " +
             "ei.passport_serial_and_number ilike %?3%) order by a.id")
-    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullAndFutureIdByAdmin(String appStatus,Integer futureId, String search, Pageable pageable);
+    Page<GetAppToExcel> searchAppByFirstnameAndLastnameByDiplomastatusIsNullAndFutureIdByAdmin(String appStatus, Integer futureId, String search, Pageable pageable);
 
     @Query(" select a from Application as a join Diploma as d on a.enrolleeInfo.id=d.enrolleeInfo.id where d.institutionOldNameId=?1 and d.isActive=true and a.diplomaStatus=?2 and " +
             " (d.enrolleeInfo.firstname like %?3% or d.enrolleeInfo.lastname like %?3% or d.enrolleeInfo.middleName like %?3% or d.specialityName like %?3% or " +
@@ -456,7 +458,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "  ei.lastname  as lastName, " +
             "  ei.middle_name as middleName, " +
             "  ei.phone_number as phoneNumber, " +
+            " ei.pinfl as pinfl, " +
             "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " ei.passport_given_date as givenDate," +
             " fi.name as futureInstitutionName, " +
             " d2.name as directionName, " +
             " ef.name as talimShakli, " +
@@ -481,7 +485,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "  ei.lastname  as lastName, " +
             "  ei.middle_name as middleName, " +
             "  ei.phone_number as phoneNumber, " +
+            " ei.pinfl as pinfl, " +
             "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " ei.passport_given_date as givenDate," +
             " fi.name as futureInstitutionName, " +
             " d2.name as directionName, " +
             " ef.name as talimShakli, " +
@@ -506,7 +512,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "  ei.lastname  as lastName, " +
             "  ei.middle_name as middleName, " +
             "  ei.phone_number as phoneNumber, " +
+            " ei.pinfl as pinfl, " +
             "  ei.passport_serial_and_number as passportSerialNumber, " +
+            " ei.passport_given_date as givenDate," +
             " fi.name as futureInstitutionName, " +
             " d2.name as directionName, " +
             " ef.name as talimShakli, " +
@@ -643,6 +651,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "or ei.middle_name ilike %?2% or ei.passport_serial_and_number ilike %?2%)\n" +
             " order by d.id")
     Page<GetDiplomasToExcel> searchAllDiplomaToAdmin(Boolean status, String search, Pageable pageable);
+
     @Query(nativeQuery = true, value = " select d.id  as diplomaId,\n" +
             "       ei.firstname                  as firstName,\n" +
             "       ei.lastname                   as lastName,\n" +
@@ -661,8 +670,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             " and (ei.phone_number ilike %?1% or  ei.pinfl ilike  %?1% or ei.firstname ilike %?1% or ei.lastname ilike  %?1% \n" +
             "or ei.middle_name ilike %?1% or ei.passport_serial_and_number ilike %?1%)" +
             " order by d.id")
-    Page<GetDiplomasToExcel> searchAllDiplomaNullToAdmin( String search, Pageable pageable);
-
+    Page<GetDiplomasToExcel> searchAllDiplomaNullToAdmin(String search, Pageable pageable);
 
 
     // Diploma null to admin
@@ -999,7 +1007,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(value = "select a from Application  as a where a.futureInstitution.id<>a.eduForm.direction.futureInstitution.id")
     List<Application> test();
 
-    @Query(nativeQuery = true,value = "select * from application as a inner join story_message sm on a.id = sm.application_id\n" +
+    @Query(nativeQuery = true, value = "select * from application as a inner join story_message sm on a.id = sm.application_id\n" +
             "inner join admin_entity ae on a.future_institution_id = ae.future_institution_id\n" +
             "where a.future_institution_id=ae.future_institution_id and  a.status='Ariza yuborildi' and a.diploma_status=true\n" +
             "and sm.status='Ariza qabul qilindi' ")
